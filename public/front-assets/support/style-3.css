@@ -1,0 +1,11 @@
+
+
+.chart-wrapper {
+  padding: 13px;
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--primary-text);
+}
+.chart-wrapper h2 {
+  margin: 0;
+}

@@ -1,0 +1,138 @@
+:root {
+  --bg: #4ec6ca;
+  --time: 2s;
+  --shadow: 5px 3px 10px 0px rgba(0, 0, 0, 0.3);
+  --circle: #fff;
+  --dark-blue: #005c6c;
+  --light-blue: #e6f4f1;
+  --dark-purple: #9b1756;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+// use only the available space inside the 400x400 frame
+.frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  margin-top: -200px;
+  margin-left: -200px;
+  border-radius: 2px;
+  box-shadow: 4px 8px 16px 0 rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  background: var(--bg);
+  color: #fff;
+  font-family: "Open Sans", Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+
+.card {
+    width: 100%;
+    height: 100%;
+}
+
+
+.header span {
+  display: block;
+  font-size: 12px;
+}
+
+.header p {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.title {
+  font-size: 14px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.right {
+  text-align: right;
+}
+
+p {
+  margin: 0;
+}
+
+.body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 180px;
+}
+
+//
+.graph .grid {
+  stroke: #ccc;
+  stroke-dasharray: 0;
+  stroke-width: 1;
+}
+
+.labels {
+  font-size: 11px;
+}
+
+.graph {
+  height: 110px;
+  width: 230px;
+}
+
+.data1 {
+  fill: var(--dark-purple);
+  stroke: var(--dark-purple);
+  stroke-width: 2;
+}
+
+.data2 {
+  fill: var(--dark-blue);
+  stroke: var(--dark-blue);
+  stroke-width: 2;
+}
+
+.legend {
+  color: #000;
+  font-size: 13px;
+  margin-bottom: 16px;
+  margin-right: 24px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.legend span {
+  padding: 0 12px;
+  position: relative;
+}
+
+.legend span::before {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 3px;
+  position: absolute;
+  top: 50%;
+  left: -2px;
+  transform: translateY(-50%);
+}
+
+.legend .data1::before {
+  background-color: var(--dark-blue);
+}
+
+.legend .data2::before {
+  background-color: var(--dark-purple);
+}
