@@ -26,6 +26,9 @@
 				<li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
 					<a href="{{ route('dashboard')}}"><i class="fa-solid fa-gauge"></i> <span> {{ __('dashboard') }} </span></a>
 				</li>
+				<li class="{{ request()->routeIs('chat') ? 'active' : '' }}">
+					<a href="{{ route('chat')}}"><i class="fa-solid fa-message"></i> <span> {{ __('chat') }} </span></a>
+				</li>
 				{{--<li class="{{ request()->routeIs('user.category') ? 'active' : '' }}">
 					<a href="{{ route('user.category')}}"><i class="fa-solid fa-brain"></i> <span> {{ __('category') }} </span></a>
 				</li>

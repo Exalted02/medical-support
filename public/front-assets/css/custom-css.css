@@ -1,3 +1,11 @@
+.header .header-left {
+	background: #008FFB;
+}
+.header .header-left a{
+	color: #fff;
+	font-size: 22px;
+    font-weight: 700;
+}
 .add-btn, 
 .continue-btn, 
 .cancel-btn, 
@@ -54,7 +62,13 @@
     text-overflow: ellipsis;
 }
 .sidebar .sidebar-menu ul li a:hover {
-    color: #ffffff !important;
+    /* color: #ffffff !important; */
+}
+.sidebar .sidebar-menu ul li a i {
+	font-size: 15px;
+}
+.sidebar .sidebar-menu ul li a span {
+	margin-left: 8px;
 }
 .action-btn {
 	border-radius: 5px;
@@ -310,9 +324,47 @@
 	display:inline-block;
 	
 }
-
-
-
+.chat-main-row .chat-main-wrapper .chat-sidebar {
+	border-left: 0;
+    border-right: 1px solid #E9E9EA;
+}
+.chat-window .dropdown-toggle {
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f7f7f7;
+    padding: 5px 10px !important;
+    height: 40px;
+    border-radius: 5px;
+    margin: 0 25px 0 10px;
+    width: auto;
+    position: relative;
+}
+.chat-window .dropdown-toggle p {
+	font-size: 15px;
+}
+.chat-footer .btn-custom {
+    background: #008FFB;
+}
+.chat-user-list {
+	padding: 15px;
+}
+.vertical-tabs-3 .nav-item .nav-link.active {
+    background-color: #248fdb;
+    border: 1px solid #248fdb;
+    color: #FFF;
+}
+[data-sidebar="light"] body .sidebar .sidebar-menu ul li.active {
+    background-color: #F4F6F9;
+}
+[data-sidebar=light] body .sidebar .sidebar-menu ul li.active a {
+    color: #008FFB;
+    background-color: transparent;
+}
+[data-sidebar=light] body .sidebar ul li.active span {
+    display: inline-block;
+    color: #008FFB;
+}
 
 
 

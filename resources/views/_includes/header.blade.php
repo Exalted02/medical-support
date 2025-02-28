@@ -4,13 +4,14 @@
 	<!-- Logo -->
 	<div class="header-left">
 		<a href="{{ route('dashboard')}}" class="logo">
-			<img src="{{ asset('front-assets/img/-logo1.jpg') }}" alt="{{ __('project_title') }}">
+			<img src="{{ asset('front-assets/img/logo.jpg') }}" alt="{{ __('project_title') }}">
 		</a>
 		<a href="{{ route('dashboard')}}" class="logo collapse-logo">
-			<img src="{{ asset('front-assets/img/-logo1.jpg') }}" alt="{{ __('project_title') }}">
+			<img src="{{ asset('front-assets/img/logo.jpg') }}" alt="{{ __('project_title') }}">
 		</a>
 		<a href="{{ route('dashboard')}}" class="logo2">
-			<img src="{{ asset('front-assets/img/-logo1.jpg') }}"  alt="{{ __('project_title') }}">
+			{{--<img src="{{ asset('front-assets/img/logo.jpg') }}"  alt="{{ __('project_title') }}">--}}
+			LOGO
 		</a>
 	</div>
 	<!-- /Logo -->
@@ -95,7 +96,7 @@
 							<a href="activities.html">
 								<div class="chat-block d-flex">
 									<span class="avatar flex-shrink-0">
-										<img src="assets/img/profiles/avatar-02.jpg" alt="User Image">
+										<img src="{{ url('static-image/avatar-02.jpg') }}" alt="User Image">
 									</span>
 									<div class="media-body flex-grow-1">
 										<p class="noti-details"><span class="noti-title">John Doe</span> added new task <span class="noti-title">Patient appointment booking</span></p>
@@ -108,7 +109,7 @@
 							<a href="activities.html">
 								<div class="chat-block d-flex">
 									<span class="avatar flex-shrink-0">
-										<img src="assets/img/profiles/avatar-03.jpg" alt="User Image">
+										<img src="{{ url('static-image/avatar-03.jpg') }}" alt="User Image">
 									</span>
 									<div class="media-body flex-grow-1">
 										<p class="noti-details"><span class="noti-title">Tarah Shropshire</span> changed the task name <span class="noti-title">Appointment booking with payment gateway</span></p>
@@ -121,7 +122,7 @@
 							<a href="activities.html">
 								<div class="chat-block d-flex">
 									<span class="avatar flex-shrink-0">
-										<img src="assets/img/profiles/avatar-06.jpg" alt="User Image">
+										<img src="{{ url('static-image/avatar-06.jpg') }}" alt="User Image">
 									</span>
 									<div class="media-body flex-grow-1">
 										<p class="noti-details"><span class="noti-title">Misty Tison</span> added <span class="noti-title">Domenic Houston</span> and <span class="noti-title">Claire Mapes</span> to project <span class="noti-title">Doctor available module</span></p>
@@ -134,7 +135,7 @@
 							<a href="activities.html">
 								<div class="chat-block d-flex">
 									<span class="avatar flex-shrink-0">
-										<img src="assets/img/profiles/avatar-17.jpg" alt="User Image">
+										<img src="{{ url('static-image/avatar-17.jpg') }}" alt="User Image">
 									</span>
 									<div class="media-body flex-grow-1">
 										<p class="noti-details"><span class="noti-title">Rolland Webber</span> completed task <span class="noti-title">Patient and Doctor video conferencing</span></p>
@@ -147,7 +148,7 @@
 							<a href="activities.html">
 								<div class="chat-block d-flex">
 									<span class="avatar flex-shrink-0">
-										<img src="assets/img/profiles/avatar-13.jpg" alt="User Image">
+										<img src="{{ url('static-image/avatar-13.jpg') }}" alt="User Image">
 									</span>
 									<div class="media-body flex-grow-1">
 										<p class="noti-details"><span class="noti-title">Bernardo Galaviz</span> added new task <span class="noti-title">Private chat module</span></p>
@@ -182,7 +183,7 @@
 								<div class="list-item">
 									<div class="list-left">
 										<span class="avatar">
-											<img src="assets/img/profiles/avatar-09.jpg" alt="User Image">
+											<img src="{{ url('static-image/avatar-09.jpg') }}" alt="User Image">
 										</span>
 									</div>
 									<div class="list-body">
@@ -199,7 +200,7 @@
 								<div class="list-item">
 									<div class="list-left">
 										<span class="avatar">
-											<img src="assets/img/profiles/avatar-02.jpg" alt="User Image">
+											<img src="{{ url('static-image/avatar-02.jpg') }}" alt="User Image">
 										</span>
 									</div>
 									<div class="list-body">
@@ -216,7 +217,7 @@
 								<div class="list-item">
 									<div class="list-left">
 										<span class="avatar">
-											<img src="assets/img/profiles/avatar-03.jpg" alt="User Image">
+											<img src="{{ url('static-image/avatar-03.jpg') }}" alt="User Image">
 										</span>
 									</div>
 									<div class="list-body">
@@ -233,7 +234,7 @@
 								<div class="list-item">
 									<div class="list-left">
 										<span class="avatar">
-											<img src="assets/img/profiles/avatar-05.jpg" alt="User Image">
+											<img src="{{ url('static-image/avatar-05.jpg') }}" alt="User Image">
 										</span>
 									</div>
 									<div class="list-body">
@@ -250,7 +251,7 @@
 								<div class="list-item">
 									<div class="list-left">
 										<span class="avatar">
-											<img src="assets/img/profiles/avatar-08.jpg" alt="User Image">
+											<img src="{{ url('static-image/avatar-08.jpg') }}" alt="User Image">
 										</span>
 									</div>
 									<div class="list-body">
@@ -284,7 +285,8 @@
 			<div class="dropdown-menu">
 				
 				
-				<a class="dropdown-item" href="{{url('change-password')}}">{{ __('change_password') }}</a>
+				{{--<a class="dropdown-item" href="{{url('change-password')}}">{{ __('change_password') }}</a>--}}
+				<a class="dropdown-item" href="{{url('my-profile')}}">My Profile</a>
 				<a class="dropdown-item" href="{{ route('logout') }}">Logout</a>
 			</div>
 		</li>

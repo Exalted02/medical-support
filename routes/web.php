@@ -22,6 +22,7 @@ use App\Http\Controllers\SizeController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ChatController;
 
 
 
@@ -73,6 +74,12 @@ Route::middleware('auth')->group(function () {
 	//ChangePassword
 	Route::get('/change-password', [ChangePasswordController::class, 'index'])->name('change-password');
 	Route::post('/change-password', [ChangePasswordController::class, 'save_data'])->name('change-password-save');
+	
+	//My Profile Page
+	Route::get('/my-profile', [MyProfileController::class, 'index'])->name('my-profile');
+	
+	//Chat Page
+	Route::get('/chat', [ChatController::class, 'index'])->name('chat');
 
 	//EmailSettings
 	Route::get('/email-settings', [EmailSettingsController::class, 'index'])->name('user.email-settings');

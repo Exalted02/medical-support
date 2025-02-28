@@ -22,9 +22,9 @@
             <!-- /Page Header -->
         
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="row">
-						<div class="col-md-6 col-sm-6 col-lg-6 col-xl-6">
+						<div class="col-md-3 col-sm-3 col-lg-3 col-xl-3">
 							<div class="card">
 								<div class="card-body">
 									<div class="d-flex justify-content-between mb-3">
@@ -43,7 +43,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-md-6 col-sm-6 col-lg-6 col-xl-6">
+						<div class="col-md-3 col-sm-3 col-lg-3 col-xl-3">
 							<div class="card">
 								<div class="card-body">
 									<div class="d-flex justify-content-between mb-3">
@@ -62,7 +62,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-md-6 col-sm-6 col-lg-6 col-xl-6">
+						<div class="col-md-3 col-sm-3 col-lg-3 col-xl-3">
 							<div class="card">
 								<div class="card-body">
 									<div class="d-flex justify-content-between mb-3">
@@ -81,7 +81,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-md-6 col-sm-6 col-lg-6 col-xl-6">
+						<div class="col-md-3 col-sm-3 col-lg-3 col-xl-3">
 							<div class="card">
 								<div class="card-body">
 									<div class="d-flex justify-content-between mb-3">
@@ -102,11 +102,6 @@
 						</div>
 					</div>
                 </div>
-                <div class="col-md-6 text-center">
-					<div class="card">
-						
-					</div>
-				</div>
             </div>
 			<div class="row">
 				<div class="col-md-12">
@@ -115,7 +110,7 @@
 							<div class="card">
 								<div class="card-body">
 									<h3 class="card-title">Tickets Analytics</h3>
-									<canvas id="line-chart" class="w-full m_medi-chart" height="250"></canvas>
+									<canvas id="line-chart" class="w-full m_medi-chart" height="150"></canvas>
 								</div>
 							</div>
 						</div>
@@ -123,7 +118,7 @@
 							<div class="card">
 								<div class="card-body">
 									<h3 class="card-title">Support Provided</h3>
-									<canvas id="line-chart-2" class="w-full m_medi-chart" height="200"></canvas>
+									<canvas id="line-chart-2" class="w-full m_medi-chart" height="150"></canvas>
 								</div>
 							</div>
 						</div>
@@ -143,8 +138,10 @@
 										<tr>
 											<th>No</th>
 											<th>Name</th>
-											<th>Email</th>
+											<th>Query</th>
+											<th>Date</th>
 											<th>Status</th>
+											<th>Query Id</th>
 											<th class="text-end">Action</th>
 										</tr>
 									</thead>
@@ -152,10 +149,12 @@
 										<tr>
 											<td>1</td>
 											<td>Jens Brincker</td>
-											<td>barrycuda@example.com</td>
+											<td>Lorem Ipsum is simply dummy text of the printing </td>
+											<td>27/05/2016</td>
 											<td>
-												<span class="badge bg-inverse-danger">Paid</span>
+												<span class="badge bg-inverse-danger">Cancelled</span>
 											</td>
+											<td>101</td>
 											<td class="text-end">
 												<div class="dropdown dropdown-action">
 													<a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
@@ -169,10 +168,12 @@
 										<tr>
 											<td>2</td>
 											<td>Mark Hay</td>
-											<td>tressawexler@example.com</td>
+											<td>Lorem Ipsum is simply dummy text of the printing </td>
+											<td>25/05/2017</td>
 											<td>
-												<span class="badge bg-inverse-warning">Paid</span>
+												<span class="badge bg-inverse-warning">Ongoing</span>
 											</td>
+											<td>102</td>
 											<td class="text-end">
 												<div class="dropdown dropdown-action">
 													<a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
@@ -186,10 +187,12 @@
 										<tr>
 											<td>3</td>
 											<td>Anthony Davie</td>
-											<td>rubybartlett@example.com</td>
+											<td>Lorem Ipsum is simply dummy text of the printing </td>
+											<td>27/05/2017</td>
 											<td>
-												<span class="badge bg-inverse-success">Paid</span>
+												<span class="badge bg-inverse-success">Solved</span>
 											</td>
+											<td>103</td>
 											<td class="text-end">
 												<div class="dropdown dropdown-action">
 													<a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
@@ -203,10 +206,12 @@
 										<tr>
 											<td>4</td>
 											<td>David Perry</td>
-											<td>mistytison@example.com</td>
+											<td>Lorem Ipsum is simply dummy text of the printing </td>
+											<td>20/04/2016</td>
 											<td>
-												<span class="badge bg-inverse-danger">Paid</span>
+												<span class="badge bg-inverse-danger">Cancelled</span>
 											</td>
+											<td>104</td>
 											<td class="text-end">
 												<div class="dropdown dropdown-action">
 													<a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
@@ -220,10 +225,12 @@
 										<tr>
 											<td>5</td>
 											<td>Anthony Davie</td>
-											<td>danieldeacon@example.com</td>
+											<td>Lorem Ipsum is simply dummy text of the printing </td>
+											<td>17/05/2016</td>
 											<td>
-												<span class="badge bg-inverse-warning">Paid</span>
+												<span class="badge bg-inverse-warning">Ongoing</span>
 											</td>
+											<td>105</td>
 											<td class="text-end">
 												<div class="dropdown dropdown-action">
 													<a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
