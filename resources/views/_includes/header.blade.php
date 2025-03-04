@@ -48,6 +48,11 @@
 			</div>
 		</li>
 		<!-- /Search -->
+		<!-- /Generate Ticket -->
+		<li class="nav-item m-l-5">
+			<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#generate_ticket">Generate Ticket</button>
+		</li>
+		<!-- /Generate Ticket -->
 		@php
 			$selectedLang = session('locale', 'en'); // Default to 'en' if session does not exist
 			$languages = [

@@ -1,35 +1,35 @@
+<!-- MODAL -->
+<!-- Add Group Modal -->
+<div id="generate_ticket" class="modal custom-modal fade" role="dialog">
+	<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Generate new Ticket</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				{{--<p>Groups are where your team communicates. They’re best when organized around a topic — #leads, for example.</p>--}}
+				<form>
+					<div class="input-block mb-3">
+						<label class="col-form-label">Ticket Subject <span class="text-danger">*</span></label>
+						<input class="form-control" type="text">
+					</div>
+					<div class="input-block mb-3">
+						<label class="col-form-label">Messsage <span class="text-danger">*</span></label>
+						<input class="form-control" type="text">
+					</div>
+					<div class="submit-section">
+						<button class="btn btn-primary submit-btn">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Add Group Modal -->
+<!-- MODAL -->
 <!-- Footer -->
-
-<script>
-$(document).ready(function() {
-	if ($.fn.DataTable.isDataTable('.datatable')) {
-		$('.datatable').DataTable().destroy(); // Destroy existing instance
-	}
-	
-	$('.datatable').DataTable({
-		pageLength: 50, // Set default records per page to 50
-		ordering: false, 
-		language: {
-			"lengthMenu": "{{ __('Show _MENU_ entries') }}",
-			"zeroRecords": "{{ __('No records found') }}",
-			"info": "{{ __('Showing _START_ to _END_ of _TOTAL_ entries') }}",
-			"infoEmpty": "{{ __('No entries available') }}",
-			"infoFiltered": "{{ __('(filtered from _MAX_ total entries)') }}",
-			"search": "{{ __('Search') }}",
-			"paginate": {
-				"first": "{{ __('First') }}",
-				"last": "{{ __('Last') }}",
-				"next": "{{ __('Next') }}",
-				"previous": "{{ __('Previous') }}"
-			},
-		},
-		columnDefs: [
-			{ orderable: false, targets: 0 }, 
-			{ orderable: false, targets: '_all' } 
-		],
-	});
-});
-
-</script>
 
 <!-- Footer -->

@@ -80,6 +80,7 @@ Route::middleware('auth')->group(function () {
 	
 	//Chat Page
 	Route::get('/chat', [ChatController::class, 'index'])->name('chat');
+	Route::get('/ticket-chat', [ChatController::class, 'ticket_chat'])->name('ticket-chat');
 
 	//EmailSettings
 	Route::get('/email-settings', [EmailSettingsController::class, 'index'])->name('user.email-settings');

@@ -11,4 +11,9 @@ class ChatController extends Controller
       $data[] = '';
       return view('chat.index', $data);
     }
+    public function ticket_chat()
+    {
+      $data[] = '';
+      return view('chat.ticket-chat', $data);
+    }
 }

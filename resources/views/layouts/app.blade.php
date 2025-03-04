@@ -73,7 +73,7 @@
 			
 				@yield('content')
 
-			
+			@include('_includes/footer')
 		</div>
 		<!-- jQuery -->
         <script src="{{ url('front-assets/js/jquery-3.7.1.min.js') }}"></script>

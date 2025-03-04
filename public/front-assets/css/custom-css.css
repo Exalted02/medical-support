@@ -215,6 +215,9 @@
 .select2-container {
 	width: 100% !important;
 }
+.m-l-5 {
+	margin-left: 5px !important;
+}
 .p-r-0 {
 	padding-right: 0 !important;
 }
@@ -353,6 +356,15 @@
     background-color: #248fdb;
     border: 1px solid #248fdb;
     color: #FFF;
+}
+.chat-user-list .nav-item .nav-link {
+	padding: 0.5rem 1rem;
+	-webkit-line-clamp: 1 !important;
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    line-height: 2rem;
 }
 [data-sidebar="light"] body .sidebar .sidebar-menu ul li.active {
     background-color: #F4F6F9;
