@@ -33,6 +33,7 @@ class User extends Authenticatable
         'zipcode',
         'phone_number',
         'fax',
+        'token',
         'dob',
         'gender_id',
         'upload_tax_lisence',
