@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Department;
 
 class RegisteredUserController extends Controller
 {
@@ -25,7 +26,8 @@ class RegisteredUserController extends Controller
     }
     public function employee_create(): View
     {
-        return view('auth.employee-register');
+		$departments = Department::all();
+        return view('auth.employee-register', compact('departments'));
     }
 
     /**
@@ -33,7 +35,7 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store_employee(Request $request): RedirectResponse
     {
 		$validator = Validator::make($request->all(), [
 			'first_name' => 'required|string|max:255',
@@ -53,17 +55,54 @@ class RegisteredUserController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'department' => $request->department ?? '',
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
-
-        return redirect(RouteServiceProvider::HOME);
+		
+		return redirect()->route('employee-dashboard');
+        //return redirect(RouteServiceProvider::HOME);
     }
+	public function employee_dashboard()
+	{
+		$data = [];
+		return view('dashboard', $data);
+	}
+	public function store_client(Request $request): RedirectResponse
+	{
+		$validator = Validator::make($request->all(), [
+			'first_name' => 'required|string|max:255',
+			'last_name' => 'required|string|max:255',
+			'email' => 'required|email|unique:users,email',
+			'password' => 'required|min:6|confirmed',
+		]);
+
+		if ($validator->fails()) {
+			return redirect()->back()->withErrors($validator)->withInput();
+		}
+        
+        $user = User::create([
+            'name' => $request->first_name .' '.$request->last_name,
+            'user_type' => 2,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'company_name' => $request->company_name ?? '',
+            'phone_number' => $request->phone_number ?? '',
+        ]);
+
+        event(new Registered($user));
+
+        Auth::login($user);
+		
+		return redirect()->route('client-dashboard');
+		//return redirect(RouteServiceProvider::HOME);
+	}
 	public function store_customer(Request $request)
 	{
-		//echo "<pre>";print_r($request->all());
 		 $request->validate([
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],

@@ -2,14 +2,14 @@
     <div class="col-md-6">
 		<div class="m_banner-content-2 m_font-poppins">
 			<h3 class="text-center">Employee Sign Up</h3>
-			<form method="POST" action="{{ route('register') }}">
+			<form method="POST" action="{{ route('employee.register') }}">
 			@csrf
 				<fieldset>
 					<div class="m_banner-content-main">
 						<label for="first_name">First Name</label>
 						<input type="text" name="first_name" placeholder="Enter Your First Name" value="{{ old('first_name', request('first_name')) }}">
 						@error('first_name')
-							<span class="text-danger">{{ $message }}</span>
+							<small class="text-danger d-block">{{ $message }}</small> 
 						@enderror
 					</div>
 
@@ -17,7 +17,7 @@
 						<label for="last_name">Last Name</label>
 						<input type="text" name="last_name" placeholder="Enter Your Last Name" value="{{ old('last_name', request('last_name')) }}">
 						@error('last_name')
-							<span class="text-danger">{{ $message }}</span>
+							<small class="text-danger d-block">{{ $message }}</small> 
 						@enderror
 					</div>
 
@@ -25,7 +25,7 @@
 						<label for="email">Email Address</label>
 						<input type="email" name="email" placeholder="Enter your Company Email Address" value="{{ old('email', request('email')) }}">
 						@error('email')
-							<span class="text-danger">{{ $message }}</span>
+							<small class="text-danger d-block">{{ $message }}</small> 
 						@enderror
 					</div>
 
@@ -35,9 +35,9 @@
 							<label for="number">Department</label>
 							<select class="select form-control" name="department">
 								<option value="">Please select</option>
-								<option value="1">store</option>
-								<option value="2">opd</option>
-								<option value="3">clinical</option>
+								@foreach($departments as $department)
+								<option value="{{ $department->id }}">{{ $department->name }}</option>
+								@endforeach
 							</select>
 						</div>
 					</div>
@@ -51,7 +51,7 @@
 						<label for="password">Password</label>
 						<input type="password" name="password" placeholder="Password">
 						@error('password')
-							<span class="text-danger">{{ $message }}</span>
+							<small class="text-danger d-block">{{ $message }}</small> 
 						@enderror
 					</div>
 

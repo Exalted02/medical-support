@@ -2,27 +2,36 @@
     <div class="col-md-6">
 		<div class="m_banner-content-2 m_font-poppins">
 			<h3 class="text-center">Client Sign Up</h3>
-			<form method="POST" action="{{ route('register') }}">
+			<form method="POST" action="{{ route('client.register') }}">
 			@csrf
 				<fieldset>
 					<div class="m_banner-content-main">
 						<label for="fname">First Name</label>
-						<input type="text" name="fname" placeholder="Enter Your First Name">
+						<input type="text" name="first_name" placeholder="Enter Your First Name" value="{{ old('first_name', request('first_name')) }}">
+						@error('first_name')
+							<small class="text-danger d-block">{{ $message }}</small> 
+						@enderror
 					</div>
 
 					<div class="m_banner-content-main">
 						<label for="lname">Last Name</label>
-						<input type="text" name="lname" placeholder="Enter Your Last Name">
+						<input type="text" name="last_name" placeholder="Enter Your Last Name" value="{{ old('last_name', request('last_name')) }}">
+						@error('last_name')
+							<small class="text-danger d-block">{{ $message }}</small> 
+						@enderror
 					</div>
 
 					<div class="m_banner-content-main">
 						<label for="email">Email Address</label>
-						<input type="email" name="email" placeholder="Enter your Company Email Address">
+						<input type="email" name="email" placeholder="Enter your Company Email Address" value="{{ old('email', request('email')) }}">
+						@error('email')
+							<small class="text-danger d-block">{{ $message }}</small> 
+						@enderror
 					</div>
 
 					<div class="m_banner-content-main">
 						<label for="tel">Contact Number</label>
-						<input type="tel" name="tel" placeholder="Enter Contact Number">
+						<input type="tel" name="phone_number" placeholder="Enter Contact Number">
 					</div>
 
 					<div class="m_banner-content-main">
@@ -34,32 +43,31 @@
 						
 						<div class="dropdown">
 							<label for="number">Company name</label>
-							<div class="select">
-								<span class="selected">Enter your Company name</span>
-								<div class="caret"></div>
-							</div>
-							<ul class="menu">
-								<li>Company-1</li>
-								<li>Company-2</li>
-								<li>Company-3</li>
-								<li class="active">Company-4</li>
-							</ul>
+							<select class="select form-control" name="company_name">
+								<option value="">Please select</option>
+								<option value="1">company1</option>
+								<option value="2">company2</option>
+								<option value="3">company3</option>
+							</select>
 						</div>
 					</div>
 
 					<div class="m_banner-content-main">
 						<label for="text">Create Username</label>
-						<input type="text" name="text" placeholder="Enter Username">
+						<input type="text" name="username" placeholder="Enter Username" value="{{ old('username', request('username')) }}">
 					</div>
 
 					<div class="m_banner-content-main">
 						<label for="password">Password</label>
-						<input type="password" placeholder="Password" id="sign-up-password" required>
+						<input type="password" name="password" placeholder="Password">
+						@error('password')
+							<small class="text-danger d-block">{{ $message }}</small> 
+						@enderror
 					</div>
 
 					<div class="m_banner-content-main">
 						<label for="password">Confirm Password</label>
-						<input type="password" placeholder="Confirm Password" id="sign-up-confirm_password" required>
+						<input type="password" name="password_confirmation" placeholder="Confirm Password">
 
 					</div>
 
