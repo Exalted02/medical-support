@@ -36,7 +36,7 @@
 							<select class="select form-control" name="department">
 								<option value="">Please select</option>
 								@foreach($departments as $department)
-								<option value="{{ $department->id }}">{{ $department->name }}</option>
+								<option value="{{ $department->id }}" {{ old('department', request('department')) == (string) $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
 								@endforeach
 							</select>
 						</div>

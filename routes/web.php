@@ -60,7 +60,14 @@ Route::get('lang/change', [LangController::class, 'change'])->name('changeLang')
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
-	
+
+Route::get('/employee-dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('employee-dashboard');
+
+Route::get('/client-dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('client-dashboard');		
 
 
 Route::middleware('auth')->group(function () {

@@ -54,6 +54,7 @@ class RegisteredUserController extends Controller
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
+			'username' => $request->username ?? '',
             'password' => Hash::make($request->password),
             'department' => $request->department ?? '',
         ]);
@@ -61,15 +62,8 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
-		
-		return redirect()->route('employee-dashboard');
-        //return redirect(RouteServiceProvider::HOME);
+        return redirect(RouteServiceProvider::EMPLYHOME);
     }
-	public function employee_dashboard()
-	{
-		$data = [];
-		return view('dashboard', $data);
-	}
 	public function store_client(Request $request): RedirectResponse
 	{
 		$validator = Validator::make($request->all(), [
@@ -89,18 +83,19 @@ class RegisteredUserController extends Controller
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
+            'username' => $request->username ?? '',
             'password' => Hash::make($request->password),
             'company_name' => $request->company_name ?? '',
             'phone_number' => $request->phone_number ?? '',
+            'fax' => $request->fax ?? '',
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
-		
-		return redirect()->route('client-dashboard');
-		//return redirect(RouteServiceProvider::HOME);
+		return redirect(RouteServiceProvider::CLIENTHOME);
 	}
+	
 	public function store_customer(Request $request)
 	{
 		 $request->validate([

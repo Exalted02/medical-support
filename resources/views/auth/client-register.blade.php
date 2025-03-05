@@ -31,12 +31,12 @@
 
 					<div class="m_banner-content-main">
 						<label for="tel">Contact Number</label>
-						<input type="tel" name="phone_number" placeholder="Enter Contact Number">
+						<input type="tel" name="phone_number" placeholder="Enter Contact Number" value="{{ old('phone_number', request('phone_number')) }}">
 					</div>
 
 					<div class="m_banner-content-main">
 						<label for="number">Fax Number</label>
-						<input type="number" name="number" placeholder="Enter Fax Number">
+						<input type="number" name="fax" placeholder="Enter Fax Number" value="{{ old('fax', request('fax')) }}">
 					</div>
 
 					<div class="m_banner-content-main-2">
@@ -45,9 +45,9 @@
 							<label for="number">Company name</label>
 							<select class="select form-control" name="company_name">
 								<option value="">Please select</option>
-								<option value="1">company1</option>
-								<option value="2">company2</option>
-								<option value="3">company3</option>
+								<option value="1" {{ old('company_name', request('company_name')) == "1" ? 'selected' : 'selected' }}>company1</option>
+								<option value="2" {{ old('company_name', request('company_name')) == "2" ? 'selected' : 'selected' }}>company2</option>
+								<option value="3" {{ old('company_name', request('company_name')) == "3" ? 'selected' : 'selected' }}>company3</option>
 							</select>
 						</div>
 					</div>
