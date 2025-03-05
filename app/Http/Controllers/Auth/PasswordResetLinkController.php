@@ -47,6 +47,8 @@ class PasswordResetLinkController extends Controller
 				'toEmails' => [$request->email],
 			];
 		send_email($data);
+		
+		return redirect()->route('password.request')->with('status','Link send to your mail..');
 	}
     public function store_bck(Request $request): RedirectResponse
     {
