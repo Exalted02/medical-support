@@ -6,13 +6,13 @@
 			@csrf
 				<fieldset>
 					<div class="m_banner-content-main">
-						<label for="fname">First Name</label>
-						<input type="text" name="fname" placeholder="Enter Your First Name">
+						<label for="first_name">First Name</label>
+						<input type="text" name="first_name" placeholder="Enter Your First Name">
 					</div>
 
 					<div class="m_banner-content-main">
-						<label for="lname">Last Name</label>
-						<input type="text" name="lname" placeholder="Enter Your Last Name">
+						<label for="last_name">Last Name</label>
+						<input type="text" name="last_name" placeholder="Enter Your Last Name">
 					</div>
 
 					<div class="m_banner-content-main">
