@@ -288,10 +288,8 @@
 				</span>
 			</a>
 			<div class="dropdown-menu">
-				
-				
-				{{--<a class="dropdown-item" href="{{url('change-password')}}">{{ __('change_password') }}</a>--}}
 				<a class="dropdown-item" href="{{url('my-profile')}}">My Profile</a>
+				<a class="dropdown-item" href="{{url('change-password')}}">Change Password</a>
 				<a class="dropdown-item" href="{{ route('logout') }}">Logout</a>
 			</div>
 		</li>

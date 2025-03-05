@@ -6,32 +6,32 @@
         <div class="row">
             <div class="col-md-6 offset-md-3">
 				<form id="frmChangePassword" action="{{ route('change-password-save') }}">
-					<h4 class="page-title">{{ __('change_password') }}</h4>
+					<h4 class="page-title">Change Password</h4>
 					<div class="row">
                         <div class="col-md-12">
                             <div class="input-block mb-3">
-                                <label class="col-form-label">{{ __('old_password') }}</label>
+                                <label class="col-form-label">Old Password</label>
                                 <input type="password" class="form-control" id="old_password" name="old_password">
 								<div class="invalid-feedback"></div>
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="input-block mb-3">
-                                <label class="col-form-label">{{ __('new_password') }}</label>
+                                <label class="col-form-label">New Password</label>
                                 <input type="password" class="form-control" id="new_password" name="new_password">
 								<div class="invalid-feedback"></div>
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="input-block mb-3">
-                                <label class="col-form-label">{{ __('confirm_new_password') }}</label>
+                                <label class="col-form-label">Confirm Password</label>
                                 <input type="password" class="form-control" id="new_password_confirmation" name="new_password_confirmation">
 								<div class="invalid-feedback"></div>
                             </div>
                         </div>
                     </div>
                     <div class="submit-section">
-                        <button class="btn btn-primary save-password" type="button" >{{ __('update_password') }}</button>
+                        <button class="btn btn-primary save-password" type="button">Update Password</button>
                     </div>
 				</form>
 			</div>
@@ -47,7 +47,7 @@
 					<div class="success-popup-icon">
 						<i class="la la-pencil"></i>
 					</div>
-					<h3>{{ __('password_updated_successfully') }}!!!</h3>
+					<h3>Password updated successfully') }}!!!</h3>
 				</div>
 			</div>
 		</div>
