@@ -7,49 +7,57 @@
 				<fieldset>
 					<div class="m_banner-content-main">
 						<label for="first_name">First Name</label>
-						<input type="text" name="first_name" placeholder="Enter Your First Name">
+						<input type="text" name="first_name" placeholder="Enter Your First Name" value="{{ old('first_name', request('first_name')) }}">
+						@error('first_name')
+							<span class="text-danger">{{ $message }}</span>
+						@enderror
 					</div>
 
 					<div class="m_banner-content-main">
 						<label for="last_name">Last Name</label>
-						<input type="text" name="last_name" placeholder="Enter Your Last Name">
+						<input type="text" name="last_name" placeholder="Enter Your Last Name" value="{{ old('last_name', request('last_name')) }}">
+						@error('last_name')
+							<span class="text-danger">{{ $message }}</span>
+						@enderror
 					</div>
 
 					<div class="m_banner-content-main">
 						<label for="email">Email Address</label>
-						<input type="email" name="email" placeholder="Enter your Company Email Address">
+						<input type="email" name="email" placeholder="Enter your Company Email Address" value="{{ old('email', request('email')) }}">
+						@error('email')
+							<span class="text-danger">{{ $message }}</span>
+						@enderror
 					</div>
 
 					<div class="m_banner-content-main-2">
 						
 						<div class="dropdown">
 							<label for="number">Department</label>
-							<div class="select">
-								<span class="selected">Select-Department</span>
-								<div class="caret"></div>
-							</div>
-							<ul class="menu">
-								<li>Department-1</li>
-								<li>Department-2</li>
-								<li>Department-3</li>
-								<li class="active">Department-4</li>
-							</ul>
+							<select class="select form-control" name="department">
+								<option value="">Please select</option>
+								<option value="1">store</option>
+								<option value="2">opd</option>
+								<option value="3">clinical</option>
+							</select>
 						</div>
 					</div>
 
 					<div class="m_banner-content-main">
 						<label for="text">Create Username</label>
-						<input type="text" name="text" placeholder="Enter Username">
+						<input type="text" name="username" placeholder="Enter Username" value="{{ old('username', request('username')) }}">
 					</div>
 
 					<div class="m_banner-content-main">
 						<label for="password">Password</label>
-						<input type="password" placeholder="Password" id="sign-business-password" required>
+						<input type="password" name="password" placeholder="Password">
+						@error('password')
+							<span class="text-danger">{{ $message }}</span>
+						@enderror
 					</div>
 
 					<div class="m_banner-content-main">
 						<label for="password">Confirm Password</label>
-						<input type="password" placeholder="Confirm Password" id="sign-business-confirm_password" required>
+						<input type="password" name="password_confirmation" placeholder="Confirm Password">
 
 					</div>
 

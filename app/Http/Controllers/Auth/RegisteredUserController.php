@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Validator;
 
 class RegisteredUserController extends Controller
 {
@@ -34,15 +35,19 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
-		
-		echo 'hello......';die;
+		$validator = Validator::make($request->all(), [
+			'first_name' => 'required|string|max:255',
+			'last_name' => 'required|string|max:255',
+			'email' => 'required|email|unique:users,email',
+			'password' => 'required|min:6|confirmed',
+		]);
+
+		if ($validator->fails()) {
+			return redirect()->back()->withErrors($validator)->withInput();
+		}
+        
         $user = User::create([
-            'name' => $request->first_name .''.$request->last_name,
+            'name' => $request->first_name .' '.$request->last_name,
             'user_type' => 1,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
