@@ -30,7 +30,7 @@ class AuthenticatedSessionController extends Controller
 		$credentials = $request->only('email', 'password');
 		$remember = $request->filled('remember');
 		if (Auth::attempt($credentials, $remember)) {
-			//$request->authenticate();
+			$request->authenticate();
 
 			$request->session()->regenerate();
 			$user = Auth::user();
@@ -43,6 +43,8 @@ class AuthenticatedSessionController extends Controller
 			
 			return redirect()->intended(RouteServiceProvider::HOME);
 		}
+		
+		return back()->withErrors(['email' => 'These credentials do not match our records.'])->withInput($request->only('email'));
     }
 
     /**
