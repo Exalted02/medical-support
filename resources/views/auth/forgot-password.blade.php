@@ -2,12 +2,11 @@
 	<div class="col-md-6 m_banner-content-3">
 		<div class="m_banner-content-2 m_font-poppins">
 			<h3 class="text-center">Forgot password</h3>
+			<div class="mt-2 mb-2">
 			@if (session('status'))
-				<div class="alert alert-success">
-					{{ session('status') }}
-				</div>
+				<p class="text-success text-center">{{ session('status') }}</p>
 			@endif
-
+			</div>
 			<form method="POST" action="{{ route('password.email') }}">
 				@csrf
 

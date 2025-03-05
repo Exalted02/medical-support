@@ -60,6 +60,6 @@ class NewPasswordController extends Controller
                     : back()->withInput($request->only('email'))
                             ->withErrors(['email' => __($status)]);*/
 							
-		return redirect()->route('login')->with('status', 'Your password has been reset successfully.');
+		return redirect()->route('login')->with('status', 'Your password has been reset successfully. Please check...');
     }
 }
