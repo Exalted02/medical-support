@@ -48,7 +48,7 @@
 
 				<!-- Password Reset Token -->
 				<input type="hidden" name="token" value="{{ $request->route('token') }}">
-
+				<input type="hidden" name="email" value="exaltedsol04@gmail.com">
 				<!-- Email Address -->
 				{{--<div>
 					<x-input-label for="email" :value="__('Email')" />

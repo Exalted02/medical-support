@@ -20,6 +20,8 @@ Route::middleware('guest')->group(function () {
     Route::post('register/employee', [RegisteredUserController::class, 'store_employee'])->name('employee.register');
 	
 	Route::post('register/client', [RegisteredUserController::class, 'store_client'])->name('client.register');
+	
+	Route::get('verify-email/{email}', [RegisteredUserController::class, 'verify_email'])->name('verification.email');
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
                 ->name('login');

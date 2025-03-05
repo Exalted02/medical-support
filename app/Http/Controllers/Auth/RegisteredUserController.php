@@ -64,13 +64,15 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 		
 		//--- send mail ----
+		$resetLink = url('verify-email/' . $request->email);
+		$link = "<a href='{$resetLink}'>click here</a>";
 		$empname = $request->first_name .' '.$request->last_name;
 		$get_email = get_email(1);
 		if(!empty($get_email))
 		{
 			$data = [
 				'subject' => $get_email->message_subject,
-				'body' => str_replace(array("[EMPLOYEE_NAME]", "[EMAIL_ID]", "[PASSWORD]"), array($empname, $request->email, $request->password), $get_email->message),
+				'body' => str_replace(array("[EMPLOYEE_NAME]", "[EMAIL_ID]", "[PASSWORD]","[VERIFYEMAIL]"), array($empname, $request->email, $request->password, $link), $get_email->message),
 				'toEmails' => [$user->email],
 			];
 			send_email($data);
@@ -109,19 +111,28 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 		
 		//--- send mail ----
+		$resetLink = url('verify-email/' . $request->email);
+		$link = "<a href='{$resetLink}'>click here</a>";
+		
 		$empname = $request->first_name .' '.$request->last_name;
 		$get_email = get_email(2);
 		if(!empty($get_email))
 		{
 			$data = [
 				'subject' => $get_email->message_subject,
-				'body' => str_replace(array("[CLIENT_NAME]", "[EMAIL_ID]", "[PASSWORD]"), array($empname, $request->email, $request->password), $get_email->message),
+				'body' => str_replace(array("[CLIENT_NAME]", "[EMAIL_ID]", "[PASSWORD]","[VERIFYEMAIL]"), array($empname, $request->email, $request->password,$link), $get_email->message),
 				'toEmails' => [$user->email],
 			];
 			send_email($data);
 		}
 		
 		return redirect(RouteServiceProvider::CLIENTHOME);
+	}
+	public function verify_email(Request $request)
+	{
+		$email = $request->route('email');
+		User::where('email',$email)->update(['email_verified_at'=> date('Y-m-d h:i:s')]);
+		return redirect()->route('login');
 	}
 	
 	public function store_customer(Request $request)
