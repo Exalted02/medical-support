@@ -62,6 +62,20 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
+		
+		//--- send mail ----
+		$empname = $request->first_name .' '.$request->last_name;
+		$get_email = get_email(1);
+		if(!empty($get_email))
+		{
+			$data = [
+				'subject' => $get_email->message_subject,
+				'body' => str_replace(array("[EMPLOYEE_NAME]", "[EMAIL_ID]", "[PASSWORD]"), array($empname, $request->email, $request->password), $get_email->message),
+				'toEmails' => [$user->email],
+			];
+			send_email($data);
+		}
+		
         return redirect(RouteServiceProvider::EMPLYHOME);
     }
 	public function store_client(Request $request): RedirectResponse
@@ -93,6 +107,20 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
+		
+		//--- send mail ----
+		$empname = $request->first_name .' '.$request->last_name;
+		$get_email = get_email(2);
+		if(!empty($get_email))
+		{
+			$data = [
+				'subject' => $get_email->message_subject,
+				'body' => str_replace(array("[CLIENT_NAME]", "[EMAIL_ID]", "[PASSWORD]"), array($empname, $request->email, $request->password), $get_email->message),
+				'toEmails' => [$user->email],
+			];
+			send_email($data);
+		}
+		
 		return redirect(RouteServiceProvider::CLIENTHOME);
 	}
 	

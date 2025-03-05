@@ -26,9 +26,10 @@
 						@endif
 					</div>
 					<div class="m_banner-content-main-3">
-						<input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
-						<label for="vehicle1">Remember me</label>
-
+					{{--<input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
+						<label for="vehicle1">Remember me</label>--}}
+					<input type="checkbox" id="remember_me" name="remember">
+					<label for="remember_me">Remember me</label>
 					</div>
 					<div class="m_button">
 						<button type="submit" class="pure-button pure-button-primary">Log In</button>
