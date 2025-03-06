@@ -58,6 +58,8 @@
 				<p>Are you a Client?  <a href="{{ route('client-register') }}"> Sign up</a></p>
 
 				<p class="mt-4">Are you an employee? <a href="{{ route('employee-register') }}"> Sign up</a></p>
+				
+				<p class="mt-4">Are you an patient? <a href="{{ route('patient-request') }}"> Send request</a></p>
 			</div>
 		</div>
 	</div>

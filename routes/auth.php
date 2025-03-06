@@ -39,6 +39,9 @@ Route::middleware('guest')->group(function () {
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
                 ->name('password.store');
+				
+	 Route::get('patient-request', [RegisteredUserController::class, 'patient_request'])->name('patient-request');
+	 Route::post('send-request', [RegisteredUserController::class, 'patient_send_request'])->name('patient-request-send');
 });
 
 Route::middleware('auth')->group(function () {
