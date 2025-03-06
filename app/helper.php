@@ -35,6 +35,9 @@ use App\Models\Cities;
 use App\Models\States;
 use App\Models\Source;
 use App\Models\Followup_remarks;
+use App\Models\User;
+use App\Models\Employee_manage_tickets;
+use App\Models\Employee_availability_status;
 
 // use File;
 	
@@ -541,6 +544,104 @@ use App\Models\Followup_remarks;
 	   $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
 
 	   return preg_replace('/[^A-Za-z0-9\-.]/', '', $string); // Removes special chars.
+	}
+	if (!function_exists('next_user')) 
+	{
+		function next_user($currentUserId, $departmentId)
+		{
+			$users = User::where('department', $departmentId)->orderBy('id', 'asc')->pluck('id')->toArray();
+
+			if (empty($users)) {
+				return null;
+			}
+
+			$currentIndex = array_search($currentUserId, $users);
+
+			if ($currentIndex !== false) {
+				$nextIndex = ($currentIndex + 1) % count($users);
+				return $users[$nextIndex];
+			}
+			return $users[0];
+		}
+	}
+	
+	function assignTicketToNextUser($departmentId, $ticketId)
+	{
+		$today = date('Y-m-d');
+		$ifFirst = false;
+		// Get the last assigned employee in the department
+		$lastRecord = Employee_manage_tickets::where('department_id', $departmentId)
+			->orderBy('id', 'desc')
+			->first();
+
+		// Determine the starting user
+		$currentUserId = $lastRecord->emp_id ?? null;
+
+		if (!$currentUserId) {
+			$currentUser = User::where('user_type', 1)->where('department', $departmentId)->first();
+			$currentUserId = $currentUser->id ?? null;
+			$ifFirst = true;
+		}
+
+		if (!$currentUserId) {
+			return false; // No user available in this department
+		}
+
+		// Find the next available employee
+		while (true) {
+			if($ifFirst)
+			{
+				$nextUserId = $currentUserId;
+			}
+			else{
+				$nextUserId = next_user($currentUserId, $departmentId);
+				$ifFirst = false;
+			}
+			
+			/*$isUnavailable = Employee_availability_status::where('emp_id', $nextUserId)
+            ->where('is_available', 0)
+            ->where('availability_date', $today)
+            ->exists();
+
+			if ($isUnavailable) {
+				$currentUserId = $nextUserId;
+				continue; // Skip this user and move to the next one
+			}*/
+
+			// Check if the user is available today
+			$isAvailable = Employee_availability_status::where('emp_id', $nextUserId)
+				->where('is_available', 0)
+				->where('availability_date', $today)
+				->exists();
+
+			if (!$isAvailable) {
+				// Check if the ticket is already assigned
+				$isAssigned = Employee_manage_tickets::where('emp_id', $nextUserId)
+					->where('department_id', $departmentId)
+					->where('ticket_id', $ticketId)
+					->exists();
+
+				if (!$isAssigned) {
+					// Assign the ticket
+					$model = new Employee_manage_tickets();
+					$model->emp_id = $nextUserId;
+					$model->department_id = $departmentId;
+					$model->ticket_id = $ticketId;
+					$model->save();
+
+					return $nextUserId; // Return assigned user ID
+				}
+			}
+
+			// If no available user found, move to the next user
+			if ($nextUserId == $currentUserId) {
+				break; // Stop if we have looped through all users
+			}
+
+			$currentUserId = $nextUserId;
+		}
+
+		return false; // No available user found
 	}
 
 ?>

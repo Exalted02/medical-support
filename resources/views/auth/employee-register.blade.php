@@ -39,6 +39,9 @@
 								<option value="{{ $department->id }}" {{ old('department', request('department')) == (string) $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
 								@endforeach
 							</select>
+							@error('department')
+							<small class="text-danger d-block">{{ $message }}</small> 
+						    @enderror
 						</div>
 					</div>
 

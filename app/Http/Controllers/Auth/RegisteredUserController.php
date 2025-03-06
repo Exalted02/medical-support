@@ -44,22 +44,23 @@ class RegisteredUserController extends Controller
 			'first_name' => 'required|string|max:255',
 			'last_name' => 'required|string|max:255',
 			'email' => 'required|email|unique:users,email',
+			'department' => 'required',
 			'password' => 'required|min:6|confirmed',
 		]);
 
 		if ($validator->fails()) {
 			return redirect()->back()->withErrors($validator)->withInput();
 		}
-        
+        //echo "<pre>";print_r($request->all());die;
         $user = User::create([
             'name' => $request->first_name .' '.$request->last_name,
             'user_type' => 1,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
+			'department' => $request->department,
 			'username' => $request->username ?? '',
             'password' => Hash::make($request->password),
-            'department' => $request->department,
         ]);
 
         event(new Registered($user));
@@ -145,18 +146,7 @@ class RegisteredUserController extends Controller
     }
 	public function patient_send_request(Request $request)
 	{
-		/*$lastRecord = Employee_manage_tickets::where('department_id', $request->department)->orderBy('id', 'desc')->first();
-		if(!empty($lastRecord->emp_id))	
-		{
-			echo $lastRecord->emp_id; die;
-		}
-		else
-		{
-			$user = User::where('user_type',1)->where('department',$request->department)->first();
-			echo $user->id;die;
-		}
-		echo 'hello'; die;*/
-		/*$validator = Validator::make($request->all(), [
+		$validator = Validator::make($request->all(), [
 			'name' => 'required|string|max:255',
 			'email' => 'required|email',
 			'phone' => 'required|digits_between:10,15',
@@ -166,7 +156,7 @@ class RegisteredUserController extends Controller
 
 		if ($validator->fails()) {
 			return redirect()->back()->withErrors($validator)->withInput();
-		}*/
+		}
 		
 		$ticket = Ticket::create([
             'name' => $request->name,
@@ -177,40 +167,8 @@ class RegisteredUserController extends Controller
 			'status'  => 0,
         ]);
 		
-		//Employee_availability_status Employee_manage_tickets
-		//send_patient_reuest();
-		$today = date('Y-m-d');
-		///--------------
-		/*$employee = User::where('user_type',1)->where('department',$request->department)->first();
-		$is_exists = Employee_availability_status::where('emp_id',$employee->id)->where('is_available',1)->where('availability_date',$today)->exists();
-		if($is_exists)
-		{
-			$lastRecord = Employee_manage_tickets::where('department_id', $request->department)
-			->orderBy('id', 'desc')
-			->first();
-			echo $lastRecord->emp_id;die;
-		}*/
 		
-		//------------------------------------
-		
-		$employees = User::where('user_type',1)->where('department',$request->department)->get();
-		foreach($employees as $employee)
-		{
-			$is_exists = Employee_availability_status::where('emp_id',$employee->id)->where('is_available',1)->where('availability_date',$today)->exists();
-			if($is_exists)
-			{
-				$is_emp_exists = Employee_manage_tickets::where('emp_id',$employee->id)->where('department_id',$request->department)->exists();
-				if(!$is_emp_exists)
-				{
-					$model = new Employee_manage_tickets();
-					$model->emp_id  = $employee->id;
-					$model->department_id  = $request->department;
-					$model->ticket_id  = $ticket->id;
-					$model->save();
-					//break;
-				}
-			}
-		}
+		$assignedUser = assignTicketToNextUser($request->department, $ticket->id);
 		
 		//----- send mail to admin ------
 		/*$deparment = Department::where('id',$request->department)->first();
