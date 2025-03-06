@@ -14,4 +14,9 @@ class Employee_manage_tickets extends Model
         'department_id',
         'ticket_id',
     ];
+	
+	public function get_tickets()
+    {
+        return $this->hasMany(Ticket::class, 'id', 'ticket_id');
+    }
 }
