@@ -15,6 +15,7 @@ class Ticket extends Model
         'phone',
         'department',
         'message',
+        'message_reply',
         'status',
     ];
 }

@@ -171,15 +171,14 @@ class RegisteredUserController extends Controller
 		$assignedUser = assignTicketToNextUser($request->department, $ticket->id);
 		
 		//----- send mail to admin ------
-		/*$deparment = Department::where('id',$request->department)->first();
+		$deparment = Department::where('id',$request->department)->first();
 		$get_admin_email = get_email(4);
 		$admin_email = $request->email;
 		if(!empty($get_admin_email))
 		{
 			$data = [
 				'subject' => $get_admin_email->message_subject,
-				'body' => str_replace(array("[DEPARTMENT]", "[PATIENT_NAME]", "[PATIENT_EMAIL]","[PATIENT_PHONE]"), array($deparment->name, $request->name, $request->email, $request->phone), $get_admin_email->message),
-				'toEmails' => [$admin_email],
+				'body' => str_replace(array("[DEPARTMENT]", "[PATIENT_NAME]", "[PATIENT_EMAIL]","[PATIENT_PHONE]"), array($deparment->name, $request->name, $request->email, $request->phone), $get_admin_email->message),'toEmails' => [$admin_email],
 			];
 			send_email($data);
 		}
@@ -194,7 +193,7 @@ class RegisteredUserController extends Controller
 				'toEmails' => [$patient_email],
 			];
 			send_email($data);
-		}*/
+		}
 		
 		return redirect()->route('patient-request')->with('status','Request send successfully ! check on email');
 	}

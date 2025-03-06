@@ -598,16 +598,6 @@ use App\Models\Employee_availability_status;
 				$ifFirst = false;
 			}
 			
-			/*$isUnavailable = Employee_availability_status::where('emp_id', $nextUserId)
-            ->where('is_available', 0)
-            ->where('availability_date', $today)
-            ->exists();
-
-			if ($isUnavailable) {
-				$currentUserId = $nextUserId;
-				continue; // Skip this user and move to the next one
-			}*/
-
 			// Check if the user is available today
 			$isAvailable = Employee_availability_status::where('emp_id', $nextUserId)
 				->where('is_available', 0)

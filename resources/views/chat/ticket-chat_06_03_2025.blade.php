@@ -15,7 +15,7 @@
 										<ul class="nav nav-tabs flex-column vertical-tabs-3" role="tablist">
 										@foreach($tickets as $ticket)
 										   <li class="nav-item me-0" role="presentation">
-											   <a class="nav-link text-break mw-100 {{ $first ? 'active' : '' }} message-info" data-bs-toggle="tab" role="tab" aria-current="page" href="#employee-vertical" aria-selected="false" tabindex="-1" data-ticket="{{ $ticket->id }}" data-url="{{ route('ticket-message-list')}}">
+											   <a class="nav-link text-break mw-100 {{ $first ? 'active' : '' }}" data-bs-toggle="tab" role="tab" aria-current="page" href="#employee-vertical" aria-selected="false" tabindex="-1">
 												   <i class="feather-message-square me-2 align-middle d-inline-block"></i>{{ $ticket->message }}
 											   </a>
 										   </li>
@@ -53,8 +53,8 @@
 									</a>
 								</div>
 								<div class="user-info float-start">
-									<a href="profile.html" title="Mike Litorus"> <i class="typing-text"><span id="chat-patient-name"></span></i></a>
-									<span class="last-seen"><span id="chat-list-email"></span> (<span id="chat-list-phone"></span>)</span>
+									<a href="profile.html" title="Mike Litorus"><span>Mike Litorus</span> {{--<i class="typing-text">Typing...</i>--}}</a>
+									{{--<span class="last-seen">Last seen today at 7:50 AM</span>--}}
 								</div>
 							</div>
 							<div class="search-box">
@@ -102,8 +102,8 @@
 					<div class="chat-contents">
 						<div class="chat-content-wrap">
 							<div class="chat-wrap-inner">
-								<div class="chat-box" id="chat-list-div">
-								{{--<div class="chats">
+								<div class="chat-box">
+									<div class="chats">
 										<div class="chat chat-right">
 											<div class="chat-body">
 												<div class="chat-bubble">
@@ -443,7 +443,7 @@
 												</div>
 											</div>
 										</div>
-									</div>--}}
+									</div>
 								</div>
 							</div>
 						</div>
@@ -451,7 +451,7 @@
 					<div class="chat-footer">
 						<div class="message-bar">
 							<div class="message-inner">
-							{{--<a class="link attach-icon" href="#" data-bs-toggle="modal" data-bs-target="#drag_files"><img src="{{ url('static-image/attachment.png') }}" alt="Attachment Icon"></a>--}}
+								<a class="link attach-icon" href="#" data-bs-toggle="modal" data-bs-target="#drag_files"><img src="{{ url('static-image/attachment.png') }}" alt="Attachment Icon"></a>
 								<div class="message-area">
 									<div class="input-group">
 										<textarea class="form-control" placeholder="Type message..."></textarea>
@@ -469,10 +469,10 @@
 
 @endsection 
 @section('scripts')
-<script src="{{ url('front-assets/js/page/chat.js') }}"></script>
+<script src="{{ url('front-assets/js/page/my_profile.js') }}"></script>
 <script>
 //var csrfToken = "{{ csrf_token() }}";
-/*$( document ).ready(function() {
+$( document ).ready(function() {
 	if ($.fn.DataTable.isDataTable('.datatable')) {
 		$('.datatable').DataTable().destroy(); // Destroy existing instance
 	}
@@ -494,8 +494,6 @@
 			},
 		}
 	});
-	
-	
-});*/
+});
 </script>
 @endsection
