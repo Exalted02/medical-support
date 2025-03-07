@@ -9,8 +9,9 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Manage_chat;
 
-class MessageSent
+class MessageSent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -18,9 +19,9 @@ class MessageSent
      * Create a new event instance.
      */
 	 
-	 public $message;
+	public $message;
 	  
-    public function __construct()
+    public function __construct(Manage_chat $message)
     {
         $this->message = $message;
     }

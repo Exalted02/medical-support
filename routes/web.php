@@ -79,7 +79,13 @@ Route::middleware('auth')->group(function () {
 	Route::get('/my-profile', [MyProfileController::class, 'index'])->name('my-profile');
 	
 	//Chat Page
-	Route::get('/chat', [ChatController::class, 'index'])->name('chat');
+	Route::get('/chat', [ChatController::class, 'chatPage'])->name('chat');
+	Route::post('/send-message', [ChatController::class, 'sendMessage'])->name('send.message');
+	Route::get('/chat/{receiverId}', [ChatController::class, 'chatWithUser'])->name('chat.with');
+
+	//Route::get('/chat/{receiverId}', [ChatController::class, 'chatPage'])->name('chat.page');
+	
+	Route::get('/shared-chat', [ChatController::class, 'shared_chat'])->name('shared-chat');
 	Route::get('/ticket-chat', [ChatController::class, 'ticket_chat'])->name('ticket-chat');
 	Route::post('/ticket-message-list', [ChatController::class, 'ticket_chat_list'])->name('ticket-message-list');
 	Route::post('/ticket-send-message', [ChatController::class, 'ticket_send_message'])->name('ticket-send-message');

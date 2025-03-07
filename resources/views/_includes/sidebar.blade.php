@@ -27,10 +27,10 @@
 					<a href="{{ route('dashboard')}}"><i class="fa-solid fa-gauge"></i> <span> {{ __('dashboard') }} </span></a>
 				</li>
 				<li class="submenu">
-					<a href="javascript:void(0);" class="{{ request()->routeIs('chat') ? 'active' : '' }}"><i class="fa-solid fa-message"></i> <span> {{ __('chat') }} </span><span class="menu-arrow"></span></a>
+					<a href="javascript:void(0);" class="{{ request()->routeIs('chat') || request()->routeIs('shared-chat') ? 'active' : '' }}"><i class="fa-solid fa-message"></i> <span> {{ __('chat') }} </span><span class="menu-arrow"></span></a>
 					<ul style="{{ request()->routeIs('chat') ? 'display:block' : '' }}">
 						<li><a href="{{ route('chat') }}" class="{{ request()->routeIs('chat') ? 'active' : '' }}"><span>Assigned to me</span></a></li>
-						<li><a href="" class=""><span>Shared with me</span></a></li>
+						<li><a href="{{ route('shared-chat') }}" class="{{ request()->routeIs('shared-chat') ? 'active' : '' }}"><span>Shared with me</span></a></li>
 					</ul>
 				</li>
 				{{--<li class="{{ request()->routeIs('chat') ? 'active' : '' }}">
