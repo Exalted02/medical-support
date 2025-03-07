@@ -58,6 +58,22 @@ class ChatController extends Controller
 		$model->message_reply = $request->message_content;
 		$model->updated_at = now();
 		$model->save();
+		
+		//--- send mail ----
+		$to_mail = $model->email;
+		$patientname = $model->name;
+		$get_email = get_email(6);
+		if(!empty($get_email))
+		{
+			$data = [
+				'subject' => $get_email->message_subject,
+				'body' => str_replace(array("[NAME]", "[MESSAGE]"), array($patientname, $request->message_content), $get_email->message),
+				'toEmails' => [$to_mail],
+			];
+			send_email($data);
+		}
+		
+		
 		return response()->json([
 			'success' => true,
 			'ticket_id' => $request->ticket_id,

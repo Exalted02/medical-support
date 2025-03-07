@@ -35,21 +35,24 @@ $(document).ready(function() {
 		var message_content = $('#message_content').val();
 		var URL = $(this).data('url');
 		//alert(URL);alert(ticket_id);alert(message_content);
-		$.ajax({
-			url: URL,
-			type: "POST",
-			data: {ticket_id:ticket_id,message_content:message_content,_token:csrfToken},
-			//dataType: 'json',
-			success: function(response) {
-				//alert(response.ticket_id);
-				$('#message_content').val('');
-				setTimeout(function(){
-					if ($('.message-info').length > 0) {
-						$('.message-info[data-ticket="'+ response.ticket_id +'"]').trigger('click');
-					}
-				}, 500);
-			},
-		});
+		if(message_content!='')
+		{
+			$.ajax({
+				url: URL,
+				type: "POST",
+				data: {ticket_id:ticket_id,message_content:message_content,_token:csrfToken},
+				//dataType: 'json',
+				success: function(response) {
+					//alert(response.ticket_id);
+					$('#message_content').val('');
+					setTimeout(function(){
+						if ($('.message-info').length > 0) {
+							$('.message-info[data-ticket="'+ response.ticket_id +'"]').trigger('click');
+						}
+					}, 500);
+				},
+			});
+		}
 	});
 });
 function get_chat_list()
