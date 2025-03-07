@@ -26,9 +26,16 @@
 				<li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
 					<a href="{{ route('dashboard')}}"><i class="fa-solid fa-gauge"></i> <span> {{ __('dashboard') }} </span></a>
 				</li>
-				<li class="{{ request()->routeIs('chat') ? 'active' : '' }}">
-					<a href="{{ route('chat')}}"><i class="fa-solid fa-message"></i> <span> {{ __('chat') }} </span></a>
+				<li class="submenu">
+					<a href="javascript:void(0);" class="{{ request()->routeIs('chat') ? 'active' : '' }}"><i class="fa-solid fa-message"></i> <span> {{ __('chat') }} </span><span class="menu-arrow"></span></a>
+					<ul style="{{ request()->routeIs('chat') ? 'display:block' : '' }}">
+						<li><a href="{{ route('chat') }}" class="{{ request()->routeIs('chat') ? 'active' : '' }}"><span>Assigned to me</span></a></li>
+						<li><a href="" class=""><span>Shared with me</span></a></li>
+					</ul>
 				</li>
+				{{--<li class="{{ request()->routeIs('chat') ? 'active' : '' }}">
+					<a href="{{ route('chat')}}"><i class="fa-solid fa-message"></i> <span> {{ __('chat') }} </span></a>
+				</li>--}}
 				<li class="{{ request()->routeIs('ticket-chat') ? 'active' : '' }}">
 					<a href="{{ route('ticket-chat')}}"><i class="fa-brands fa-rocketchat"></i> <span> {{ __('ticket-chat') }} </span></a>
 				</li>

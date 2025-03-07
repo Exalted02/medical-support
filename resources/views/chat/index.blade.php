@@ -53,12 +53,12 @@
 									{{--<span class="last-seen">Last seen today at 7:50 AM</span>--}}
 								</div>
 							</div>
-							<div class="search-box">
+							{{--<div class="search-box">
 								<div class="input-group input-group-sm">
 									<input type="text" placeholder="Search" class="form-control">
 									<button type="button" class="btn"><i class="fa-solid fa-magnifying-glass"></i></button>
 								</div>
-							</div>
+							</div>--}}
 							<ul class="nav custom-menu">
 								<li class="nav-item">
 									<a class="nav-link task-chat profile-rightbar float-end" id="task_chat" href="#task_window"><i class="fa-solid fa-user"></i></a>
@@ -79,6 +79,40 @@
 										</a>
 									</div>
 								</li>
+								<li class="nav-item dropdown has-arrow flag-nav">
+									<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);" role="button" data-id="en">
+									<p>Assign</p>
+									</a>
+									<div class="dropdown-menu dropdown-menu-right assign-dropdown">
+										<a href="javascript:void(0);" class="dropdown-item" data-id="en">
+											<p>
+												Unassigned 
+												<i class="fa-solid fa-check"></i>
+											</p>
+										</a>
+										<a href="javascript:void(0);" class="dropdown-item" data-id="en">
+											<p>
+												<img class="assign-dropdown-image" src="{{ url('static-image/avatar-09.jpg') }}" alt="User Image">
+												Employee One
+												<i class="fa-solid fa-check"></i>
+											</p>
+										</a>
+										<a href="javascript:void(0);" class="dropdown-item" data-id="fr">
+											<p>
+												<img class="assign-dropdown-image" src="{{ url('static-image/avatar-09.jpg') }}" alt="User Image">
+												Employee Two
+												<i class="fa-solid fa-check"></i>
+											</p>
+										</a>
+										<a href="javascript:void(0);" class="dropdown-item" data-id="it">
+											<p>
+												<img class="assign-dropdown-image" src="{{ url('static-image/avatar-09.jpg') }}" alt="User Image">
+												Employee Three
+												<i class="fa-solid fa-check"></i>
+											</p>
+										</a>
+									</div>
+								</li>
 								{{--<li class="nav-item">
 									<a href="voice-call.html" class="nav-link"><i class="fa-solid fa-phone"></i></a>
 								</li>
@@ -86,8 +120,10 @@
 									<a href="video-call.html" class="nav-link"><i class="fa-solid fa-video"></i></a>
 								</li>--}}
 								<li class="nav-item dropdown dropdown-action">
-									<a aria-expanded="false" data-bs-toggle="dropdown" class="nav-link dropdown-toggle" href="#"><i class="fa-solid fa-gear"></i></a>
+									<a aria-expanded="false" data-bs-toggle="dropdown" class="nav-link dropdown-toggle" href="#"><i class="material-icons">more_vert</i></a>
 									<div class="dropdown-menu dropdown-menu-right">
+										<a href="javascript:void(0)" class="dropdown-item">Mark as read</a>
+										<a href="javascript:void(0)" class="dropdown-item">Mark as unread</a>
 										<a href="javascript:void(0)" class="dropdown-item">Delete Conversations</a>
 										<a href="javascript:void(0)" class="dropdown-item">Settings</a>
 									</div>
