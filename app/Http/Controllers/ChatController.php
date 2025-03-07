@@ -46,4 +46,21 @@ class ChatController extends Controller
 			'html' => $html,
 		]);
 	}
+	public function ticket_send_message(Request $request)
+	{
+		//echo $request->ticket_id.' '.$request->message_content; die;
+		$model = Ticket::find($request->ticket_id);
+		//echo $model->name.''.$model->email;die;
+		$model->name = $model->name;
+		$model->email = $model->email;
+		$model->phone = $model->phone;
+		$model->department = $model->department;
+		$model->message_reply = $request->message_content;
+		$model->updated_at = now();
+		$model->save();
+		return response()->json([
+			'success' => true,
+			'ticket_id' => $request->ticket_id,
+		]);
+	}
 }

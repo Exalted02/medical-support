@@ -45,7 +45,7 @@
 					<div class="chat-bubble">
 						<div class="chat-content">
 							<p>{{ $tickets->message_reply }}</p>
-							<span class="chat-time">{{ $tickets->created_at->diffForHumans() }}</span>
+							<span class="chat-time">{{ $tickets->updated_at->diffForHumans() }}</span>
 						</div>
 						<div class="chat-action-btns">
 						{{--<ul>

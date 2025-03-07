@@ -82,6 +82,7 @@ Route::middleware('auth')->group(function () {
 	Route::get('/chat', [ChatController::class, 'index'])->name('chat');
 	Route::get('/ticket-chat', [ChatController::class, 'ticket_chat'])->name('ticket-chat');
 	Route::post('/ticket-message-list', [ChatController::class, 'ticket_chat_list'])->name('ticket-message-list');
+	Route::post('/ticket-send-message', [ChatController::class, 'ticket_send_message'])->name('ticket-send-message');
 
 	//EmailSettings
 	Route::get('/email-settings', [EmailSettingsController::class, 'index'])->name('user.email-settings');
