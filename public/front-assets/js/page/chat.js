@@ -14,6 +14,7 @@ $(document).ready(function() {
 	$(document).on('click','.message-info', function(){
 		var ticket_id = $(this).data('ticket');
 		var URL = $(this).data('url');
+		$('#ticket_id').val(ticket_id);
 		$.ajax({
 			url: URL,
 			type: "POST",
@@ -27,6 +28,31 @@ $(document).ready(function() {
 				$('#chat-list-div').html(response.html);
 			},
 		});
+	});
+	$(document).on('click','.send-message', function(){
+		
+		var ticket_id = $('#ticket_id').val();
+		var message_content = $('#message_content').val();
+		var URL = $(this).data('url');
+		//alert(URL);alert(ticket_id);alert(message_content);
+		if(message_content!='')
+		{
+			$.ajax({
+				url: URL,
+				type: "POST",
+				data: {ticket_id:ticket_id,message_content:message_content,_token:csrfToken},
+				//dataType: 'json',
+				success: function(response) {
+					//alert(response.ticket_id);
+					$('#message_content').val('');
+					setTimeout(function(){
+						if ($('.message-info').length > 0) {
+							$('.message-info[data-ticket="'+ response.ticket_id +'"]').trigger('click');
+						}
+					}, 500);
+				},
+			});
+		}
 	});
 });
 function get_chat_list()

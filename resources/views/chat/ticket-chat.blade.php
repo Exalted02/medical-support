@@ -448,14 +448,15 @@
 							</div>
 						</div>
 					</div>
+					<input type="hidden" id="ticket_id">
 					<div class="chat-footer">
 						<div class="message-bar">
 							<div class="message-inner">
 							{{--<a class="link attach-icon" href="#" data-bs-toggle="modal" data-bs-target="#drag_files"><img src="{{ url('static-image/attachment.png') }}" alt="Attachment Icon"></a>--}}
 								<div class="message-area">
 									<div class="input-group">
-										<textarea class="form-control" placeholder="Type message..."></textarea>
-										<button class="btn btn-custom" type="button"><i class="fa-solid fa-paper-plane"></i></button>
+										<textarea class="form-control" placeholder="Type message..." id="message_content"></textarea>
+										<button class="btn btn-custom send-message" data-url="{{ route('ticket-send-message')}}" type="button"><i class="fa-solid fa-paper-plane"></i></button>
 									</div>
 								</div>
 							</div>
