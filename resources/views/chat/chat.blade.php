@@ -165,7 +165,7 @@ $messages2 = $messages;
 														</div>
 														<div class="chat-action-btns">
 															<ul>
-																<li><a href="#" class="edit-msg"><i class="fa-solid fa-pencil"></i></a></li>
+																<li><a href="javascript:void(0);" class="edit-msg update-msg" data-sender="{{ $message->sender_id }}" data-receiver="{{ $message->receiver_id  }}" data-msg="{{   $message->message }}"><i class="fa-solid fa-pencil"></i></a></li>
 																<li><a href="#" class="del-msg"><i class="fa-regular fa-trash-can"></i></a></li>
 															</ul>
 														</div>
@@ -211,7 +211,11 @@ $messages2 = $messages;
 								<div class="message-area">
 									<div class="input-group">
 										<textarea class="form-control" id="msg" placeholder="Type message..."></textarea>
+										 <button type="button" class="clear-msg-btn cross-button" style="position: absolute; right: 50px; background: none; border: none; cursor: pointer;display:none;">
+											<i class="fa-solid fa-xmark"></i>
+										</button>
 										<button class="btn btn-custom send-button" data-url="{{ route('send.message') }}"  type="button"><i class="fa-solid fa-paper-plane"></i></button>
+										<input type="hidden" id="mode" value="0">
 									</div>
 								</div>
 							</div>
@@ -298,6 +302,11 @@ $(document).ready(function() {
             console.log("No message data received.");
             return;
         }
+		
+		if (data.receiver_id != authUserId && data.sender_id != authUserId) {
+			console.log("Message not for this user. Ignoring.");
+			return;
+		}
 		//alert(data.sender_id);
 		//var messageTime = new Date(data.created_at).toLocaleTimeString();
 		//var messageTime = dayjs(data.created_at).fromNow();
@@ -305,12 +314,22 @@ $(document).ready(function() {
 		var messageTime = dayjs.utc(data.created_at).local().fromNow(true) + " ago";
 		
 		var avatar = "{{ url('static-image/avatar-05.jpg')}}";
+		
+		
 		var chatClass = (data.sender_id == authUserId) ? 'chat-right' : 'chat-left';
+		
+		var editdeleteDiv = '';
+		if(chatClass=='chat-right')
+		{
+			editdeleteDiv ='<div class="chat-action-btns"><ul><li><a href="javascropt:void(0);" class="edit-msg update-msg" data-sender="'+ data.sender_id+'" data-receiver="'+ data.receiver_id +'" data-msg="'+ data.message +'"><i class="fa-solid fa-pencil"></i></a></li><li><a href="#" class="del-msg"><i class="fa-regular fa-trash-can"></i></a></li></ul></div>';
+		}
+		
 		var avatar = (data.sender_id != authUserId) ? 
 			'<div class="chat-avatar"><a href="#" class="avatar">'+ avatar +'<img src="${userImageUrl}" alt="User Image"></a></div>' 
 			: '';
+			
 		//alert(data.message.message);
-		var chatHTML = '<div class="chat '+ chatClass +'"><div class="chat-body"><div class="chat-bubble"><div class="chat-content"><p>' + data.message + '</p><span class="chat-time">' + messageTime + '</span></div></div></div></div>';
+		var chatHTML = '<div class="chat '+ chatClass +'"><div class="chat-body"><div class="chat-bubble"><div class="chat-content"><p>' + data.message + '</p><span class="chat-time">' + messageTime + '</span></div>' + editdeleteDiv + '</div></div></div>';
 
 		chatBox.append(chatHTML);
 		chatBox.scrollTop(chatBox.prop("scrollHeight"));

@@ -5,7 +5,7 @@ Version      : 4.0
 */
 
 $(document).ready(function() {
-	
+	$('.cross-button').show('hide');
 	setTimeout(function(){
         if ($('.message-info').length > 0) {
             $('.message-info:first').trigger('click');
@@ -59,6 +59,16 @@ $(document).ready(function() {
 				},
 			});
 		}
+	});
+	
+	$(document).on('click','.update-msg', function(){
+		
+		var sender_id = $(this).data('sender');
+		var reciever_id = $(this).data('receiver');
+		var messageText = $(this).data('msg'); 
+		$('#msg').val(messageText);
+		$('#mode').val(1);
+		 alert(messageText);
 	});
 	
 });
