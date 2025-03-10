@@ -82,6 +82,7 @@ Route::middleware('auth')->group(function () {
 	Route::get('/chat', [ChatController::class, 'chatPage'])->name('chat');
 	Route::post('/send-message', [ChatController::class, 'sendMessage'])->name('send.message');
 	Route::get('/chat/{receiverId}', [ChatController::class, 'chatWithUser'])->name('chat.with');
+	Route::post('/message-delete', [ChatController::class, 'message_delete'])->name('message.delete');
 
 	//Route::get('/chat/{receiverId}', [ChatController::class, 'chatPage'])->name('chat.page');
 	

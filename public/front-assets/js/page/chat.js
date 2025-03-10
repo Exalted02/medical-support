@@ -17,6 +17,12 @@ $(document).ready(function() {
         }
     }, 500);*/
 	
+	
+	
+
+    // Function to upload files
+   
+	
 	$(document).on('click','.message-info', function(){
 		var ticket_id = $(this).data('ticket');
 		var URL = $(this).data('url');
@@ -83,7 +89,25 @@ $(document).ready(function() {
 	});
 	$(document).on('click','.del-msg', function(){
 		var id = $(this).data('id');
-
+		var URL = $(this).data('url');
+		$.ajax({
+			url: URL,
+			type: "POST",
+			data: {
+				id: id,
+				_token: csrfToken
+			},
+			success: function (response) {
+				if (response.success) {
+					$('.chat-content[data-id="' + id + '"]').closest('.chat').remove();
+				} else {
+					alert(response.message);
+				}
+			},
+			error: function () {
+				alert("Error deleting message.");
+			}
+		});
 		
 	});
 	
@@ -94,3 +118,4 @@ function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
+ 

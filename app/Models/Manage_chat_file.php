@@ -13,4 +13,9 @@ class Manage_chat_file extends Model
         'manage_chat_id',
         'file_name',
     ];
+	
+	public function chat()
+	{
+		return $this->belongsTo(Manage_chat::class, 'manage_chat_id');
+	}
 }

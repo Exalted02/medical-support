@@ -7,8 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Ticket;
 use App\Models\Employee_manage_tickets;
 use App\Models\Manage_chat;
+use App\Models\Manage_chat_file;
 use App\Events\MessageSent;
 use App\Events\MessageUpdated;
+use App\Events\MessageDeleted;
 
 class ChatController extends Controller
 {
@@ -129,6 +131,34 @@ class ChatController extends Controller
 
 	public function sendMessage(Request $request)
     {
+		$request->validate([
+			'files.*' => 'file|max:2048', // Max 2MB per file
+		]);
+		
+		$uploadedFiles = [];
+		if ($request->hasFile('files')) {
+			foreach ($request->file('files') as $file) {
+				// Define the destination path inside the public folder
+				$destinationPath = public_path('uploads/chat-files');
+				
+				// Ensure the directory exists
+				if (!file_exists($destinationPath)) {
+					mkdir($destinationPath, 0777, true);
+				}
+
+				// Generate a unique file name
+				$fileName = time() . '_' . $file->getClientOriginalName();
+				
+				// Move file to public/uploads/chat-files
+				$file->move($destinationPath, $fileName);
+				
+				// Save the file path for further use
+				if (!in_array('uploads/chat-files/' . $fileName, $uploadedFiles)) {
+					$uploadedFiles[] = 'uploads/chat-files/' . $fileName;
+				}
+			}
+		}
+		
 		$chat_group_id = substr(sha1(mt_rand()),17,6);
 		$edit_id = $request->edit_id;
 		if($edit_id!='')
@@ -141,9 +171,10 @@ class ChatController extends Controller
 		}
 		else
 		{
+
 			$message = Manage_chat::create([
 				'source' => 0,
-				'user_type' => 1,
+				'user_type' => auth()->user()->user_type,
 				'chat_group_id' => $chat_group_id,
 				'sender_id' => auth()->id(),
 				'receiver_id' => $request->receiver_id,
@@ -151,8 +182,32 @@ class ChatController extends Controller
 				'is_read' => 1,
 				'created_at' => date('Y-m-d h:i:s'),
 			]);
+			
+			foreach($uploadedFiles as $files)
+			{
+				Manage_chat_file::create([
+					'manage_chat_id' => $message->id,
+					'file_name' => $files,
+					'created_at' => date('Y-m-d h:i:s'),
+				]);
+			}
 			broadcast(new MessageSent($message))->toOthers();
 		}
         return response()->json($message);
     }
+	public function message_delete(Request $request)
+	{
+		$id = $request->id;
+		$message = Manage_chat::find($request->id);
+    
+		if ($message) {
+			$message->delete();
+
+			broadcast(new MessageDeleted($request->id))->toOthers();
+
+			return response()->json(['success' => true, 'message' => 'Message deleted successfully.']);
+		}
+
+		return response()->json(['success' => false, 'message' => 'Message not found.'], 404);
+	}
 }
