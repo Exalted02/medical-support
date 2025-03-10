@@ -8,6 +8,7 @@ use App\Models\Ticket;
 use App\Models\Employee_manage_tickets;
 use App\Models\Manage_chat;
 use App\Events\MessageSent;
+use App\Events\MessageUpdated;
 
 class ChatController extends Controller
 {
@@ -129,17 +130,29 @@ class ChatController extends Controller
 	public function sendMessage(Request $request)
     {
 		$chat_group_id = substr(sha1(mt_rand()),17,6);
-        $message = Manage_chat::create([
-            'source' => 0,
-            'user_type' => 1,
-            'chat_group_id' => $chat_group_id,
-            'sender_id' => auth()->id(),
-            'receiver_id' => $request->receiver_id,
-            'message' => $request->message,
-            'is_read' => 1,
-            'created_at' => date('Y-m-d h:i:s'),
-        ]);
-		broadcast(new MessageSent($message))->toOthers();
+		$edit_id = $request->edit_id;
+		if($edit_id!='')
+		{
+			$message = Manage_chat::find($edit_id);
+			$message->message = $request->message;
+			$message->save();
+			//broadcast(new MessageUpdated($message))->toOthers();
+			event(new MessageUpdated($message));
+		}
+		else
+		{
+			$message = Manage_chat::create([
+				'source' => 0,
+				'user_type' => 1,
+				'chat_group_id' => $chat_group_id,
+				'sender_id' => auth()->id(),
+				'receiver_id' => $request->receiver_id,
+				'message' => $request->message,
+				'is_read' => 1,
+				'created_at' => date('Y-m-d h:i:s'),
+			]);
+			broadcast(new MessageSent($message))->toOthers();
+		}
         return response()->json($message);
     }
 }

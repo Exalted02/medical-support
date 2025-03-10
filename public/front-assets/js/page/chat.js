@@ -5,7 +5,7 @@ Version      : 4.0
 */
 
 $(document).ready(function() {
-	$('.cross-button').show('hide');
+	
 	setTimeout(function(){
         if ($('.message-info').length > 0) {
             $('.message-info:first').trigger('click');
@@ -63,12 +63,28 @@ $(document).ready(function() {
 	
 	$(document).on('click','.update-msg', function(){
 		
+		var id = $(this).data('id');
 		var sender_id = $(this).data('sender');
 		var reciever_id = $(this).data('receiver');
+		$('#receiverId').val(reciever_id);
 		var messageText = $(this).data('msg'); 
 		$('#msg').val(messageText);
 		$('#mode').val(1);
-		 alert(messageText);
+		$('#edit_id').val(id);
+		$('.cross-button').show();
+		//alert(messageText);
+	});
+	
+	$(document).on('click','.cross-button', function(){
+		$('#edit_id').val('');
+		$('#msg').val('');
+		$('.cross-button').hide();
+		
+	});
+	$(document).on('click','.del-msg', function(){
+		var id = $(this).data('id');
+
+		
 	});
 	
 });

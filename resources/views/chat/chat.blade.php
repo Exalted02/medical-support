@@ -159,14 +159,14 @@ $messages2 = $messages;
 												@endif
 												<div class="chat-body">
 													<div class="chat-bubble">
-														<div class="chat-content">
+														<div class="chat-content" data-id="{{ $message->id}}">
 															<p>{{ $message->message }}</p>
 															<span class="chat-time">{{ \Carbon\Carbon::parse($message->created_at)->diffForHumans() }}</span>
 														</div>
 														<div class="chat-action-btns">
 															<ul>
-																<li><a href="javascript:void(0);" class="edit-msg update-msg" data-sender="{{ $message->sender_id }}" data-receiver="{{ $message->receiver_id  }}" data-msg="{{   $message->message }}"><i class="fa-solid fa-pencil"></i></a></li>
-																<li><a href="#" class="del-msg"><i class="fa-regular fa-trash-can"></i></a></li>
+																<li><a href="javascript:void(0);" class="edit-msg update-msg" data-id="{{ $message->id }}" data-sender="{{ $message->sender_id }}" data-receiver="{{ $message->receiver_id  }}" data-msg="{{   $message->message }}"><i class="fa-solid fa-pencil"></i></a></li>
+																<li><a href="javascript:void(0);" class="del-msg" data-id="{{ $message->id}}"><i class="fa-regular fa-trash-can"></i></a></li>
 															</ul>
 														</div>
 													</div>
@@ -187,12 +187,12 @@ $messages2 = $messages;
 															<p>{{ $message->message }}</p>
 															<span class="chat-time">{{ \Carbon\Carbon::parse($message->created_at)->diffForHumans() }}</span>
 														</div>
-														<div class="chat-action-btns">
+														{{--<div class="chat-action-btns">
 															<ul>
 																<li><a href="#" class="edit-msg"><i class="fa-solid fa-pencil"></i></a></li>
 																<li><a href="#" class="del-msg"><i class="fa-regular fa-trash-can"></i></a></li>
 															</ul>
-														</div>
+														</div>--}}
 													</div>
 												</div>
 											</div>
@@ -211,11 +211,11 @@ $messages2 = $messages;
 								<div class="message-area">
 									<div class="input-group">
 										<textarea class="form-control" id="msg" placeholder="Type message..."></textarea>
-										 <button type="button" class="clear-msg-btn cross-button" style="position: absolute; right: 50px; background: none; border: none; cursor: pointer;display:none;">
+										<button type="button" class="clear-msg-btn cross-button" style="position: absolute; right: 50px; background: none; border: none; cursor: pointer;display:none;">
 											<i class="fa-solid fa-xmark"></i>
 										</button>
 										<button class="btn btn-custom send-button" data-url="{{ route('send.message') }}"  type="button"><i class="fa-solid fa-paper-plane"></i></button>
-										<input type="hidden" id="mode" value="0">
+										<input type="hidden" id="edit_id" value="">
 									</div>
 								</div>
 							</div>
@@ -264,16 +264,27 @@ $(document).ready(function() {
 	//alert(receiverId);
 	$(document).on('click','.send-button', function () {
         let message = $('#msg').val();
+		let edit_id = $('#edit_id').val();
 		let URL = $(this).data('url');
 		var receiverId = $('#receiverId').val();
 		//alert(receiverId);
         if (message.trim() !== '') {
             $.post(URL, {
+                edit_id: edit_id,
                 message: message,
                 receiver_id: receiverId,
                 _token: "{{ csrf_token() }}"
             }, function () {
-                $('#msg').val('');
+                if (edit_id) {
+                // Update existing message in chat box
+                $('.chat-content[data-id="'+ edit_id +'"] p').text(message);
+                $('#edit_id').val(''); // Reset edit ID after update
+				} else {
+					// Append new message as usual
+					//chatBox.append(chatHTML);
+				}
+				$('#msg').val(''); // Clear input field
+				chatBox.scrollTop(chatBox.prop("scrollHeight"));
             });
         }
     });
@@ -303,14 +314,13 @@ $(document).ready(function() {
             return;
         }
 		
+		if (!data || !data.message) return;
+		
 		if (data.receiver_id != authUserId && data.sender_id != authUserId) {
 			console.log("Message not for this user. Ignoring.");
 			return;
 		}
 		//alert(data.sender_id);
-		//var messageTime = new Date(data.created_at).toLocaleTimeString();
-		//var messageTime = dayjs(data.created_at).fromNow();
-		//var messageTime = dayjs.utc(data.created_at).local().fromNow();
 		var messageTime = dayjs.utc(data.created_at).local().fromNow(true) + " ago";
 		
 		var avatar = "{{ url('static-image/avatar-05.jpg')}}";
@@ -321,7 +331,7 @@ $(document).ready(function() {
 		var editdeleteDiv = '';
 		if(chatClass=='chat-right')
 		{
-			editdeleteDiv ='<div class="chat-action-btns"><ul><li><a href="javascropt:void(0);" class="edit-msg update-msg" data-sender="'+ data.sender_id+'" data-receiver="'+ data.receiver_id +'" data-msg="'+ data.message +'"><i class="fa-solid fa-pencil"></i></a></li><li><a href="#" class="del-msg"><i class="fa-regular fa-trash-can"></i></a></li></ul></div>';
+			editdeleteDiv ='<div class="chat-action-btns"><ul><li><a href="javascropt:void(0);" class="edit-msg update-msg" data-id="'+ data.id +'" data-sender="'+ data.sender_id+'" data-receiver="'+ data.receiver_id +'" data-msg="'+ data.message +'"><i class="fa-solid fa-pencil"></i></a></li><li><a href="javascript:void(0);" class="del-msg"  data-id="'+ data.id +'"><i class="fa-regular fa-trash-can"></i></a></li></ul></div>';
 		}
 		
 		var avatar = (data.sender_id != authUserId) ? 
@@ -329,10 +339,21 @@ $(document).ready(function() {
 			: '';
 			
 		//alert(data.message.message);
-		var chatHTML = '<div class="chat '+ chatClass +'"><div class="chat-body"><div class="chat-bubble"><div class="chat-content"><p>' + data.message + '</p><span class="chat-time">' + messageTime + '</span></div>' + editdeleteDiv + '</div></div></div>';
+		var chatHTML = '<div class="chat '+ chatClass +'"><div class="chat-body"><div class="chat-bubble"><div class="chat-content" data-id="' + data.id + '"><p>' + data.message + '</p><span class="chat-time">' + messageTime + '</span></div>' + editdeleteDiv + '</div></div></div>';
 
 		chatBox.append(chatHTML);
 		chatBox.scrollTop(chatBox.prop("scrollHeight"));
+	});
+	
+	channel.bind('message-updated', function(data) {
+		//console.log("Updated Message:", data);
+		let updatedMessage = data.message; // Ensure message is correctly accessed
+		//let messageElement = $('.chat-content[data-id="' + data.id + '"] p');
+		let messageElement = $('.chat-content[data-id="' + data.id + '"]');
+		if (messageElement.length) {
+			console.log(data.message);
+			messageElement.text(updatedMessage);
+		}
 	});
 </script>
 @endsection
