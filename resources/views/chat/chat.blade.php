@@ -226,8 +226,12 @@ $messages2 = $messages;
 @endsection 
 @section('scripts')
 <script src="{{ url('front-assets/js/page/chat.js') }}"></script>
-<!--<script src="https://js.pusher.com/7.0/pusher.min.js"></script>-->
-<script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+<!--<script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.9/plugin/utc.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 	let userLinks = document.querySelectorAll('.user-link');
@@ -265,11 +269,51 @@ $(document).ready(function() {
                 receiver_id: receiverId,
                 _token: "{{ csrf_token() }}"
             }, function () {
-                $('#message').val('');
+                $('#msg').val('');
             });
         }
     });
+	
+	
 });
 </script>
+<script>
+	dayjs.extend(dayjs_plugin_utc);
+	dayjs.extend(dayjs_plugin_relativeTime);
+	//var pusherKey = "{{ env('PUSHER_APP_KEY') }}";
+    //var pusherCluster = "{{ env('PUSHER_APP_CLUSTER') }}";
+	var authUserId = {!! json_encode(auth()->id()) !!};
+	
+	var chatBox = $('#chat-messages');
+    var pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
+        cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
+        encrypted: true
+    });
 
+    var channel = pusher.subscribe('chat-channel');
+
+    channel.bind('message-sent', function(data) {
+        //console.log("New message received: ", data);
+        if (!data || !data.message) {
+            console.log("No message data received.");
+            return;
+        }
+		//alert(data.sender_id);
+		//var messageTime = new Date(data.created_at).toLocaleTimeString();
+		//var messageTime = dayjs(data.created_at).fromNow();
+		//var messageTime = dayjs.utc(data.created_at).local().fromNow();
+		var messageTime = dayjs.utc(data.created_at).local().fromNow(true) + " ago";
+		
+		var avatar = "{{ url('static-image/avatar-05.jpg')}}";
+		var chatClass = (data.sender_id == authUserId) ? 'chat-right' : 'chat-left';
+		var avatar = (data.sender_id != authUserId) ? 
+			'<div class="chat-avatar"><a href="#" class="avatar">'+ avatar +'<img src="${userImageUrl}" alt="User Image"></a></div>' 
+			: '';
+		//alert(data.message.message);
+		var chatHTML = '<div class="chat '+ chatClass +'"><div class="chat-body"><div class="chat-bubble"><div class="chat-content"><p>' + data.message + '</p><span class="chat-time">' + messageTime + '</span></div></div></div></div>';
+
+		chatBox.append(chatHTML);
+		chatBox.scrollTop(chatBox.prop("scrollHeight"));
+	});
+</script>
 @endsection

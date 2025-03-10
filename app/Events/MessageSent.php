@@ -7,11 +7,12 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Manage_chat;
 
-class MessageSent implements ShouldBroadcast
+class MessageSent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -24,6 +25,7 @@ class MessageSent implements ShouldBroadcast
     public function __construct(Manage_chat $message)
     {
         $this->message = $message;
+		\Log::info('Message Sent Event Triggered:', ['message' => $message]);
     }
 
     /**
@@ -40,8 +42,18 @@ class MessageSent implements ShouldBroadcast
     public function broadcastAs()
     {
         return 'message-sent'; // Event Name
+	}
+	
+	public function broadcastWith()
+    {
+        return [
+            'id' => $this->message->id,
+            'sender_id' => $this->message->sender_id,
+            'receiver_id' => $this->message->receiver_id,
+            'message' => $this->message->message,
+            'created_at' => $this->message->created_at->toDateTimeString(),
+        ];
     }
-	 
 	 
     /*public function broadcastOn(): array
     {

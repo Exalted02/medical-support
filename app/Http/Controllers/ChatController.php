@@ -102,26 +102,14 @@ class ChatController extends Controller
 				return $message->sender_id == auth()->id() ? $message->receiver_id : $message->sender_id;
 			});
 
-		// If no receiverId is set, pick the first available user
 		if (!$receiverId && $chatUsers->isNotEmpty()) {
 			//\Log::info('Receiver ID was not found, setting to first user.');
 			$receiverId = $chatUsers->keys()->first();
 		}
 
-		// Debugging: Check if `$receiverId` is correctly assigned
-		//\Log::info('Final Receiver ID:', ['receiverId' => $receiverId]);
-
-		// Load messages for selected user
+		
 		$messages = collect();
-		/*if ($receiverId) {
-			$messages = Manage_chat::where(function ($query) use ($receiverId) {
-				$query->where('sender_id', auth()->id())
-					->where('receiver_id', $receiverId);
-			})->orWhere(function ($query) use ($receiverId) {
-				$query->where('sender_id', $receiverId)
-					->where('receiver_id', auth()->id());
-			})->orderBy('created_at', 'asc')->get();
-		}*/
+		
 		if (!empty($receiverId)) {
 			$messages = Manage_chat::where(function ($query) use ($receiverId) {
 					$query->where('sender_id', auth()->id())
@@ -133,103 +121,12 @@ class ChatController extends Controller
 				})
 				->orderBy('id', 'asc')
 				->get();
-			//echo '<pre>';print_r($messages);die;
 		}
 
 		return view('chat.chat', compact('messages', 'chatUsers', 'receiverId'));
 	}
 
-	/*public function chatPage(Request $request)
-	{
-		$receiverId = $request->query('receiverId'); // Get from URL
-		//$receiverId = 16; // Get from URL
-
-		$chatUsers = Manage_chat::where('receiver_id', auth()->id())
-			->orWhere('sender_id', auth()->id())
-			->with(['sender', 'receiver'])
-			->orderBy('created_at', 'desc')
-			->get()
-			->groupBy(function ($message) {
-				return $message->sender_id == auth()->id() ? $message->receiver_id : $message->sender_id;
-			});
-
-		// If no receiverId is set, pick the first available user
-		if (!$receiverId && $chatUsers->isNotEmpty()) {
-			$receiverId = $chatUsers->keys()->first();
-		}
-
-		// Load messages for selected user
-		$messages = collect();
-		if ($receiverId) {
-			$messages = Manage_chat::where(function ($query) use ($receiverId) {
-				$query->where('sender_id', auth()->id())
-					->where('receiver_id', $receiverId);
-			})->orWhere(function ($query) use ($receiverId) {
-				$query->where('sender_id', $receiverId)
-					->where('receiver_id', auth()->id());
-			})->orderBy('created_at', 'asc')->get();
-		}
-
-		return view('chat.chat', compact('messages', 'chatUsers', 'receiverId'));
-	}*/
-
-
-	/*public function chatPage($receiverId = null)
-	{
-		// Get all users who have chatted with the logged-in user
-		$chatUsers = Manage_chat::where('receiver_id', auth()->id())
-			->orWhere('sender_id', auth()->id())
-			->with(['sender', 'receiver']) // Ensure relationships exist in the Manage_chat model
-			->orderBy('created_at', 'desc')
-			->get()
-			->groupBy(function ($message) {
-				return $message->sender_id == auth()->id() ? $message->receiver_id : $message->sender_id;
-			});
-
-		// If a receiver is selected, fetch chat messages
-		$messages = collect();
-		if ($receiverId) {
-			$messages = Manage_chat::where(function ($query) use ($receiverId) {
-				$query->where('sender_id', auth()->id())
-					->where('receiver_id', $receiverId);
-			})->orWhere(function ($query) use ($receiverId) {
-				$query->where('sender_id', $receiverId)
-					->where('receiver_id', auth()->id());
-			})->orderBy('created_at', 'desc')->get();
-		}
-		
-		//echo "<pre>";print_r($messages);die;
-		return view('chat.chat', compact('chatUsers', 'messages', 'receiverId'));
-	}*/
-
-	
-	/*public function chatPage($receiverId='')
-    {
-		$chatUsers = Manage_chat::where('receiver_id', auth()->id())
-        ->orWhere('sender_id', auth()->id())
-        ->with(['sender', 'receiver'])
-        ->orderBy('created_at', 'desc')
-        ->get()
-        ->groupBy(function ($message) {
-            return $message->sender_id == auth()->id() ? $message->receiver_id : $message->sender_id;
-        });
-
-       return view('chat.chat', compact('messages', 'chatUsers','receiverId'));
-    }
-	public function chatWithUser($receiverId)
-	{
-		$messages = Manage_chat::where(function ($query) use ($receiverId) {
-			$query->where('sender_id', auth()->id())
-				->where('receiver_id', $receiverId);
-		})->orWhere(function ($query) use ($receiverId) {
-			$query->where('sender_id', $receiverId)
-				->where('receiver_id', auth()->id());
-		})->orderBy('created_at', 'asc')->get();
-
-		return view('chat.chat', compact('messages', 'receiverId'));
-	}*/
-
-    public function sendMessage(Request $request)
+	public function sendMessage(Request $request)
     {
 		$chat_group_id = substr(sha1(mt_rand()),17,6);
         $message = Manage_chat::create([
@@ -242,7 +139,6 @@ class ChatController extends Controller
             'is_read' => 1,
             'created_at' => date('Y-m-d h:i:s'),
         ]);
-			
 		broadcast(new MessageSent($message))->toOthers();
         return response()->json($message);
     }
