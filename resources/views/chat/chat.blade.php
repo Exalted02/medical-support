@@ -303,6 +303,22 @@ $(document).ready(function() {
 				success: function(response) {
 					console.log("Message sent:", response);
 					
+					/*let chatHTML = '<div class="chat-content" data-id=" '+ response.id + '">' + response.message ? '<p>' +response.message +'</p> : ''}';
+
+					// If files exist, append them
+					if (response.files && response.files.length > 0) {
+						response.files.forEach(file => {
+							// Check if the file is an image or another file type
+							if (/\.(jpg|jpeg|png|gif)$/i.test(file)) {
+								chatHTML += '<img src="' + file + '" class="chat-image-preview">';
+							} else {
+								chatHTML += '<a href="' + file + '" target="_blank" class="chat-file-link">📎 Download File</a>';
+							}
+						});
+					}
+
+					chatHTML += '</div>';*/
+					
 					// Clear input & file preview after sending
 					$('#msg').val('');
 					$('#file-preview').html('');
@@ -402,7 +418,14 @@ function uploadFiles(files) {
     var channel = pusher.subscribe('chat-channel');
 
     channel.bind('message-sent', function(data) {
-        //console.log("New message received: ", data);
+        console.log("New message received: ", data);
+		/*if (!data.files || !Array.isArray(data.files)) {
+			console.log("No files received.");
+			data.files = []; // Ensure it is an empty array to avoid errors
+		}*/
+		
+		
+        //console.log("File length: ", data.files.length);
         if (!data || !data.message) {
             console.log("No message data received.");
             return;
@@ -417,8 +440,9 @@ function uploadFiles(files) {
 		//alert(data.sender_id);
 		var messageTime = dayjs.utc(data.created_at).local().fromNow(true) + " ago";
 		
-		var avatar = "{{ url('static-image/avatar-05.jpg')}}";
-		
+		var app_url =  "{{ env('APP_URL') }}";
+		var avatar = app_url + '/static-image/avatar-05.jpg';
+		//alert(avatar);
 		
 		var chatClass = (data.sender_id == authUserId) ? 'chat-right' : 'chat-left';
 		
@@ -432,8 +456,24 @@ function uploadFiles(files) {
 			'<div class="chat-avatar"><a href="#" class="avatar">'+ avatar +'<img src="${userImageUrl}" alt="User Image"></a></div>' 
 			: '';
 			
+		var fileHTML = '';
+
+		// If files exist, append images or file links
+		if (data.files && data.files.length > 0) {
+			data.files.forEach(file => {
+				fileHTML += '<img src="' + file + '" class="chat-image-preview">';
+				/*if (/\.(jpg|jpeg|png|gif)$/i.test(file)) {
+					 alert(file);
+					fileHTML += '<img src="' + file + '" class="chat-image-preview">';
+				} else {
+					fileHTML += '<a href="'+ file +'" target="_blank" class="chat-file-link">📎 Download File</a>';
+				}*/
+			});
+		}
+		
+			
 		//alert(data.message.message);
-		var chatHTML = '<div class="chat '+ chatClass +'"><div class="chat-body"><div class="chat-bubble"><div class="chat-content" data-id="' + data.id + '"><p>' + data.message + '</p><span class="chat-time">' + messageTime + '</span></div>' + editdeleteDiv + '</div></div></div>';
+		var chatHTML = '<div class="chat '+ chatClass +'"><div class="chat-body"><div class="chat-bubble"><div class="chat-content" data-id="' + data.id + '"><p>' + (data.message ? '<p>' + data.message + '</p>' : '') + '</p> '+  fileHTML + '<span class="chat-time">' + messageTime + '</span></div>' + editdeleteDiv + '</div></div></div>';
 
 		chatBox.append(chatHTML);
 		chatBox.scrollTop(chatBox.prop("scrollHeight"));

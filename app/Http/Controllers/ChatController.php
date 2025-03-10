@@ -193,7 +193,13 @@ class ChatController extends Controller
 			}
 			broadcast(new MessageSent($message))->toOthers();
 		}
-        return response()->json($message);
+        //return response()->json($message);
+		
+		return response()->json([
+			'id' => $message->id,
+			'message' => $message->message,
+			'files' => $uploadedFiles // Send the list of uploaded files
+		]);
     }
 	public function message_delete(Request $request)
 	{
