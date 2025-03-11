@@ -424,8 +424,31 @@ function uploadFiles(files) {
 			data.files = []; // Ensure it is an empty array to avoid errors
 		}*/
 		
+		var app_url =  "{{ env('APP_URL') }}";
+		var fileHTML = '';
+		var filePath = '';
+		// If files exist, append images or file links
+		if (data.files && data.files.length > 0) {
+			console.log("this is a file loop");
+			data.files.forEach(file => {
+				filePath  = app_url + '/ '+ file;
+				//fileHTML += '<img src="' + file + '" class="chat-image-preview">';
+				if (/\.(jpg|jpeg|png|gif)$/i.test(file)) {
+					 alert(filePath);
+					fileHTML += '<img src="' + filePath + '" class="chat-image-preview">';
+				} else {
+					fileHTML += '<a href="'+ filePath +'" target="_blank" class="chat-file-link">📎 Download File</a>';
+				}
+			});
+		}
 		
-        //console.log("File length: ", data.files.length);
+		if(data.files || Array.isArray(data.files))
+		{
+			console.log("File length: ", data.files.length);
+			console.log("File name: ", data.files[0]);
+		}
+	
+	
         if (!data || !data.message) {
             console.log("No message data received.");
             return;
@@ -440,7 +463,7 @@ function uploadFiles(files) {
 		//alert(data.sender_id);
 		var messageTime = dayjs.utc(data.created_at).local().fromNow(true) + " ago";
 		
-		var app_url =  "{{ env('APP_URL') }}";
+		
 		var avatar = app_url + '/static-image/avatar-05.jpg';
 		//alert(avatar);
 		
@@ -456,20 +479,7 @@ function uploadFiles(files) {
 			'<div class="chat-avatar"><a href="#" class="avatar">'+ avatar +'<img src="${userImageUrl}" alt="User Image"></a></div>' 
 			: '';
 			
-		var fileHTML = '';
-
-		// If files exist, append images or file links
-		if (data.files && data.files.length > 0) {
-			data.files.forEach(file => {
-				fileHTML += '<img src="' + file + '" class="chat-image-preview">';
-				/*if (/\.(jpg|jpeg|png|gif)$/i.test(file)) {
-					 alert(file);
-					fileHTML += '<img src="' + file + '" class="chat-image-preview">';
-				} else {
-					fileHTML += '<a href="'+ file +'" target="_blank" class="chat-file-link">📎 Download File</a>';
-				}*/
-			});
-		}
+		
 		
 			
 		//alert(data.message.message);

@@ -136,6 +136,7 @@ class ChatController extends Controller
 		]);
 		
 		$uploadedFiles = [];
+		$files = '';
 		if ($request->hasFile('files')) {
 			foreach ($request->file('files') as $file) {
 				// Define the destination path inside the public folder
@@ -183,22 +184,22 @@ class ChatController extends Controller
 				'created_at' => date('Y-m-d h:i:s'),
 			]);
 			
-			foreach($uploadedFiles as $files)
+			foreach($uploadedFiles as $file)
 			{
-				Manage_chat_file::create([
+				$files = Manage_chat_file::create([
 					'manage_chat_id' => $message->id,
-					'file_name' => $files,
+					'file_name' => $file,
 					'created_at' => date('Y-m-d h:i:s'),
 				]);
 			}
-			broadcast(new MessageSent($message))->toOthers();
+			broadcast(new MessageSent($message,$uploadedFiles))->toOthers();
 		}
         //return response()->json($message);
 		
 		return response()->json([
 			'id' => $message->id,
 			'message' => $message->message,
-			'files' => $uploadedFiles // Send the list of uploaded files
+			//'files' => $uploadedFiles // Send the list of uploaded files
 		]);
     }
 	public function message_delete(Request $request)
