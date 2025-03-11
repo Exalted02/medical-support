@@ -16,6 +16,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Api\RegisteredUserController;
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\GmailAuthController;
 
 
 
@@ -52,6 +53,12 @@ Route::get('db-seed', function () {
     \Artisan::call('db:seed');
     dd("Database seeded");
 });
+Route::get('/auth/google', [GmailAuthController::class, 'redirectToGoogle'])->name('gmail.auth');
+Route::get('/auth/callback', [GmailAuthController::class, 'handleGoogleCallback']);
+// Route::get('/gmail/messages', [GmailAuthController::class, 'getMessages'])->name('gmail.messages');
+Route::get('/gmail/inbox', [GmailAuthController::class, 'getMessages'])->name('gmail.inbox');
+
+
 Route::get('/', [ProfileController::class, 'welcome']);
 
 Route::get('lang/home', [LangController::class, 'index']);
