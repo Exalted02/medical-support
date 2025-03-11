@@ -175,7 +175,7 @@ class ChatController extends Controller
 
 			$message = Manage_chat::create([
 				'source' => 0,
-				'user_type' => auth()->user()->user_type,
+				'user_type' => 1,
 				'chat_group_id' => $chat_group_id,
 				'sender_id' => auth()->id(),
 				'receiver_id' => $request->receiver_id,
@@ -192,15 +192,16 @@ class ChatController extends Controller
 					'created_at' => date('Y-m-d h:i:s'),
 				]);
 			}
+			//broadcast(new MessageSent($message))->toOthers();
 			broadcast(new MessageSent($message,$uploadedFiles))->toOthers();
 		}
         //return response()->json($message);
 		
-		return response()->json([
+		/*return response()->json([
 			'id' => $message->id,
 			'message' => $message->message,
 			//'files' => $uploadedFiles // Send the list of uploaded files
-		]);
+		]);*/
     }
 	public function message_delete(Request $request)
 	{
