@@ -28,4 +28,9 @@ class Manage_chat extends Model
     {
         return $this->belongsTo(User::class, 'receiver_id');
     }
+	
+	public function chat_files()
+	{
+		 return $this->hasMany(Manage_chat_file::class, 'manage_chat_id');
+	}
 }

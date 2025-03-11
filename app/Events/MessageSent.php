@@ -21,10 +21,12 @@ class MessageSent implements ShouldBroadcastNow
      */
 	 
 	public $message;
+	public $files;
 	  
-    public function __construct(Manage_chat $message)
+    public function __construct(Manage_chat $message,$files)
     {
         $this->message = $message;
+        $this->files = $files;
 		\Log::info('Message Sent Event Triggered:', ['message' => $message]);
     }
 
@@ -52,6 +54,7 @@ class MessageSent implements ShouldBroadcastNow
             'receiver_id' => $this->message->receiver_id,
             'message' => $this->message->message,
             'created_at' => $this->message->created_at->toDateTimeString(),
+            'files' => $this->files,
         ];
     }
 	 

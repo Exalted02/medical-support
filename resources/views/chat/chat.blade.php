@@ -159,14 +159,14 @@ $messages2 = $messages;
 												@endif
 												<div class="chat-body">
 													<div class="chat-bubble">
-														<div class="chat-content">
+														<div class="chat-content" data-id="{{ $message->id}}">
 															<p>{{ $message->message }}</p>
 															<span class="chat-time">{{ \Carbon\Carbon::parse($message->created_at)->diffForHumans() }}</span>
 														</div>
 														<div class="chat-action-btns">
 															<ul>
-																<li><a href="javascript:void(0);" class="edit-msg update-msg" data-sender="{{ $message->sender_id }}" data-receiver="{{ $message->receiver_id  }}" data-msg="{{   $message->message }}"><i class="fa-solid fa-pencil"></i></a></li>
-																<li><a href="#" class="del-msg"><i class="fa-regular fa-trash-can"></i></a></li>
+																<li><a href="javascript:void(0);" class="edit-msg update-msg" data-id="{{ $message->id }}" data-sender="{{ $message->sender_id }}" data-receiver="{{ $message->receiver_id  }}" data-msg="{{   $message->message }}"><i class="fa-solid fa-pencil"></i></a></li>
+																<li><a href="javascript:void(0);" class="del-msg" data-id="{{ $message->id}}" data-url="{{ route('message.delete')}}"><i class="fa-regular fa-trash-can"></i></a></li>
 															</ul>
 														</div>
 													</div>
@@ -187,12 +187,12 @@ $messages2 = $messages;
 															<p>{{ $message->message }}</p>
 															<span class="chat-time">{{ \Carbon\Carbon::parse($message->created_at)->diffForHumans() }}</span>
 														</div>
-														<div class="chat-action-btns">
+														{{--<div class="chat-action-btns">
 															<ul>
 																<li><a href="#" class="edit-msg"><i class="fa-solid fa-pencil"></i></a></li>
 																<li><a href="#" class="del-msg"><i class="fa-regular fa-trash-can"></i></a></li>
 															</ul>
-														</div>
+														</div>--}}
 													</div>
 												</div>
 											</div>
@@ -205,19 +205,26 @@ $messages2 = $messages;
 						</div>
 					</div>
 					<div class="chat-footer">
+					<div id="file-preview" class=""></div>
 						<div class="message-bar">
 							<div class="message-inner">
-								<a class="link attach-icon" href="#" data-bs-toggle="modal" data-bs-target="#drag_files"><img src="{{ url('static-image/attachment.png') }}" alt="Attachment Icon"></a>
-								<div class="message-area">
-									<div class="input-group">
-										<textarea class="form-control" id="msg" placeholder="Type message..."></textarea>
-										 <button type="button" class="clear-msg-btn cross-button" style="position: absolute; right: 50px; background: none; border: none; cursor: pointer;display:none;">
-											<i class="fa-solid fa-xmark"></i>
-										</button>
-										<button class="btn btn-custom send-button" data-url="{{ route('send.message') }}"  type="button"><i class="fa-solid fa-paper-plane"></i></button>
-										<input type="hidden" id="mode" value="0">
+								<a class="link attach-icon" id="triggerFileUpload" href="#"  data-bs-target="#drag_files"><img src="{{ url('static-image/attachment.png') }}" alt="Attachment Icon"></a>
+								
+								
+								<form id="chat-file-upload-form" enctype="multipart/form-data">
+									<div class="message-area">
+										<div class="input-group">
+										<input type="file" id="chat-files" name="files[]" multiple class="d-none">
+											<textarea class="form-control" id="msg" placeholder="Type message..."></textarea>
+											<button type="button" class="clear-msg-btn cross-button" style="position: absolute; right: 50px; background: none; border: none; cursor: pointer;display:none;">
+												<i class="fa-solid fa-xmark"></i>
+											</button>
+											{{--<button class="btn btn-custom send-button" data-url="{{ route('send.message') }}"  type="button"><i class="fa-solid fa-paper-plane"></i></button>--}}
+											<button class="btn btn-custom" type="button"><i class="fa-solid fa-paper-plane"></i></button>
+											<input type="hidden" id="edit_id" value="">
+										</div>
 									</div>
-								</div>
+								</form>
 							</div>
 						</div>
 					</div>
@@ -262,24 +269,138 @@ $(document).ready(function() {
 	//var authUserId = {!! json_encode(auth()->id()) !!};
 	$('#receiverId').val(receiverId);
 	//alert(receiverId);
-	$(document).on('click','.send-button', function () {
-        let message = $('#msg').val();
-		let URL = $(this).data('url');
+	//$(document).on('click','.send-button', function () {
+	$('.btn-custom').on('click', function () {
+	//$('#chat-file-upload-form').on('submit', function (e) {
+		
+		let formData = new FormData($('#chat-file-upload-form')[0]); // Get form data
+		
+		let message = $('#msg').val();
+		let edit_id = $('#edit_id').val();
+		//let URL = $(this).data('url');
+		let URL = "{{ route('send.message') }}";
 		var receiverId = $('#receiverId').val();
+		
+		let files = $('#chat-files')[0].files;
+		$.each(files, function (index, file) {
+            formData.append("files[]", file);
+        });
+		
+		formData.append('message', message);
+        formData.append('receiver_id', receiverId);
+        formData.append('edit_id', edit_id);
+        formData.append('_token', "{{ csrf_token() }}");
+		
 		//alert(receiverId);
-        if (message.trim() !== '') {
+		//if (message.trim() !== '') 
+		//{
+			$.ajax({
+				url: URL,
+				type: "POST",
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function(response) {
+					console.log("Message sent:", response);
+					
+					/*let chatHTML = '<div class="chat-content" data-id=" '+ response.id + '">' + response.message ? '<p>' +response.message +'</p> : ''}';
+
+					// If files exist, append them
+					if (response.files && response.files.length > 0) {
+						response.files.forEach(file => {
+							// Check if the file is an image or another file type
+							if (/\.(jpg|jpeg|png|gif)$/i.test(file)) {
+								chatHTML += '<img src="' + file + '" class="chat-image-preview">';
+							} else {
+								chatHTML += '<a href="' + file + '" target="_blank" class="chat-file-link">📎 Download File</a>';
+							}
+						});
+					}
+
+					chatHTML += '</div>';*/
+					
+					// Clear input & file preview after sending
+					$('#msg').val('');
+					$('#file-preview').html('');
+					$('#edit_id').val('');
+
+					// Append new message if not an edit
+					if (edit_id) {
+						// Update existing message in chat box
+						$('.chat-content[data-id="'+ edit_id +'"] p').text(message);
+						$('#edit_id').val(''); // Reset edit ID after update
+					} else {
+						// Append new message as usual
+						//chatBox.append(chatHTML);
+					}
+
+					// Scroll to latest message
+					$('.chat-box').scrollTop($('.chat-box')[0].scrollHeight);
+				},
+				error: function(xhr) {
+					console.error("Error sending message:", xhr.responseText);
+				}
+			});
+		//}
+		
+        /*if (message.trim() !== '') {
             $.post(URL, {
-                message: message,
-                receiver_id: receiverId,
-                _token: "{{ csrf_token() }}"
+                data:formData
             }, function () {
-                $('#msg').val('');
+                if (edit_id) {
+                // Update existing message in chat box
+                $('.chat-content[data-id="'+ edit_id +'"] p').text(message);
+                $('#edit_id').val(''); // Reset edit ID after update
+				} else {
+					// Append new message as usual
+					//chatBox.append(chatHTML);
+				}
+				$('#msg').val(''); // Clear input field
+				chatBox.scrollTop(chatBox.prop("scrollHeight"));
             });
-        }
+        }*/
     });
 	
-	
+	let selectedFiles = [];
+
+    // Click on attach icon triggers file input
+    $('#triggerFileUpload').on('click', function (e) {
+        e.preventDefault();
+        $('#chat-files').click();
+    });
+
+    // Handle file selection
+	$('#chat-files').on('change', function (e) {
+		selectedFiles = e.target.files;
+		$('#file-preview').html(""); // Clear previous previews
+
+		$.each(selectedFiles, function (index, file) {
+			let fileType = file.type.split('/')[0]; // Get file type (image, video, etc.)
+
+			if (fileType === 'image') {
+				let reader = new FileReader();
+				reader.onload = function (event) {
+					$('#file-preview').append(
+						'<div class="file-item">' +
+							'<img src="' + event.target.result + '" class="file-preview-img">' +
+						'</div>'
+					);
+				};
+				reader.readAsDataURL(file);
+			}
+		});
+
+		uploadFiles(selectedFiles);
+	});
+    
 });
+function uploadFiles(files) {
+	let formData = new FormData();
+	formData.append("_token", "{{ csrf_token() }}");
+	$.each(files, function (index, file) {
+		formData.append("files[]", file);
+	});
+}
 </script>
 <script>
 	dayjs.extend(dayjs_plugin_utc);
@@ -297,42 +418,91 @@ $(document).ready(function() {
     var channel = pusher.subscribe('chat-channel');
 
     channel.bind('message-sent', function(data) {
-        //console.log("New message received: ", data);
+        console.log("New message received: ", data);
+		/*if (!data.files || !Array.isArray(data.files)) {
+			console.log("No files received.");
+			data.files = []; // Ensure it is an empty array to avoid errors
+		}*/
+		
+		var app_url =  "{{ env('APP_URL') }}";
+		var fileHTML = '';
+		var filePath = '';
+		// If files exist, append images or file links
+		if (data.files && data.files.length > 0) {
+			console.log("this is a file loop");
+			data.files.forEach(file => {
+				filePath  = app_url + '/ '+ file;
+				//fileHTML += '<img src="' + file + '" class="chat-image-preview">';
+				if (/\.(jpg|jpeg|png|gif)$/i.test(file)) {
+					 alert(filePath);
+					fileHTML += '<img src="' + filePath + '" class="chat-image-preview">';
+				} else {
+					fileHTML += '<a href="'+ filePath +'" target="_blank" class="chat-file-link">📎 Download File</a>';
+				}
+			});
+		}
+		
+		if(data.files || Array.isArray(data.files))
+		{
+			console.log("File length: ", data.files.length);
+			console.log("File name: ", data.files[0]);
+		}
+	
+	
         if (!data || !data.message) {
             console.log("No message data received.");
             return;
         }
+		
+		if (!data || !data.message) return;
 		
 		if (data.receiver_id != authUserId && data.sender_id != authUserId) {
 			console.log("Message not for this user. Ignoring.");
 			return;
 		}
 		//alert(data.sender_id);
-		//var messageTime = new Date(data.created_at).toLocaleTimeString();
-		//var messageTime = dayjs(data.created_at).fromNow();
-		//var messageTime = dayjs.utc(data.created_at).local().fromNow();
 		var messageTime = dayjs.utc(data.created_at).local().fromNow(true) + " ago";
 		
-		var avatar = "{{ url('static-image/avatar-05.jpg')}}";
 		
+		var avatar = app_url + '/static-image/avatar-05.jpg';
+		//alert(avatar);
 		
 		var chatClass = (data.sender_id == authUserId) ? 'chat-right' : 'chat-left';
 		
 		var editdeleteDiv = '';
 		if(chatClass=='chat-right')
 		{
-			editdeleteDiv ='<div class="chat-action-btns"><ul><li><a href="javascropt:void(0);" class="edit-msg update-msg" data-sender="'+ data.sender_id+'" data-receiver="'+ data.receiver_id +'" data-msg="'+ data.message +'"><i class="fa-solid fa-pencil"></i></a></li><li><a href="#" class="del-msg"><i class="fa-regular fa-trash-can"></i></a></li></ul></div>';
+			editdeleteDiv ='<div class="chat-action-btns"><ul><li><a href="javascropt:void(0);" class="edit-msg update-msg" data-id="'+ data.id +'" data-sender="'+ data.sender_id+'" data-receiver="'+ data.receiver_id +'" data-msg="'+ data.message +'"><i class="fa-solid fa-pencil"></i></a></li><li><a href="javascript:void(0);" class="del-msg"  data-id="'+ data.id +'" data-url="{{ route('message.delete')}}"><i class="fa-regular fa-trash-can"></i></a></li></ul></div>';
 		}
 		
 		var avatar = (data.sender_id != authUserId) ? 
 			'<div class="chat-avatar"><a href="#" class="avatar">'+ avatar +'<img src="${userImageUrl}" alt="User Image"></a></div>' 
 			: '';
 			
+		
+		
+			
 		//alert(data.message.message);
-		var chatHTML = '<div class="chat '+ chatClass +'"><div class="chat-body"><div class="chat-bubble"><div class="chat-content"><p>' + data.message + '</p><span class="chat-time">' + messageTime + '</span></div>' + editdeleteDiv + '</div></div></div>';
+		var chatHTML = '<div class="chat '+ chatClass +'"><div class="chat-body"><div class="chat-bubble"><div class="chat-content" data-id="' + data.id + '"><p>' + (data.message ? '<p>' + data.message + '</p>' : '') + '</p> '+  fileHTML + '<span class="chat-time">' + messageTime + '</span></div>' + editdeleteDiv + '</div></div></div>';
 
 		chatBox.append(chatHTML);
 		chatBox.scrollTop(chatBox.prop("scrollHeight"));
 	});
+	
+	channel.bind('message-updated', function(data) {
+		//console.log("Updated Message:", data);
+		let updatedMessage = data.message; // Ensure message is correctly accessed
+		//let messageElement = $('.chat-content[data-id="' + data.id + '"] p');
+		let messageElement = $('.chat-content[data-id="' + data.id + '"]');
+		if (messageElement.length) {
+			console.log(data.message);
+			messageElement.text(updatedMessage);
+		}
+	});
+	channel.bind('message-deleted', function (data) {
+		//console.log("Deleting message ID:", data.id);
+		$('.chat-content[data-id="' + data.id + '"]').closest('.chat').remove();
+	});
+
 </script>
 @endsection
