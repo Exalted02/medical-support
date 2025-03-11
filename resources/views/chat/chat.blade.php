@@ -352,6 +352,10 @@ $messages2 = $messages;
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.9/plugin/utc.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css">
+<!-- Fancybox JS -->
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 	let userLinks = document.querySelectorAll('.user-link');
@@ -578,7 +582,7 @@ function uploadFiles(files) {
 		var messageTime = dayjs.utc(data.created_at).local().fromNow(true) + " ago";
 		
 		
-		var avatar = app_url + '/static-image/avatar-05.jpg';
+		var avatarImg = app_url + '/static-image/avatar-05.jpg';
 		//alert(avatar);
 		
 		var chatClass = (data.sender_id == authUserId) ? 'chat-right' : 'chat-left';
@@ -595,28 +599,25 @@ function uploadFiles(files) {
 			}
 		}
 		
-		
+		var userImageUrl = app_url + '/static-image/avatar-05.jpg';
 		
 		var avatar = (data.sender_id != authUserId) ? 
-			'<div class="chat-avatar"><a href="#" class="avatar">'+ avatar +'<img src="${userImageUrl}" alt="User Image"></a></div>' 
+			'<div class="chat-avatar"><a href="#" class="avatar">'+ avatarImg +'<img src="' + userImageUrl + '" alt="User Image"></a></div>' 
 			: '';
-			
-		
-		
 			
 		//alert(data.message.message);
 		if(data.message != null)
 		{
-			//alert('ok');
-			var chatHTML = '<div class="chat '+ chatClass +'"><div class="chat-body"><div class="chat-bubble"><div class="chat-content" data-id="' + data.id + '"><p>' + (data.message ? '<p>' + data.message + '</p>' : '') + '</p> <span class="chat-time">' + messageTime + '</span></div>' + editdeleteDiv + '</div></div></div>';
+			var chatHTML = '<div class="chat '+ chatClass +'">'+ avatar +'<div class="chat-body"><div class="chat-bubble"><div class="chat-content" data-id="' + data.id + '"><p>' + (data.message ? '<p>' + data.message + '</p>' : '') + '</p> <span class="chat-time">' + messageTime + '</span></div>' + editdeleteDiv + '</div></div></div>';
 		}
 		
 		
 		if(data.files.length > 0)
 		{
-			//data.files.forEach(file => {
-				//filePath  = app_url +'/'+ file;
-				chatHTML += '<div class="chat '+ chatClass +'">';
+			//let imageGroup = "chat-gallery-" + Date.now();
+			let imageGroup = "chat-gallery"; 
+			
+			chatHTML += '<div class="chat '+ chatClass +'">';
 				chatHTML += '<div class="chat-body">';
 				chatHTML += '<div class="chat-bubble">';
 				chatHTML += '<div class="chat-content img-content" data-id="">';
@@ -624,7 +625,7 @@ function uploadFiles(files) {
 			data.files.forEach(file => {
 				filePath  = app_url +'/'+ file;	
 				if (/\.(jpg|jpeg|png|gif)$/i.test(file)) {
-					chatHTML += '<a class="chat-img-attach" href="#">';
+					chatHTML += '<a data-fancybox="' + imageGroup + '" class="chat-img-attach" href="' + filePath + '">';
 					chatHTML += '<img width="80" height="80" src="' + filePath + '" alt="Placeholder Image">';
 					chatHTML += '</a>';
 				}
@@ -655,18 +656,18 @@ function uploadFiles(files) {
 					chatHTML += '</div>';
 				}
 			});	
-				chatHTML += '</div>';
-				chatHTML += '<span class="chat-time">'+ messageTime +'</span>';
-				chatHTML += '</div>';
-				chatHTML += editdeleteDiv;
-				chatHTML += '</div>';
-				chatHTML += '</div>';
-				chatHTML += '</div>';
-			//});
 			
+			chatHTML += '</div>';
+			chatHTML += '<span class="chat-time">'+ messageTime +'</span>';
+			chatHTML += '</div>';
+			chatHTML += editdeleteDiv;
+			chatHTML += '</div>';
+			chatHTML += '</div>';
+			chatHTML += '</div>';
+			
+			$(".chat-container").append(chatHTML);
+			Fancybox.bind("[data-fancybox='chat-gallery']", {});
 		}
-		//alert(chatHTML);
-		
 		
 		//alert(chatHTML);
 		chatBox.append(chatHTML);
@@ -687,6 +688,11 @@ function uploadFiles(files) {
 		//console.log("Deleting message ID:", data.id);
 		$('.chat-content[data-id="' + data.id + '"]').closest('.chat').remove();
 	});
-
+    
+	
+	/*document.addEventListener("DOMContentLoaded", function() {
+		Fancybox.bind("[data-fancybox='chat-gallery']", {}); // Fixed group name
+		//Fancybox.bind("[data-fancybox]", {});
+	});	*/
 </script>
 @endsection
