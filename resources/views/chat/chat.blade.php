@@ -212,7 +212,7 @@ $messages2 = $messages;
 																}
 															@endphp
 															<div class="chat-file">
-																<a href="{{ $filePath }}" target="_blank" class="chat-file-link">
+																<a href="{{ route('file.download', ['filename' => basename($filePath)]) }}" class="chat-file-link">
 																	<i class="fa {{ $fileIcon }} fa-2x"></i>
 																</a>
 															</div>
@@ -291,7 +291,7 @@ $messages2 = $messages;
 																	}
 																@endphp	
 																<div class="chat-file">
-																	<a href="{{ $filePath }}" target="_blank" class="chat-file-link">
+																	<a href="{{ route('file.download', ['filename' => basename($filePath)]) }}" class="chat-file-link">
 																		<i class="fa {{ $fileIcon }} fa-2x"></i>
 																	</a>
 																</div>
