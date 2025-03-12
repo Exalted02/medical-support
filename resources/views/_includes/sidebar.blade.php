@@ -31,6 +31,7 @@
 					<ul style="{{ request()->routeIs('chat') ? 'display:block' : '' }}">
 						<li><a href="{{ route('chat') }}" class="{{ request()->routeIs('chat') ? 'active' : '' }}"><span>Assigned to me</span></a></li>
 						<li><a href="{{ route('shared-chat') }}" class="{{ request()->routeIs('shared-chat') ? 'active' : '' }}"><span>Shared with me</span></a></li>
+						<li><a href="{{ route('shared-inboxes') }}" class="{{ request()->routeIs('shared-inboxes') ? 'active' : '' }}"><span>Shared inboxes</span></a></li>
 					</ul>
 				</li>
 				{{--<li class="{{ request()->routeIs('chat') ? 'active' : '' }}">

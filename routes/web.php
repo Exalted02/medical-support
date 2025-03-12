@@ -94,6 +94,8 @@ Route::middleware('auth')->group(function () {
 	//Route::get('/chat/{receiverId}', [ChatController::class, 'chatPage'])->name('chat.page');
 	
 	Route::get('/shared-chat', [ChatController::class, 'shared_chat'])->name('shared-chat');
+	Route::get('/shared-inboxes', [GmailAuthController::class, 'getMessages'])->name('shared-inboxes');
+	Route::post('/send-reply', [GmailAuthController::class, 'sendReply'])->name('send.reply');
 	Route::get('/ticket-chat', [ChatController::class, 'ticket_chat'])->name('ticket-chat');
 	Route::post('/ticket-message-list', [ChatController::class, 'ticket_chat_list'])->name('ticket-message-list');
 	Route::post('/ticket-send-message', [ChatController::class, 'ticket_send_message'])->name('ticket-send-message');
