@@ -117,6 +117,7 @@ class ChatController extends Controller
 		$receiverEmail = '';
 		$receiverPhone = '';
 		$receiverDepartment = '';
+		$receiverDepartment = User::where('id',auth()->user()->id)->first()->department;
 		
 		$messages = collect();
 		
@@ -132,7 +133,7 @@ class ChatController extends Controller
 				->orderBy('id', 'asc')
 				->get();
 				
-			$chat_group_id = $messages[0]->chat_group_id;
+			$chat_group_id = $messages[0]->chat_group_id ?? null;
 			
 			$userData = User::where('id',$receiverId)->first();
 			$receiverName = $userData->name;
@@ -187,7 +188,43 @@ class ChatController extends Controller
 		}
 		else
 		{
-			$chatData = Manage_chat::where(function ($query) use ($request) {
+			$exists = Manage_chat::where(function ($query) {
+				$query->where('sender_id', auth()->id())
+					  ->orWhere('receiver_id', auth()->id());
+			})->exists();
+				
+			if($exists)
+			{
+				$receiver_id = $request->receiver_id;
+				$chatData = Manage_chat::where(function ($query) use ($request) {
+				$query->where('sender_id', auth()->id())
+					  ->where('receiver_id', $request->receiver_id);
+				})
+				->orWhere(function ($query) use ($request) {
+					$query->where('sender_id', $request->receiver_id)
+						  ->where('receiver_id', auth()->id());
+				})
+				->first();
+				
+			}
+			else
+			{
+				$receiver_id = assignChatReceiverId($request->department_id);
+				
+				$chatData = Manage_chat::where(function ($query) use ($receiver_id) {
+				$query->where('sender_id', auth()->id())
+					  ->where('receiver_id', $receiver_id);
+				})
+				->orWhere(function ($query) use ($receiver_id) {
+					$query->where('sender_id', $receiver_id)
+						  ->where('receiver_id', auth()->id());
+				})
+				->first();
+			}
+			
+			
+			
+			/*$chatData = Manage_chat::where(function ($query) use ($request) {
 				$query->where('sender_id', auth()->id())
 					  ->where('receiver_id', $request->receiver_id);
 			})
@@ -195,9 +232,9 @@ class ChatController extends Controller
 				$query->where('sender_id', $request->receiver_id)
 					  ->where('receiver_id', auth()->id());
 			})
-			->first();
+			->first();*/
 			
-			if(!empty($chatData->chat_group_id) || $chatData->chat_group_id!='')
+			if($chatData && !empty($chatData->chat_group_id))
 			{
 				$chat_group_id =  $chatData->chat_group_id;
 			}
@@ -205,23 +242,15 @@ class ChatController extends Controller
 			{
 				$chat_group_id = substr(sha1(mt_rand()),17,6);
 			}
-
-			$notexists = Manage_chat::where('sender_id', auth()->id())->doesntExist();		
-			if($notexists)
-			{
-				echo 'not exists';
-			}
-			else
-			{
-				echo 'exists';
-			}
+			
+			$userType = User::where('id',$receiver_id)->first()->user_type;
 			
 			$message = Manage_chat::create([
 				'source' => 0,
-				'user_type' => auth()->user()->user_type,
+				'user_type' => $userType,
 				'chat_group_id' => $chat_group_id,
 				'sender_id' => auth()->id(),
-				'receiver_id' => $request->receiver_id,
+				'receiver_id' => $receiver_id,
 				'message' => $request->message,
 				'is_read' => 1,
 				'created_at' => date('Y-m-d h:i:s'),

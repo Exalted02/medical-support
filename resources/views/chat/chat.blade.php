@@ -385,6 +385,7 @@ $(document).ready(function() {
 	//var authUserId = {!! json_encode(auth()->id()) !!};
 	$('#receiverId').val(receiverId);
 	 var receiverDept = {!! json_encode($receiverDepartment) !!};
+	 //alert(receiverId);
 	$('#receiver_department').val(receiverDept);
 	
 	$('.btn-custom').on('click', function () {
@@ -396,6 +397,7 @@ $(document).ready(function() {
 		//let URL = $(this).data('url');
 		let URL = "{{ route('send.message') }}";
 		var receiverId = $('#receiverId').val();
+		var department_id = $('#receiver_department').val();
 		
 		let files = $('#chat-files')[0].files;
 		$.each(files, function (index, file) {
@@ -405,6 +407,7 @@ $(document).ready(function() {
 		formData.append('message', message);
         formData.append('receiver_id', receiverId);
         formData.append('edit_id', edit_id);
+        formData.append('department_id', department_id);
         formData.append('_token', "{{ csrf_token() }}");
 		
 		//alert(receiverId);
