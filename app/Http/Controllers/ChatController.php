@@ -11,6 +11,7 @@ use App\Models\Manage_chat_file;
 use App\Events\MessageSent;
 use App\Events\MessageUpdated;
 use App\Events\MessageDeleted;
+use App\Models\User;
 
 class ChatController extends Controller
 {
@@ -104,13 +105,19 @@ class ChatController extends Controller
 			->groupBy(function ($message) {
 				return $message->sender_id == auth()->id() ? $message->receiver_id : $message->sender_id;
 			});
-
+			
 		if (!$receiverId && $chatUsers->isNotEmpty()) {
 			//\Log::info('Receiver ID was not found, setting to first user.');
 			$receiverId = $chatUsers->keys()->first();
+			
 		}
-
+		
 		$chat_group_id = '';
+		$receiverName = '';
+		$receiverEmail = '';
+		$receiverPhone = '';
+		$receiverDepartment = '';
+		
 		$messages = collect();
 		
 		if (!empty($receiverId)) {
@@ -126,9 +133,15 @@ class ChatController extends Controller
 				->get();
 				
 			$chat_group_id = $messages[0]->chat_group_id;
+			
+			$userData = User::where('id',$receiverId)->first();
+			$receiverName = $userData->name;
+			$receiverEmail = $userData->email;
+			$receiverPhone = $userData->phone_number;
+			$receiverDepartment = $userData->department;
 		}
-		
-		return view('chat.chat', compact('messages', 'chatUsers', 'receiverId','chat_group_id'));
+		//echo $receiverDepartment; die;
+		return view('chat.chat', compact('messages', 'chatUsers', 'receiverId','chat_group_id','receiverName','receiverEmail','receiverPhone','receiverDepartment'));
 	}
 
 	public function sendMessage(Request $request)
@@ -191,8 +204,18 @@ class ChatController extends Controller
 			else	
 			{
 				$chat_group_id = substr(sha1(mt_rand()),17,6);
-			}				
+			}
 
+			$notexists = Manage_chat::where('sender_id', auth()->id())->doesntExist();		
+			if($notexists)
+			{
+				echo 'not exists';
+			}
+			else
+			{
+				echo 'exists';
+			}
+			
 			$message = Manage_chat::create([
 				'source' => 0,
 				'user_type' => auth()->user()->user_type,
@@ -203,6 +226,7 @@ class ChatController extends Controller
 				'is_read' => 1,
 				'created_at' => date('Y-m-d h:i:s'),
 			]);
+			
 			
 			foreach($uploadedFiles as $file)
 			{

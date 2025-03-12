@@ -3,6 +3,7 @@
 <!-- Page Wrapper -->
 @php 
 //echo "<pre>";print_r($messages->toArray());die;
+//echo "<pre>";print_r($chatUsers->toArray());die;
 $messages2 = $messages;
 @endphp
 <div class="page-wrapper">
@@ -56,8 +57,8 @@ $messages2 = $messages;
 									</a>
 								</div>
 								<div class="user-info float-start">
-									<a href="profile.html" title="Mike Litorus"><span>Mike Litorus</span> {{--<i class="typing-text">Typing...</i>--}}</a>
-									{{--<span class="last-seen">Last seen today at 7:50 AM</span>--}}
+									<a href="profile.html" title="Mike Litorus"><span>{{ $receiverName ?? '' }}</span> {{--<i class="typing-text">Typing...</i>--}}</a>
+									<span class="last-seen">{{ $receiverEmail ?? '' }} {{ $receiverPhone ? '('.  $receiverPhone .')' : '' }}</span>
 								</div>
 							</div>
 							{{--<div class="search-box">
@@ -343,6 +344,7 @@ $messages2 = $messages;
 	</div>
 </div>
 <input type="hidden" id="receiverId">
+<input type="hidden" id="receiver_department">
 @endsection 
 @section('scripts')
 <script src="{{ url('front-assets/js/page/chat.js') }}"></script>
@@ -382,11 +384,11 @@ $(document).ready(function() {
     var receiverId = {!! json_encode($receiverId) !!};
 	//var authUserId = {!! json_encode(auth()->id()) !!};
 	$('#receiverId').val(receiverId);
-	//alert(receiverId);
-	//$(document).on('click','.send-button', function () {
+	 var receiverDept = {!! json_encode($receiverDepartment) !!};
+	$('#receiver_department').val(receiverDept);
+	
 	$('.btn-custom').on('click', function () {
-	//$('#chat-file-upload-form').on('submit', function (e) {
-		
+	
 		let formData = new FormData($('#chat-file-upload-form')[0]); // Get form data
 		
 		let message = $('#msg').val();
@@ -588,19 +590,8 @@ function getFileIcon(extension) {
 			data.files = []; // Ensure it is an empty array to avoid errors
 		}*/
 		
-		/*if(data.sender_id != receiver_id && data.sender_id != authUserId)
-		{
-			console.log("Message not for this chat. Ignoring.");
-			return;
-		}*/
-		
-		//if (data.sender_id == receiver_id  && data.receiver_id != authUserId && data.sender_id != authUserId)
-		
-	    //if (data.receiver_id != receiver_id  && data.receiver_id != authUserId && data.sender_id != data.receiver_id)
-		
 		if (data.chat_group_id != chat_group_id)
 		{
-			//console.log("Message not for this user. Ignoring.");
 			return;
 		}
 		
@@ -609,32 +600,14 @@ function getFileIcon(extension) {
 		var filePath = '';
 		var chatHTML = '';
 		// If files exist, append images or file links
-		
-		
-		
 		if(data.files || Array.isArray(data.files))
 		{
 			console.log("File lengthsss: ", data.files.length);
 			console.log("File namesss: ", data.files[0]);
 		}
 	
-        /*if (!data || !data.message) {
-            console.log("No message data received.");
-            return;
-        }
-		
-		if (!data || !data.message) return;
-		
-		if (data.receiver_id != authUserId && data.sender_id != authUserId) {
-			console.log("Message not for this user. Ignoring.");
-			return;
-		}*/
-		//alert(data.sender_id);
 		var messageTime = dayjs.utc(data.created_at).local().fromNow(true) + " ago";
 		
-		
-		var avatarImg = app_url + '/static-image/avatar-05.jpg';
-		//alert(avatar);
 		
 		var chatClass = (data.sender_id == authUserId) ? 'chat-right' : 'chat-left';
 		
@@ -650,13 +623,16 @@ function getFileIcon(extension) {
 			}
 		}
 		
-		var userImageUrl = app_url + '/static-image/avatar-05.jpg';
+		var userImageUrl = app_url + '/' + 'static-image/avatar-05.jpg';
 		
-		var avatar = (data.sender_id != authUserId) ? 
-			'<div class="chat-avatar"><a href="#" class="avatar">'+ avatarImg +'<img src="' + userImageUrl + '" alt="User Image"></a></div>' 
-			: '';
+		
+		var avatar = '';
+		if(chatClass=='chat-left')
+		{
+			avatar = '<div class="chat-avatar"><a href="#" class="avatar"><img src="' + userImageUrl + '" alt="User Image"></a></div>';
+		}
 			
-		//alert(data.message.message);
+		//alert(data.message.message); data.sender_id != authUserId
 		if(data.message != null)
 		{
 			var chatHTML = '<div class="chat '+ chatClass +'">'+ avatar +'<div class="chat-body"><div class="chat-bubble"><div class="chat-content" data-id="' + data.id + '"><p>' + (data.message ? '<p>' + data.message + '</p>' : '') + '</p> <span class="chat-time">' + data.created_at + '</span></div>' + editdeleteDiv + '</div></div></div>';
