@@ -377,6 +377,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 });
 
+let selectedFiles = [];
 $(document).ready(function() {
     var receiverId = {!! json_encode($receiverId) !!};
 	//var authUserId = {!! json_encode(auth()->id()) !!};
@@ -456,27 +457,11 @@ $(document).ready(function() {
 			});
 		//}
 		
-        /*if (message.trim() !== '') {
-            $.post(URL, {
-                data:formData
-            }, function () {
-                if (edit_id) {
-                // Update existing message in chat box
-                $('.chat-content[data-id="'+ edit_id +'"] p').text(message);
-                $('#edit_id').val(''); // Reset edit ID after update
-				} else {
-					// Append new message as usual
-					//chatBox.append(chatHTML);
-				}
-				$('#msg').val(''); // Clear input field
-				chatBox.scrollTop(chatBox.prop("scrollHeight"));
-            });
-        }*/
+        
     });
 	
-	let selectedFiles = [];
-
-    // Click on attach icon triggers file input
+	// file select code 
+	// Click on attach icon triggers file input
     $('#triggerFileUpload').on('click', function (e) {
         e.preventDefault();
         $('#chat-files').click();
@@ -484,35 +469,58 @@ $(document).ready(function() {
 
     // Handle file selection
 	$('#chat-files').on('change', function (e) {
-		selectedFiles = e.target.files;
-		$('#file-preview').html(""); // Clear previous previews
+		let files = Array.from(e.target.files); 
+		selectedFiles = selectedFiles.concat(files);
 
-		$.each(selectedFiles, function (index, file) {
-			let fileType = file.type.split('/')[0]; // Get file type (image, video, etc.)
-
-			if (fileType === 'image') {
-				let reader = new FileReader();
-				reader.onload = function (event) {
-					$('#file-preview').append(
-						'<div class="file-item">' +
-							'<img src="' + event.target.result + '" class="file-preview-img">' +
-						'</div>'
-					);
-				};
-				reader.readAsDataURL(file);
-			}
-		});
-
-		uploadFiles(selectedFiles);
+		updateFilePreview();
+		updateFileInput();
 	});
-    
+
+	// Remove file on clicking cross icon
+	$(document).on('click', '.remove-file', function () {
+		let index = $(this).parent('.file-item').data('index');
+		selectedFiles.splice(index, 1);
+		$(this).parent('.file-item').remove();
+
+		updateFileIndexes();
+		updateFileInput();
+	});
 });
+
+function updateFileIndexes() {
+    $('.file-item').each(function (index) {
+        $(this).attr('data-index', index);
+    });
+}
+
 function uploadFiles(files) {
 	let formData = new FormData();
 	formData.append("_token", "{{ csrf_token() }}");
-	$.each(files, function (index, file) {
-		formData.append("files[]", file);
-	});
+	files.forEach((file) => {
+        formData.append("files[]", file);
+    });
+}
+
+function updateFilePreview() {
+    $('#file-preview').html(""); // Clear existing preview
+
+    selectedFiles.forEach((file, index) => {
+        let reader = new FileReader();
+        reader.onload = function (event) {
+            $('#file-preview').append('<div class="file-item" data-index="'+ index +'"><span class="remove-file">&times;</span><img src="' + event.target.result + '" class="file-preview-img"></div>'
+            );
+        };
+        reader.readAsDataURL(file);
+    });
+}
+function updateFileInput() {
+    let dataTransfer = new DataTransfer();
+
+    selectedFiles.forEach((file) => {
+        dataTransfer.items.add(file);
+    });
+
+    $('#chat-files')[0].files = dataTransfer.files; // Update input files
 }
 </script>
 
