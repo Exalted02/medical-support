@@ -11,6 +11,8 @@ class Manage_chat_file extends Model
 	protected $table = 'manage_chat_files';
 	protected $fillable = [
         'manage_chat_id',
+        'chat_group_id',
+        'file_type',
         'file_name',
     ];
 	

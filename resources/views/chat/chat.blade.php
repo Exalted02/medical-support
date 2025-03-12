@@ -148,6 +148,10 @@ $messages2 = $messages;
 									<div class="chats" id="chat-messages">
 										
 										@foreach ($messages2 as $message)
+										
+										@php 
+										  $fileData = App\Models\Manage_chat_file::where('manage_chat_id', $message->id)->get();
+										@endphp
 										@if($message->sender_id == auth()->id())
 											<div class="chat chat-right">
 												@if ($message->sender_id != auth()->id())
@@ -157,6 +161,8 @@ $messages2 = $messages;
 														</a>
 													</div>
 												@endif
+												
+												@if(!empty($message->message))
 												<div class="chat-body">
 													<div class="chat-bubble">
 														<div class="chat-content" data-id="{{ $message->id}}">
@@ -171,6 +177,59 @@ $messages2 = $messages;
 														</div>
 													</div>
 												</div>
+												@else 
+												<div class="chat-body">	
+													<div class="chat-bubble">
+														<div class="chat-content img-content">
+															<div class="chat-img-group clearfix">
+															@foreach($fileData as $files)
+															
+															@php
+																$filePath = url($files->file_name);
+																$fileExtension = pathinfo($files->file_name, PATHINFO_EXTENSION);
+															@endphp
+															
+															@if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
+																<a class="chat-img-attach" href="#">
+																	<img width="80" height="80" src="{{ url( $files->file_name) }}">
+																</a>
+															@else 
+																@php
+																$fileIcon = "fa-file"; // Default icon
+
+																if (in_array($fileExtension, ['pdf'])) {
+																	$fileIcon = "fa-file-pdf text-danger"; // PDF (red)
+																} elseif (in_array($fileExtension, ['doc', 'docx'])) {
+																	$fileIcon = "fa-file-word text-primary"; // Word (blue)
+																} elseif (in_array($fileExtension, ['xls', 'xlsx'])) {
+																	$fileIcon = "fa-file-excel text-success"; // Excel (green)
+																} elseif (in_array($fileExtension, ['ppt', 'pptx'])) {
+																	$fileIcon = "fa-file-powerpoint text-warning"; // PowerPoint (orange)
+																} elseif (in_array($fileExtension, ['zip', 'rar'])) {
+																	$fileIcon = "fa-file-archive text-muted"; // Compressed file
+																} elseif (in_array($fileExtension, ['txt'])) {
+																	$fileIcon = "fa-file-alt text-secondary"; // Text file
+																}
+															@endphp
+															<div class="chat-file">
+																<a href="{{ route('file.download', ['filename' => basename($filePath)]) }}" class="chat-file-link">
+																	<i class="fa {{ $fileIcon }} fa-2x"></i>
+																</a>
+															</div>
+															
+															@endif
+															@endforeach
+															</div>
+															<span class="chat-time">{{ \Carbon\Carbon::parse($message->created_at)->diffForHumans() }}</span>
+														</div>
+														<div class="chat-action-btns">
+															<ul>
+																<li><a href="javascript:void(0);" class="del-msg" data-id="{{ $message->id}}" data-url="{{ route('message.delete')}}"><i class="fa-regular fa-trash-can"></i></a></li>
+															</ul>
+														</div>
+													</div>
+												</div>
+												@endif
 											</div>
 											@else
 												<div class="chat chat-left">
@@ -181,6 +240,7 @@ $messages2 = $messages;
 														</a>
 													</div>
 												@endif
+												@if(!empty($message->message))
 												<div class="chat-body">
 													<div class="chat-bubble">
 														<div class="chat-content">
@@ -195,6 +255,55 @@ $messages2 = $messages;
 														</div>--}}
 													</div>
 												</div>
+												@else 
+													
+												<div class="chat-body">	
+													<div class="chat-bubble">
+														<div class="chat-content img-content">
+															<div class="chat-img-group clearfix">
+															@foreach($fileData as $files)
+															
+															@php
+																$filePath = url($files->file_name);
+																$fileExtension = pathinfo($files->file_name, PATHINFO_EXTENSION);
+															@endphp
+															
+															@if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
+																<a class="chat-img-attach" href="#">
+																	<img width="80" height="80" src="{{ url( $files->file_name) }}">
+																</a>
+																@else 
+																@php
+																	$fileIcon = "fa-file"; // Default icon
+
+																	if (in_array($fileExtension, ['pdf'])) {
+																		$fileIcon = "fa-file-pdf text-danger"; // PDF (red)
+																	} elseif (in_array($fileExtension, ['doc', 'docx'])) {
+																		$fileIcon = "fa-file-word text-primary"; // Word (blue)
+																	} elseif (in_array($fileExtension, ['xls', 'xlsx'])) {
+																		$fileIcon = "fa-file-excel text-success"; // Excel (green)
+																	} elseif (in_array($fileExtension, ['ppt', 'pptx'])) {
+																		$fileIcon = "fa-file-powerpoint text-warning"; // PowerPoint (orange)
+																	} elseif (in_array($fileExtension, ['zip', 'rar'])) {
+																		$fileIcon = "fa-file-archive text-muted"; // Compressed file
+																	} elseif (in_array($fileExtension, ['txt'])) {
+																		$fileIcon = "fa-file-alt text-secondary"; // Text file
+																	}
+																@endphp	
+																<div class="chat-file">
+																	<a href="{{ route('file.download', ['filename' => basename($filePath)]) }}" class="chat-file-link">
+																		<i class="fa {{ $fileIcon }} fa-2x"></i>
+																	</a>
+																</div>
+																@endif
+																@endforeach
+															</div>
+															<span class="chat-time">{{ \Carbon\Carbon::parse($message->created_at)->diffForHumans() }}</span>
+														</div>
+													</div>
+												</div>
+												@endif
+												
 											</div>
 											@endif
 										@endforeach
@@ -242,6 +351,10 @@ $messages2 = $messages;
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.9/plugin/utc.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css">
+<!-- Fancybox JS -->
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -402,7 +515,11 @@ function uploadFiles(files) {
 	});
 }
 </script>
+
 <script>
+	var receiver_id = {!! json_encode($receiverId) !!};
+	var chat_group_id = {!! json_encode($chat_group_id) !!};
+	//alert(chat_group_id);
 	dayjs.extend(dayjs_plugin_utc);
 	dayjs.extend(dayjs_plugin_relativeTime);
 	//var pusherKey = "{{ env('PUSHER_APP_KEY') }}";
@@ -424,32 +541,37 @@ function uploadFiles(files) {
 			data.files = []; // Ensure it is an empty array to avoid errors
 		}*/
 		
+		/*if(data.sender_id != receiver_id && data.sender_id != authUserId)
+		{
+			console.log("Message not for this chat. Ignoring.");
+			return;
+		}*/
+		
+		//if (data.sender_id == receiver_id  && data.receiver_id != authUserId && data.sender_id != authUserId)
+		
+	    //if (data.receiver_id != receiver_id  && data.receiver_id != authUserId && data.sender_id != data.receiver_id)
+		
+		if (data.chat_group_id != chat_group_id)
+		{
+			console.log("Message not for this user. Ignoring.");
+			return;
+		}
+		
 		var app_url =  "{{ env('APP_URL') }}";
 		var fileHTML = '';
 		var filePath = '';
+		var chatHTML = '';
 		// If files exist, append images or file links
-		if (data.files && data.files.length > 0) {
-			console.log("this is a file loop");
-			data.files.forEach(file => {
-				filePath  = app_url + '/ '+ file;
-				//fileHTML += '<img src="' + file + '" class="chat-image-preview">';
-				if (/\.(jpg|jpeg|png|gif)$/i.test(file)) {
-					 alert(filePath);
-					fileHTML += '<img src="' + filePath + '" class="chat-image-preview">';
-				} else {
-					fileHTML += '<a href="'+ filePath +'" target="_blank" class="chat-file-link">📎 Download File</a>';
-				}
-			});
-		}
+		
+		
 		
 		if(data.files || Array.isArray(data.files))
 		{
-			console.log("File length: ", data.files.length);
-			console.log("File name: ", data.files[0]);
+			console.log("File lengthsss: ", data.files.length);
+			console.log("File namesss: ", data.files[0]);
 		}
 	
-	
-        if (!data || !data.message) {
+        /*if (!data || !data.message) {
             console.log("No message data received.");
             return;
         }
@@ -459,12 +581,12 @@ function uploadFiles(files) {
 		if (data.receiver_id != authUserId && data.sender_id != authUserId) {
 			console.log("Message not for this user. Ignoring.");
 			return;
-		}
+		}*/
 		//alert(data.sender_id);
 		var messageTime = dayjs.utc(data.created_at).local().fromNow(true) + " ago";
 		
 		
-		var avatar = app_url + '/static-image/avatar-05.jpg';
+		var avatarImg = app_url + '/static-image/avatar-05.jpg';
 		//alert(avatar);
 		
 		var chatClass = (data.sender_id == authUserId) ? 'chat-right' : 'chat-left';
@@ -472,19 +594,86 @@ function uploadFiles(files) {
 		var editdeleteDiv = '';
 		if(chatClass=='chat-right')
 		{
-			editdeleteDiv ='<div class="chat-action-btns"><ul><li><a href="javascropt:void(0);" class="edit-msg update-msg" data-id="'+ data.id +'" data-sender="'+ data.sender_id+'" data-receiver="'+ data.receiver_id +'" data-msg="'+ data.message +'"><i class="fa-solid fa-pencil"></i></a></li><li><a href="javascript:void(0);" class="del-msg"  data-id="'+ data.id +'" data-url="{{ route('message.delete')}}"><i class="fa-regular fa-trash-can"></i></a></li></ul></div>';
+			if(data.files.length > 0)
+			{
+				editdeleteDiv ='<div class="chat-action-btns"><ul><li></li><li><a href="javascript:void(0);" class="del-msg"  data-id="'+ data.id +'" data-url="{{ route('message.delete')}}"><i class="fa-regular fa-trash-can"></i></a></li></ul></div>';
+			}
+			else{
+			  editdeleteDiv ='<div class="chat-action-btns"><ul><li><a href="javascropt:void(0);" class="edit-msg update-msg" data-id="'+ data.id +'" data-sender="'+ data.sender_id+'" data-receiver="'+ data.receiver_id +'" data-msg="'+ data.message +'"><i class="fa-solid fa-pencil"></i></a></li><li><a href="javascript:void(0);" class="del-msg"  data-id="'+ data.id +'" data-url="{{ route('message.delete')}}"><i class="fa-regular fa-trash-can"></i></a></li></ul></div>';
+			}
 		}
 		
+		var userImageUrl = app_url + '/static-image/avatar-05.jpg';
+		
 		var avatar = (data.sender_id != authUserId) ? 
-			'<div class="chat-avatar"><a href="#" class="avatar">'+ avatar +'<img src="${userImageUrl}" alt="User Image"></a></div>' 
+			'<div class="chat-avatar"><a href="#" class="avatar">'+ avatarImg +'<img src="' + userImageUrl + '" alt="User Image"></a></div>' 
 			: '';
 			
-		
-		
-			
 		//alert(data.message.message);
-		var chatHTML = '<div class="chat '+ chatClass +'"><div class="chat-body"><div class="chat-bubble"><div class="chat-content" data-id="' + data.id + '"><p>' + (data.message ? '<p>' + data.message + '</p>' : '') + '</p> '+  fileHTML + '<span class="chat-time">' + messageTime + '</span></div>' + editdeleteDiv + '</div></div></div>';
+		if(data.message != null)
+		{
+			var chatHTML = '<div class="chat '+ chatClass +'">'+ avatar +'<div class="chat-body"><div class="chat-bubble"><div class="chat-content" data-id="' + data.id + '"><p>' + (data.message ? '<p>' + data.message + '</p>' : '') + '</p> <span class="chat-time">' + messageTime + '</span></div>' + editdeleteDiv + '</div></div></div>';
+		}
+		
+		
+		if(data.files.length > 0)
+		{
+			//let imageGroup = "chat-gallery-" + Date.now();
+			let imageGroup = "chat-gallery"; 
+			
+			chatHTML += '<div class="chat '+ chatClass +'">';
+				chatHTML += '<div class="chat-body">';
+				chatHTML += '<div class="chat-bubble">';
+				chatHTML += '<div class="chat-content img-content" data-id="">';
+				chatHTML += '<div class="chat-img-group clearfix">';
+			data.files.forEach(file => {
+				filePath  = app_url +'/'+ file;	
+				if (/\.(jpg|jpeg|png|gif)$/i.test(file)) {
+					chatHTML += '<a data-fancybox="' + imageGroup + '" class="chat-img-attach" href="' + filePath + '">';
+					chatHTML += '<img width="80" height="80" src="' + filePath + '" alt="Placeholder Image">';
+					chatHTML += '</a>';
+				}
+				else {
+					
+					let fileIcon = "fa-file"; // Default generic file icon
 
+					// Check for specific file types and assign appropriate icons
+					if (/\.(pdf)$/i.test(file)) {
+						fileIcon = "fa-file-pdf text-danger"; // PDF icon (red)
+					} else if (/\.(doc|docx)$/i.test(file)) {
+						fileIcon = "fa-file-word text-primary"; // Word file icon (blue)
+					} else if (/\.(xls|xlsx)$/i.test(file)) {
+						fileIcon = "fa-file-excel text-success"; // Excel file icon (green)
+					} else if (/\.(ppt|pptx)$/i.test(file)) {
+						fileIcon = "fa-file-powerpoint text-warning"; // PowerPoint icon (orange)
+					} else if (/\.(zip|rar)$/i.test(file)) {
+						fileIcon = "fa-file-archive text-muted"; // Compressed file icon
+					} else if (/\.(txt)$/i.test(file)) {
+						fileIcon = "fa-file-alt text-secondary"; // Text file icon
+					}
+					
+					// If the file is not an image (e.g., PDF, DOC)
+					chatHTML += '<div class="chat-file">';
+					chatHTML += '<a href="' + filePath + '" target="_blank" class="chat-file-link">';
+					chatHTML += '<i class="fa ' + fileIcon + ' fa-2x"></i>';
+					chatHTML += '</a>';
+					chatHTML += '</div>';
+				}
+			});	
+			
+			chatHTML += '</div>';
+			chatHTML += '<span class="chat-time">'+ messageTime +'</span>';
+			chatHTML += '</div>';
+			chatHTML += editdeleteDiv;
+			chatHTML += '</div>';
+			chatHTML += '</div>';
+			chatHTML += '</div>';
+			
+			$(".chat-container").append(chatHTML);
+			Fancybox.bind("[data-fancybox='chat-gallery']", {});
+		}
+		
+		//alert(chatHTML);
 		chatBox.append(chatHTML);
 		chatBox.scrollTop(chatBox.prop("scrollHeight"));
 	});
@@ -503,6 +692,11 @@ function uploadFiles(files) {
 		//console.log("Deleting message ID:", data.id);
 		$('.chat-content[data-id="' + data.id + '"]').closest('.chat').remove();
 	});
-
+    
+	
+	/*document.addEventListener("DOMContentLoaded", function() {
+		Fancybox.bind("[data-fancybox='chat-gallery']", {}); // Fixed group name
+		//Fancybox.bind("[data-fancybox]", {});
+	});	*/
 </script>
 @endsection

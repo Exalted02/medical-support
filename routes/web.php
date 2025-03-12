@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\RegisteredUserController;
 
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\GmailAuthController;
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -57,6 +58,16 @@ Route::get('/auth/google', [GmailAuthController::class, 'redirectToGoogle'])->na
 Route::get('/auth/callback', [GmailAuthController::class, 'handleGoogleCallback']);
 // Route::get('/gmail/messages', [GmailAuthController::class, 'getMessages'])->name('gmail.messages');
 Route::get('/gmail/inbox', [GmailAuthController::class, 'getMessages'])->name('gmail.inbox');
+
+Route::get('/download/{filename}', function ($filename) {
+    $filePath = public_path('uploads/chat-files/' . $filename);
+
+    if (file_exists($filePath)) {
+        return response()->download($filePath);
+    } else {
+        abort(404);
+    }
+})->name('file.download');
 
 
 Route::get('/', [ProfileController::class, 'welcome']);
