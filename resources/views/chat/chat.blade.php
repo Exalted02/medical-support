@@ -502,47 +502,7 @@ function uploadFiles(files) {
 }
 
 
-/*function updateFilePreview() {
-    $('#file-preview').html(""); // Clear existing preview
 
-    selectedFiles.forEach((file, index) => {
-        let fileType = file.type.split('/')[0]; // Get file type (image, video, application, etc.)
-        let fileExtension = file.name.split('.').pop().toLowerCase();
-        let filePreviewHTML = '';
-
-        if (fileType === 'image') {
-            let reader = new FileReader();
-            reader.onload = function (event) {
-                filePreviewHTML = '<div class="file-item" data-index="' +index + '"><span class="remove-file">&times;</span><img src="'+ event.target.result +'" class="file-preview-img"><span class="file-name">' + file.name + '</span></div>';
-                $('#file-preview').append(filePreviewHTML);
-            };
-            reader.readAsDataURL(file);
-        } 
-		else if (fileExtension === 'pdf') {
-            let reader = new FileReader();
-            reader.onload = function (event) {
-                filePreviewHTML = '<div class="file-item" data-index="' + index + '"><span class="remove-file">&times;</span><embed src="' + event.target.result + '" type="application/pdf" class="file-preview-pdf"><span class="file-name">' + file.name + '</span></div>';
-                $('#file-preview').append(filePreviewHTML);
-            };
-            reader.readAsDataURL(file);
-        } 
-		else if (['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(fileExtension)) 
-		{
-            let googleViewerUrl = 'https://docs.google.com/gview?url=' +URL.createObjectURL(file) + '&embedded=true';
-			filePreviewHTML ='<div class="file-item" data-index="' + index + '"><span class="remove-file">&times;</span><iframe src="' + googleViewerUrl + '" class="file-preview-doc"></iframe><span class="file-name">' + file.name + '</span></div>';
-            $('#file-preview').append(filePreviewHTML);
-        }
-		else 
-		{
-            let reader = new FileReader();
-            reader.onload = function (event) {
-                filePreviewHTML = '<div class="file-item" data-index="' + index + '"><span class="remove-file">&times;</span><object data="' + event.target.result + '" class="file-preview-other"></object><span class="file-name">' + file.name + '</span></div>';
-                $('#file-preview').append(filePreviewHTML);
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-}*/
 function updateFilePreview() {
     $('#file-preview').html(""); // Clear existing preview
 
@@ -699,7 +659,7 @@ function getFileIcon(extension) {
 		//alert(data.message.message);
 		if(data.message != null)
 		{
-			var chatHTML = '<div class="chat '+ chatClass +'">'+ avatar +'<div class="chat-body"><div class="chat-bubble"><div class="chat-content" data-id="' + data.id + '"><p>' + (data.message ? '<p>' + data.message + '</p>' : '') + '</p> <span class="chat-time">' + messageTime + '</span></div>' + editdeleteDiv + '</div></div></div>';
+			var chatHTML = '<div class="chat '+ chatClass +'">'+ avatar +'<div class="chat-body"><div class="chat-bubble"><div class="chat-content" data-id="' + data.id + '"><p>' + (data.message ? '<p>' + data.message + '</p>' : '') + '</p> <span class="chat-time">' + data.created_at + '</span></div>' + editdeleteDiv + '</div></div></div>';
 		}
 		
 		
@@ -749,7 +709,7 @@ function getFileIcon(extension) {
 			});	
 			
 			chatHTML += '</div>';
-			chatHTML += '<span class="chat-time">'+ messageTime +'</span>';
+			chatHTML += '<span class="chat-time">'+ data.created_at +'</span>';
 			chatHTML += '</div>';
 			chatHTML += editdeleteDiv;
 			chatHTML += '</div>';
