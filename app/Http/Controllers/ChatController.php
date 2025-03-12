@@ -206,8 +206,17 @@ class ChatController extends Controller
 			
 			foreach($uploadedFiles as $file)
 			{
+				$file_type = 0;
+				$extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+				if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'])) {
+					//echo "Image file: " . $file->getClientOriginalName();
+					$file_type = 1;
+				}
+				
 				$files = Manage_chat_file::create([
 					'manage_chat_id' => $message->id,
+					'chat_group_id' => $message->chat_group_id,
+					'file_type' => $file_type,
 					'file_name' => $file,
 					'created_at' => date('Y-m-d h:i:s'),
 				]);
