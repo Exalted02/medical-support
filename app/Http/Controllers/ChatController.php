@@ -239,10 +239,23 @@ class ChatController extends Controller
     
 		if ($message) {
 			$message->delete();
+			
+			$file_data = Manage_chat_file::where('manage_chat_id',$request->id)->get();
+			foreach($file_data as $files)
+			{
+				// unlink the image from folder
+				$file_path = public_path($files->file_name);
+				//echo $file_path;die;
+				if (file_exists($file_path)) {
+					unlink($file_path);
+				}
+			}
+			
+			Manage_chat_file::where('manage_chat_id',$request->id)->delete();
 
 			broadcast(new MessageDeleted($request->id))->toOthers();
 
-			return response()->json(['success' => true, 'message' => 'Message deleted successfully.']);
+			return response()->json(['success' => true, 'message' => 'Message deleted success-fully.']);
 		}
 
 		return response()->json(['success' => false, 'message' => 'Message not found.'], 404);

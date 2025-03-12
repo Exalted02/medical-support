@@ -165,14 +165,14 @@ $messages2 = $messages;
 												@if(!empty($message->message))
 												<div class="chat-body">
 													<div class="chat-bubble">
-														<div class="chat-content" data-id="{{ $message->id}}">
+														<div class="chat-content chat-text-section" data-id="{{ $message->id}}">
 															<p>{{ $message->message }}</p>
 															<span class="chat-time">{{ \Carbon\Carbon::parse($message->created_at)->diffForHumans() }}</span>
 														</div>
 														<div class="chat-action-btns">
 															<ul>
 																<li><a href="javascript:void(0);" class="edit-msg update-msg" data-id="{{ $message->id }}" data-sender="{{ $message->sender_id }}" data-receiver="{{ $message->receiver_id  }}" data-msg="{{   $message->message }}"><i class="fa-solid fa-pencil"></i></a></li>
-																<li><a href="javascript:void(0);" class="del-msg" data-id="{{ $message->id}}" data-url="{{ route('message.delete')}}"><i class="fa-regular fa-trash-can"></i></a></li>
+																<li><a href="javascript:void(0);" class="del-msg" data-id="{{ $message->id}}" data-url="{{ route('message.delete')}}" data-classname="chat-text-section"><i class="fa-regular fa-trash-can"></i></a></li>
 															</ul>
 														</div>
 													</div>
@@ -180,7 +180,7 @@ $messages2 = $messages;
 												@else 
 												<div class="chat-body">	
 													<div class="chat-bubble">
-														<div class="chat-content img-content">
+														<div class="chat-content img-content chat-file-section" data-id="{{ $message->id}}">
 															<div class="chat-img-group clearfix">
 															@foreach($fileData as $files)
 															
@@ -224,7 +224,7 @@ $messages2 = $messages;
 														</div>
 														<div class="chat-action-btns">
 															<ul>
-																<li><a href="javascript:void(0);" class="del-msg" data-id="{{ $message->id}}" data-url="{{ route('message.delete')}}"><i class="fa-regular fa-trash-can"></i></a></li>
+																<li><a href="javascript:void(0);" class="del-msg" data-id="{{ $message->id}}" data-url="{{ route('message.delete')}}" data-classname="chat-file-section"><i class="fa-regular fa-trash-can"></i></a></li>
 															</ul>
 														</div>
 													</div>
