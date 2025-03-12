@@ -110,7 +110,7 @@ class ChatController extends Controller
 			$receiverId = $chatUsers->keys()->first();
 		}
 
-		
+		$chat_group_id = '';
 		$messages = collect();
 		
 		if (!empty($receiverId)) {
@@ -124,9 +124,11 @@ class ChatController extends Controller
 				})
 				->orderBy('id', 'asc')
 				->get();
+				
+			$chat_group_id = $messages[0]->chat_group_id;
 		}
-
-		return view('chat.chat', compact('messages', 'chatUsers', 'receiverId'));
+		
+		return view('chat.chat', compact('messages', 'chatUsers', 'receiverId','chat_group_id'));
 	}
 
 	public function sendMessage(Request $request)
@@ -160,7 +162,7 @@ class ChatController extends Controller
 			}
 		}
 		
-		$chat_group_id = substr(sha1(mt_rand()),17,6);
+		//$chat_group_id = substr(sha1(mt_rand()),17,6);
 		$edit_id = $request->edit_id;
 		if($edit_id!='')
 		{
@@ -172,10 +174,28 @@ class ChatController extends Controller
 		}
 		else
 		{
+			$chatData = Manage_chat::where(function ($query) use ($request) {
+				$query->where('sender_id', auth()->id())
+					  ->where('receiver_id', $request->receiver_id);
+			})
+			->orWhere(function ($query) use ($request) {
+				$query->where('sender_id', $request->receiver_id)
+					  ->where('receiver_id', auth()->id());
+			})
+			->first();
+			
+			if(!empty($chatData->chat_group_id) || $chatData->chat_group_id!='')
+			{
+				$chat_group_id =  $chatData->chat_group_id;
+			}
+			else	
+			{
+				$chat_group_id = substr(sha1(mt_rand()),17,6);
+			}				
 
 			$message = Manage_chat::create([
 				'source' => 0,
-				'user_type' => 1,
+				'user_type' => auth()->user()->user_type,
 				'chat_group_id' => $chat_group_id,
 				'sender_id' => auth()->id(),
 				'receiver_id' => $request->receiver_id,

@@ -518,6 +518,8 @@ function uploadFiles(files) {
 
 <script>
 	var receiver_id = {!! json_encode($receiverId) !!};
+	var chat_group_id = {!! json_encode($chat_group_id) !!};
+	//alert(chat_group_id);
 	dayjs.extend(dayjs_plugin_utc);
 	dayjs.extend(dayjs_plugin_relativeTime);
 	//var pusherKey = "{{ env('PUSHER_APP_KEY') }}";
@@ -547,7 +549,9 @@ function uploadFiles(files) {
 		
 		//if (data.sender_id == receiver_id  && data.receiver_id != authUserId && data.sender_id != authUserId)
 		
-	    if (data.receiver_id != receiver_id  && data.receiver_id != authUserId && data.sender_id != data.receiver_id)
+	    //if (data.receiver_id != receiver_id  && data.receiver_id != authUserId && data.sender_id != data.receiver_id)
+		
+		if (data.chat_group_id != chat_group_id)
 		{
 			console.log("Message not for this user. Ignoring.");
 			return;
