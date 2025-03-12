@@ -501,16 +501,77 @@ function uploadFiles(files) {
     });
 }
 
+
+/*function updateFilePreview() {
+    $('#file-preview').html(""); // Clear existing preview
+
+    selectedFiles.forEach((file, index) => {
+        let fileType = file.type.split('/')[0]; // Get file type (image, video, application, etc.)
+        let fileExtension = file.name.split('.').pop().toLowerCase();
+        let filePreviewHTML = '';
+
+        if (fileType === 'image') {
+            let reader = new FileReader();
+            reader.onload = function (event) {
+                filePreviewHTML = '<div class="file-item" data-index="' +index + '"><span class="remove-file">&times;</span><img src="'+ event.target.result +'" class="file-preview-img"><span class="file-name">' + file.name + '</span></div>';
+                $('#file-preview').append(filePreviewHTML);
+            };
+            reader.readAsDataURL(file);
+        } 
+		else if (fileExtension === 'pdf') {
+            let reader = new FileReader();
+            reader.onload = function (event) {
+                filePreviewHTML = '<div class="file-item" data-index="' + index + '"><span class="remove-file">&times;</span><embed src="' + event.target.result + '" type="application/pdf" class="file-preview-pdf"><span class="file-name">' + file.name + '</span></div>';
+                $('#file-preview').append(filePreviewHTML);
+            };
+            reader.readAsDataURL(file);
+        } 
+		else if (['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(fileExtension)) 
+		{
+            let googleViewerUrl = 'https://docs.google.com/gview?url=' +URL.createObjectURL(file) + '&embedded=true';
+			filePreviewHTML ='<div class="file-item" data-index="' + index + '"><span class="remove-file">&times;</span><iframe src="' + googleViewerUrl + '" class="file-preview-doc"></iframe><span class="file-name">' + file.name + '</span></div>';
+            $('#file-preview').append(filePreviewHTML);
+        }
+		else 
+		{
+            let reader = new FileReader();
+            reader.onload = function (event) {
+                filePreviewHTML = '<div class="file-item" data-index="' + index + '"><span class="remove-file">&times;</span><object data="' + event.target.result + '" class="file-preview-other"></object><span class="file-name">' + file.name + '</span></div>';
+                $('#file-preview').append(filePreviewHTML);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}*/
 function updateFilePreview() {
     $('#file-preview').html(""); // Clear existing preview
 
     selectedFiles.forEach((file, index) => {
-        let reader = new FileReader();
+		
+		let fileType = file.type.split('/')[0];
+		let fileExtension = file.name.split('.').pop().toLowerCase();
+		let filePreviewHTML = '';
+		
+        /*let reader = new FileReader();
         reader.onload = function (event) {
             $('#file-preview').append('<div class="file-item" data-index="'+ index +'"><span class="remove-file">&times;</span><img src="' + event.target.result + '" class="file-preview-img"></div>'
             );
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file);*/
+		
+		if (fileType === 'image') {
+			let reader = new FileReader();
+			reader.onload = function (event) {
+				filePreviewHTML = '<div class="file-item" data-index="' +index +'"><span class="remove-file">&times;</span><img src="' + event.target.result +'" class="file-preview-img"></div>';
+				$('#file-preview').append(filePreviewHTML);
+			};
+			reader.readAsDataURL(file);
+        } else {
+          
+            let fileIcon = getFileIcon(fileExtension);
+            filePreviewHTML = '<div class="file-item" data-index="' + index +'"><span class="remove-file">&times;</span><div class="file-placeholder">' + fileIcon + '</div><span class="file-name">' + file.name + '</span></div>';
+            $('#file-preview').append(filePreviewHTML);
+        }
     });
 }
 function updateFileInput() {
@@ -521,6 +582,24 @@ function updateFileInput() {
     });
 
     $('#chat-files')[0].files = dataTransfer.files; // Update input files
+}
+function getFileIcon(extension) {
+    let icons = {
+        'pdf': '📕',    // PDF icon
+        'doc': '📄',    // Word icon
+        'docx': '📄',
+        'xls': '📊',    // Excel icon
+        'xlsx': '📊',
+        'ppt': '📽',    // PowerPoint icon
+        'pptx': '📽',
+        'txt': '📜',    // Text file icon
+        'zip': '📦',    // ZIP file icon
+        'rar': '📦',
+        'mp4': '🎥',    // Video file icon
+        'mp3': '🎵'     // Audio file icon
+    };
+
+    return icons[extension] || '📁'; // Default file icon
 }
 </script>
 
