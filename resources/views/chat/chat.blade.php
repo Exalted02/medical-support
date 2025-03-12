@@ -190,12 +190,12 @@ $messages2 = $messages;
 															@endphp
 															
 															@if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
-																<a class="chat-img-attach" href="#">
+																<a class="chat-img-attach" data-fancybox="chat-gallery" href="{{ url($files->file_name) }}">
 																	<img width="80" height="80" src="{{ url( $files->file_name) }}">
 																</a>
 															@else 
 																@php
-																$fileIcon = "fa-file"; // Default icon
+																$fileIcon = "fa-file"; 
 
 																if (in_array($fileExtension, ['pdf'])) {
 																	$fileIcon = "fa-file-pdf text-danger"; // PDF (red)
@@ -269,7 +269,7 @@ $messages2 = $messages;
 															@endphp
 															
 															@if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
-																<a class="chat-img-attach" href="#">
+																<a class="chat-img-attach" data-fancybox="chat-gallery" href="{{ url($files->file_name) }}">
 																	<img width="80" height="80" src="{{ url( $files->file_name) }}">
 																</a>
 																@else 
@@ -553,7 +553,7 @@ function uploadFiles(files) {
 		
 		if (data.chat_group_id != chat_group_id)
 		{
-			console.log("Message not for this user. Ignoring.");
+			//console.log("Message not for this user. Ignoring.");
 			return;
 		}
 		
