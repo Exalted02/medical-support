@@ -59,11 +59,4 @@ class MessageSent implements ShouldBroadcastNow
             'files' => $this->files,
         ];
     }
-	 
-    /*public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
-    }*/
 }

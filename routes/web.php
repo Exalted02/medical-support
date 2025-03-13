@@ -99,9 +99,10 @@ Route::middleware('auth')->group(function () {
 	//Chat Page
 	Route::get('/chat', [ChatController::class, 'chatPage'])->name('chat');
 	Route::post('/send-message', [ChatController::class, 'sendMessage'])->name('send.message');
-	Route::get('/chat/{receiverId}', [ChatController::class, 'chatWithUser'])->name('chat.with');
+	//Route::get('/chat/{receiverId}', [ChatController::class, 'chatWithUser'])->name('chat.with');
 	Route::post('/message-delete', [ChatController::class, 'message_delete'])->name('message.delete');
-
+	Route::get('/chat/latest-users', [ChatController::class, 'getChatUsers'])->name('chat.users');
+	Route::get('/chat/updateReadStatus', [ChatController::class, 'update_chat_read_status'])->name('chat.update.readstatus');
 	//Route::get('/chat/{receiverId}', [ChatController::class, 'chatPage'])->name('chat.page');
 	
 	Route::get('/shared-chat', [ChatController::class, 'shared_chat'])->name('shared-chat');
