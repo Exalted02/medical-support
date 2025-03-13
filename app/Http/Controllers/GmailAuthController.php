@@ -37,10 +37,10 @@ class GmailAuthController extends Controller
             $token = $client->fetchAccessTokenWithAuthCode($request->code);
             session(['gmail_token' => $token]);
 
-            return redirect()->route('shared-inboxes');
+            return redirect()->route('gmail-inboxes');
         }
 
-        return redirect()->route('gmail.auth')->with('error', 'Authentication failed.');
+        return redirect()->route('channel')->with('error', 'Authentication failed.');
     }
 
     public function getMessages()
@@ -49,13 +49,13 @@ class GmailAuthController extends Controller
         $token = session('gmail_token');
 
         if (!$token) {
-            return redirect()->route('gmail.auth')->with('error', 'Please authenticate with Gmail.');
+            return redirect()->route('channel')->with('error', 'Please authenticate with Gmail.');
         }
 
         $client->setAccessToken($token);
 
         if ($client->isAccessTokenExpired()) {
-            return redirect()->route('gmail.auth')->with('error', 'Session expired. Please authenticate again.');
+            return redirect()->route('channel')->with('error', 'Session expired. Please authenticate again.');
         }
 
         $service = new Google_Service_Gmail($client);
@@ -133,13 +133,13 @@ class GmailAuthController extends Controller
 		$token = session('gmail_token');
 
         if (!$token) {
-            return redirect()->route('gmail.auth')->with('error', 'Please authenticate with Gmail.');
+            return redirect()->route('channel')->with('error', 'Please authenticate with Gmail.');
         }
 
         $client->setAccessToken($token);
 
         if ($client->isAccessTokenExpired()) {
-            return redirect()->route('gmail.auth')->with('error', 'Session expired. Please authenticate again.');
+            return redirect()->route('channel')->with('error', 'Session expired. Please authenticate again.');
         }
 
         $service = new Google_Service_Gmail($client);

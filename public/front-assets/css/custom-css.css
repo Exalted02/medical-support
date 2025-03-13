@@ -440,6 +440,9 @@
     max-width: 70px;
     text-align: center;
 }
+.dash-widget-icon img {
+	max-width: 60%;
+}
 /*#msg {
     width: 100% !important; 
     min-width: 500px; 

@@ -3,11 +3,9 @@
 		<!-- Chart CSS -->
 		<link rel="stylesheet" href="{{ url('front-assets/plugins/morris/morris.css') }}">
     <!-- Page Wrapper -->
-    <div class="page-wrapper">
-    
+    <div class="page-wrapper">    
         <!-- Page Content -->
-        <div class="content container-fluid pb-0">
-        
+        <div class="content container-fluid pb-0">        
             <!-- Page Header -->
             <div class="page-header">
                 <div class="row">
