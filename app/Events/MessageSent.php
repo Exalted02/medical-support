@@ -54,7 +54,8 @@ class MessageSent implements ShouldBroadcastNow
             'receiver_id' => $this->message->receiver_id,
 			'chat_group_id' => $this->message->chat_group_id,
             'message' => $this->message->message,
-            'created_at' => $this->message->created_at->toDateTimeString(),
+            //'created_at' => $this->message->created_at->toDateTimeString(),
+			'created_at' => $this->message->created_at->diffForHumans(),
             'files' => $this->files,
         ];
     }

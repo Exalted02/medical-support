@@ -11,6 +11,7 @@ use App\Models\Manage_chat_file;
 use App\Events\MessageSent;
 use App\Events\MessageUpdated;
 use App\Events\MessageDeleted;
+use App\Models\User;
 
 class ChatController extends Controller
 {
@@ -104,13 +105,20 @@ class ChatController extends Controller
 			->groupBy(function ($message) {
 				return $message->sender_id == auth()->id() ? $message->receiver_id : $message->sender_id;
 			});
-
+			
 		if (!$receiverId && $chatUsers->isNotEmpty()) {
 			//\Log::info('Receiver ID was not found, setting to first user.');
 			$receiverId = $chatUsers->keys()->first();
+			
 		}
-
+		
 		$chat_group_id = '';
+		$receiverName = '';
+		$receiverEmail = '';
+		$receiverPhone = '';
+		$receiverDepartment = '';
+		$receiverDepartment = User::where('id',auth()->user()->id)->first()->department;
+		
 		$messages = collect();
 		
 		if (!empty($receiverId)) {
@@ -125,10 +133,16 @@ class ChatController extends Controller
 				->orderBy('id', 'asc')
 				->get();
 				
-			$chat_group_id = $messages[0]->chat_group_id;
+			$chat_group_id = $messages[0]->chat_group_id ?? null;
+			
+			$userData = User::where('id',$receiverId)->first();
+			$receiverName = $userData->name;
+			$receiverEmail = $userData->email;
+			$receiverPhone = $userData->phone_number;
+			$receiverDepartment = $userData->department;
 		}
-		
-		return view('chat.chat', compact('messages', 'chatUsers', 'receiverId','chat_group_id'));
+		//echo $receiverDepartment; die;
+		return view('chat.chat', compact('messages', 'chatUsers', 'receiverId','chat_group_id','receiverName','receiverEmail','receiverPhone','receiverDepartment'));
 	}
 
 	public function sendMessage(Request $request)
@@ -174,7 +188,43 @@ class ChatController extends Controller
 		}
 		else
 		{
-			$chatData = Manage_chat::where(function ($query) use ($request) {
+			$exists = Manage_chat::where(function ($query) {
+				$query->where('sender_id', auth()->id())
+					  ->orWhere('receiver_id', auth()->id());
+			})->exists();
+				
+			if($exists)
+			{
+				$receiver_id = $request->receiver_id;
+				$chatData = Manage_chat::where(function ($query) use ($request) {
+				$query->where('sender_id', auth()->id())
+					  ->where('receiver_id', $request->receiver_id);
+				})
+				->orWhere(function ($query) use ($request) {
+					$query->where('sender_id', $request->receiver_id)
+						  ->where('receiver_id', auth()->id());
+				})
+				->first();
+				
+			}
+			else
+			{
+				$receiver_id = assignChatReceiverId($request->department_id);
+				
+				$chatData = Manage_chat::where(function ($query) use ($receiver_id) {
+				$query->where('sender_id', auth()->id())
+					  ->where('receiver_id', $receiver_id);
+				})
+				->orWhere(function ($query) use ($receiver_id) {
+					$query->where('sender_id', $receiver_id)
+						  ->where('receiver_id', auth()->id());
+				})
+				->first();
+			}
+			
+			
+			
+			/*$chatData = Manage_chat::where(function ($query) use ($request) {
 				$query->where('sender_id', auth()->id())
 					  ->where('receiver_id', $request->receiver_id);
 			})
@@ -182,27 +232,30 @@ class ChatController extends Controller
 				$query->where('sender_id', $request->receiver_id)
 					  ->where('receiver_id', auth()->id());
 			})
-			->first();
+			->first();*/
 			
-			if(!empty($chatData->chat_group_id) || $chatData->chat_group_id!='')
+			if($chatData && !empty($chatData->chat_group_id))
 			{
 				$chat_group_id =  $chatData->chat_group_id;
 			}
 			else	
 			{
 				$chat_group_id = substr(sha1(mt_rand()),17,6);
-			}				
-
+			}
+			
+			$userType = User::where('id',$receiver_id)->first()->user_type;
+			
 			$message = Manage_chat::create([
 				'source' => 0,
-				'user_type' => auth()->user()->user_type,
+				'user_type' => $userType,
 				'chat_group_id' => $chat_group_id,
 				'sender_id' => auth()->id(),
-				'receiver_id' => $request->receiver_id,
+				'receiver_id' => $receiver_id,
 				'message' => $request->message,
-				'is_read' => 1,
+				'is_read' => 0,
 				'created_at' => date('Y-m-d h:i:s'),
 			]);
+			
 			
 			foreach($uploadedFiles as $file)
 			{
@@ -224,13 +277,6 @@ class ChatController extends Controller
 			//broadcast(new MessageSent($message))->toOthers();
 			broadcast(new MessageSent($message,$uploadedFiles))->toOthers();
 		}
-        //return response()->json($message);
-		
-		/*return response()->json([
-			'id' => $message->id,
-			'message' => $message->message,
-			//'files' => $uploadedFiles // Send the list of uploaded files
-		]);*/
     }
 	public function message_delete(Request $request)
 	{
@@ -239,10 +285,23 @@ class ChatController extends Controller
     
 		if ($message) {
 			$message->delete();
+			
+			$file_data = Manage_chat_file::where('manage_chat_id',$request->id)->get();
+			foreach($file_data as $files)
+			{
+				// unlink the image from folder
+				$file_path = public_path($files->file_name);
+				//echo $file_path;die;
+				if (file_exists($file_path)) {
+					unlink($file_path);
+				}
+			}
+			
+			Manage_chat_file::where('manage_chat_id',$request->id)->delete();
 
 			broadcast(new MessageDeleted($request->id))->toOthers();
 
-			return response()->json(['success' => true, 'message' => 'Message deleted successfully.']);
+			return response()->json(['success' => true, 'message' => 'Message deleted success-fully.']);
 		}
 
 		return response()->json(['success' => false, 'message' => 'Message not found.'], 404);

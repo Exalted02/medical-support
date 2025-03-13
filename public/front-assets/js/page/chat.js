@@ -89,7 +89,9 @@ $(document).ready(function() {
 	});
 	$(document).on('click','.del-msg', function(){
 		var id = $(this).data('id');
+		var className = $(this).data('classname');
 		var URL = $(this).data('url');
+		//alert(className);
 		$.ajax({
 			url: URL,
 			type: "POST",
@@ -99,7 +101,8 @@ $(document).ready(function() {
 			},
 			success: function (response) {
 				if (response.success) {
-					$('.chat-content[data-id="' + id + '"]').closest('.chat').remove();
+					$('.' + className + '[data-id="' + id + '"]').closest('.chat').remove();
+					//$('.chat-content[data-id="' + id + '"]').closest('.chat').remove();
 				} else {
 					alert(response.message);
 				}
