@@ -319,12 +319,15 @@ $messages2 = $messages;
 					</div>
 					<div class="chat-footer">
 					<div id="file-preview" class=""></div>
+					<form id="chat-file-upload-form" enctype="multipart/form-data">
+					<span id="error-message"></span>
 						<div class="message-bar">
+						
 							<div class="message-inner">
 								<a class="link attach-icon" id="triggerFileUpload" href="#"  data-bs-target="#drag_files"><img src="{{ url('static-image/attachment.png') }}" alt="Attachment Icon"></a>
 								
-							    <span id="error-message"></span>
-								<form id="chat-file-upload-form" enctype="multipart/form-data">
+							    
+								{{--<form id="chat-file-upload-form" enctype="multipart/form-data">--}}
 									<div class="message-area">
 										<div class="input-group">
 										<input type="file" id="chat-files" name="files[]" multiple class="d-none">
@@ -332,14 +335,16 @@ $messages2 = $messages;
 											<button type="button" class="clear-msg-btn cross-button" style="position: absolute; right: 50px; background: none; border: none; cursor: pointer;display:none;">
 												<i class="fa-solid fa-xmark"></i>
 											</button>
-											{{--<button class="btn btn-custom send-button" data-url="{{ route('send.message') }}"  type="button"><i class="fa-solid fa-paper-plane"></i></button>--}}
+											
 											<button class="btn btn-custom" type="button"><i class="fa-solid fa-paper-plane"></i></button>
 											<input type="hidden" id="edit_id" value="">
 										</div>
 									</div>
-								</form>
+									{{--</form>--}}
 							</div>
+						  
 						</div>
+					</form>
 					</div>
 				</div>
 			</div>
@@ -349,6 +354,8 @@ $messages2 = $messages;
 <input type="hidden" id="receiverId">
 <input type="hidden" id="receiver_department">
 <input type="hidden" id="chat_group_id">
+{{--<button class="btn btn-custom send-button" data-url="{{ route('send.message') }}"  type="button"><i class="fa-solid fa-paper-plane"></i></button>--}}
+
 @endsection 
 @section('scripts')
 <script src="{{ url('front-assets/js/page/chat.js') }}"></script>

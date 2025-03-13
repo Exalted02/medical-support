@@ -230,6 +230,7 @@ class ChatController extends Controller
 				})
 				->first();
 				
+				$userType = User::where('id',$receiver_id)->first()->user_type;
 			}
 			else
 			{
@@ -244,6 +245,8 @@ class ChatController extends Controller
 						  ->where('receiver_id', auth()->id());
 				})
 				->first();
+				
+				$userType = User::where('id',$receiver_id)->first()->user_type;
 			}
 			
 			
@@ -256,7 +259,7 @@ class ChatController extends Controller
 				$chat_group_id = substr(sha1(mt_rand()),17,6);
 			}
 			
-			$userType = User::where('id',$receiver_id)->first()->user_type;
+			//$userType = User::where('id',$receiver_id)->first()->user_type;
 			
 			$message = Manage_chat::create([
 				'source' => 0,
@@ -330,6 +333,7 @@ class ChatController extends Controller
 		$data[] = '';
 		return view('channel.index', $data);
 	}	
+
 	public function getChatUsers(Request $request)
 	{
 		$receiverId = $request->query('receiverId'); // Get receiver ID from request
