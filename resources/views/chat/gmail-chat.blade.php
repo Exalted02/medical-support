@@ -312,7 +312,7 @@
         };*/
 		let formData = new FormData(document.getElementById("replyForm"));
 		
-        fetch('/send-reply', {
+        fetch("{{ url('/send-reply') }}", {
             method: "POST",
 			body: formData,
 			headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
