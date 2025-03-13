@@ -165,7 +165,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="chat-footer">
+					{{--<div class="chat-footer">
 						<div class="message-bar">
 							<div class="message-inner">
 								<a class="link attach-icon" href="#" data-bs-toggle="modal" data-bs-target="#drag_files"><img src="{{ url('static-image/attachment.png') }}" alt="Attachment Icon"></a>
@@ -177,7 +177,7 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div>--}}
 				</div>
 			</div>
 		</div>
