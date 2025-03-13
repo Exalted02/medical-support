@@ -492,6 +492,11 @@
     max-width: 100%; 
     resize: none; 
 }*/
+.unread-message {
+    background-color: white !important;
+    color: black !important;
+    font-weight: bold;
+}
 
 
 

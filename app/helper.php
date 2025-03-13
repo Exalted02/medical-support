@@ -681,7 +681,9 @@ use App\Models\Manage_chat;
 	{
 		function next_available_user($currentUserId, $departmentId)
 		{
-			$users = User::where('department', $departmentId)->where('user_type',1)->orderBy('id', 'asc')->pluck('id')->toArray();
+			//$users = User::where('department', $departmentId)->where('user_type',1)->orderBy('id', 'asc')->pluck('id')->toArray();
+			
+			$users = User::where('user_type',1)->orderBy('id', 'asc')->pluck('id')->toArray();
 
 			if (empty($users)) {
 				return null;

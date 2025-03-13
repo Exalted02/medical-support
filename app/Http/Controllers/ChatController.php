@@ -252,7 +252,7 @@ class ChatController extends Controller
 				'sender_id' => auth()->id(),
 				'receiver_id' => $receiver_id,
 				'message' => $request->message,
-				'is_read' => 1,
+				'is_read' => 0,
 				'created_at' => date('Y-m-d h:i:s'),
 			]);
 			

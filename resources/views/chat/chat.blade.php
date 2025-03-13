@@ -24,9 +24,12 @@ $messages2 = $messages;
 													? $messages->first()->receiver
 													: $messages->first()->sender;
 												$isActive = ($receiverId == $chatUser->id); // Active only if receiverId matches
+												
+												// Check if any message from this user is unread
+												$hasUnreadMessages = $messages->where('receiver_id', auth()->id())->where('user_type',1)->where('is_read', 0)->count() > 0;
 											@endphp
 											<li class="nav-item me-0" role="presentation">
-												<a class="nav-link text-break mw-100 user-link {{ $isActive ? 'active' : '' }} message-chat-info"
+												<a class="nav-link text-break mw-100 user-link {{ $isActive ? 'active' : '' }} {{ $hasUnreadMessages ? 'unread-message' : '' }} message-chat-info"
 												   href="{{ route('chat', ['receiverId' => $chatUser->id]) }}"
 												   data-userid="{{ $chatUser->id }}">
 													<i class="feather-user me-2 align-middle d-inline-block"></i>
@@ -345,6 +348,7 @@ $messages2 = $messages;
 </div>
 <input type="hidden" id="receiverId">
 <input type="hidden" id="receiver_department">
+<input type="hidden" id="chat_group_id">
 @endsection 
 @section('scripts')
 <script src="{{ url('front-assets/js/page/chat.js') }}"></script>
@@ -359,6 +363,66 @@ $messages2 = $messages;
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
 
 <script>
+/*document.addEventListener("DOMContentLoaded", function () {
+    let userLinks = document.querySelectorAll('.user-link');
+
+    function getChatContent() {
+        let chatContent = document.querySelector('#chat-content');
+        if (!chatContent) {
+            console.error('Error: #chat-content element not found! Retrying...');
+            setTimeout(getChatContent, 500); // Retry after 500ms
+            return null;
+        }
+        return chatContent;
+    }
+
+    let chatContent = getChatContent(); // ✅ Corrected function call
+
+    userLinks.forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent full reload
+
+            // Remove active class from all links
+            userLinks.forEach(l => l.classList.remove('active'));
+
+            // Add active class to the clicked user
+            this.classList.add('active');
+
+            // Get user ID
+            let userId = this.getAttribute('data-userid');
+
+            // Ensure chat-content div exists before updating
+            chatContent = getChatContent(); // ✅ Ensure it exists before using
+            if (chatContent) {
+                // Load chat messages dynamically
+                fetch('/chat?receiverId=' + userId)
+                    .then(response => response.text())
+                    .then(html => {
+                        chatContent.innerHTML = html; // Update chat content
+                        history.pushState(null, '', '/chat?receiverId=' + userId); // Update URL without reload
+                    })
+                    .catch(error => console.error('Error fetching chat:', error));
+            }
+        });
+    });
+
+    // Highlight user based on URL after page load
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentReceiverId = urlParams.get('receiverId');
+
+    userLinks.forEach(link => {
+        if (link.getAttribute('data-userid') === currentReceiverId) {
+            link.classList.add('active');
+        }
+    });
+});*/
+
+
+
+
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
 	let userLinks = document.querySelectorAll('.user-link');
 
@@ -397,6 +461,7 @@ $(document).ready(function() {
 		//let URL = $(this).data('url');
 		let URL = "{{ route('send.message') }}";
 		var receiverId = $('#receiverId').val();
+		 alert("receiverId ->" + receiverId);
 		var department_id = $('#receiver_department').val();
 		
 		let files = $('#chat-files')[0].files;
@@ -571,7 +636,7 @@ function getFileIcon(extension) {
 <script>
 	var receiver_id = {!! json_encode($receiverId) !!};
 	var chat_group_id = {!! json_encode($chat_group_id) !!};
-	//alert(chat_group_id);
+	$('#chat_group_id').val(chat_group_id);
 	dayjs.extend(dayjs_plugin_utc);
 	dayjs.extend(dayjs_plugin_relativeTime);
 	//var pusherKey = "{{ env('PUSHER_APP_KEY') }}";
@@ -592,11 +657,19 @@ function getFileIcon(extension) {
 			console.log("No files received.");
 			data.files = []; // Ensure it is an empty array to avoid errors
 		}*/
-		
-		if (data.chat_group_id != chat_group_id)
+		//alert(chat_group_id);
+		var chat_group_id = $('#chat_group_id').val();
+		//alert(chat_group_id);
+		if(chat_group_id =='')
+		{
+			$('#chat_group_id').val(data.chat_group_id);
+			$('#receiverId').val(data.receiver_id);
+		}
+		else if (data.chat_group_id != chat_group_id)
 		{
 			return;
 		}
+		
 		
 		var app_url =  "{{ env('APP_URL') }}";
 		var fileHTML = '';
