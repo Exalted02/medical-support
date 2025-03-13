@@ -26,12 +26,16 @@
 				<li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
 					<a href="{{ route('dashboard')}}"><i class="fa-solid fa-gauge"></i> <span> {{ __('dashboard') }} </span></a>
 				</li>
+				<li class="{{ request()->routeIs('channel') ? 'active' : '' }}">
+					<a href="{{ route('channel')}}"><i class="fa-solid fa-gauge"></i> <span> Channel </span></a>
+				</li>
 				<li class="submenu">
-					<a href="javascript:void(0);" class="{{ request()->routeIs('chat') || request()->routeIs('shared-chat') ? 'active' : '' }}"><i class="fa-solid fa-message"></i> <span> {{ __('chat') }} </span><span class="menu-arrow"></span></a>
+					<a href="javascript:void(0);" class="{{ request()->routeIs('chat') || request()->routeIs('shared-chat') || request()->routeIs('gmail-inboxes') || request()->routeIs('facebook-pages') || request()->routeIs('facebook-inboxes') ? 'active' : '' }}"><i class="fa-solid fa-message"></i> <span> {{ __('chat') }} </span><span class="menu-arrow"></span></a>
 					<ul style="{{ request()->routeIs('chat') ? 'display:block' : '' }}">
 						<li><a href="{{ route('chat') }}" class="{{ request()->routeIs('chat') ? 'active' : '' }}"><span>Assigned to me</span></a></li>
 						<li><a href="{{ route('shared-chat') }}" class="{{ request()->routeIs('shared-chat') ? 'active' : '' }}"><span>Shared with me</span></a></li>
-						<li><a href="{{ route('shared-inboxes') }}" class="{{ request()->routeIs('shared-inboxes') ? 'active' : '' }}"><span>Shared inboxes</span></a></li>
+						<li><a href="{{ route('gmail-inboxes') }}" class="{{ request()->routeIs('gmail-inboxes') ? 'active' : '' }}"><span>Gmail inboxes</span></a></li>
+						<li><a href="{{ route('facebook-pages') }}" class="{{ request()->routeIs('facebook-pages') || request()->routeIs('facebook-inboxes') ? 'active' : '' }}"><span>Facebook inboxes</span></a></li>
 					</ul>
 				</li>
 				{{--<li class="{{ request()->routeIs('chat') ? 'active' : '' }}">

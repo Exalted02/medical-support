@@ -324,6 +324,12 @@ class ChatController extends Controller
 
 		return response()->json(['success' => false, 'message' => 'Message not found.'], 404);
 	}
+
+	public function channel_list()
+	{
+		$data[] = '';
+		return view('channel.index', $data);
+	}
 	
 	public function getChatUsers(Request $request)
 	{

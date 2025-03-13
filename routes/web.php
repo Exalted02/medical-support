@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\RegisteredUserController;
 
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\GmailAuthController;
+use App\Http\Controllers\FacebookAuthController;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -57,7 +58,10 @@ Route::get('db-seed', function () {
 Route::get('/auth/google', [GmailAuthController::class, 'redirectToGoogle'])->name('gmail.auth');
 Route::get('/auth/callback', [GmailAuthController::class, 'handleGoogleCallback']);
 // Route::get('/gmail/messages', [GmailAuthController::class, 'getMessages'])->name('gmail.messages');
-Route::get('/gmail/inbox', [GmailAuthController::class, 'getMessages'])->name('gmail.inbox');
+// Route::get('/gmail/inbox', [GmailAuthController::class, 'getMessages'])->name('gmail.inbox');
+
+Route::get('/auth/facebook', [FacebookAuthController::class, 'redirectToFacebook'])->name('facebook.auth');
+Route::get('/facebook/callback', [FacebookAuthController::class, 'handleFacebookCallback']);
 
 Route::get('/download/{filename}', function ($filename) {
     $filePath = public_path('uploads/chat-files/' . $filename);
@@ -106,11 +110,24 @@ Route::middleware('auth')->group(function () {
 	//Route::get('/chat/{receiverId}', [ChatController::class, 'chatPage'])->name('chat.page');
 	
 	Route::get('/shared-chat', [ChatController::class, 'shared_chat'])->name('shared-chat');
-	Route::get('/shared-inboxes', [GmailAuthController::class, 'getMessages'])->name('shared-inboxes');
-	Route::post('/send-reply', [GmailAuthController::class, 'sendReply'])->name('send.reply');
 	Route::get('/ticket-chat', [ChatController::class, 'ticket_chat'])->name('ticket-chat');
 	Route::post('/ticket-message-list', [ChatController::class, 'ticket_chat_list'])->name('ticket-message-list');
 	Route::post('/ticket-send-message', [ChatController::class, 'ticket_send_message'])->name('ticket-send-message');
+	
+	//Channel list
+	Route::get('/channel', [ChatController::class, 'channel_list'])->name('channel');
+	
+	//Gmail inbox
+	Route::get('/gmail-inboxes', [GmailAuthController::class, 'getMessages'])->name('gmail-inboxes');
+	Route::post('/send-reply', [GmailAuthController::class, 'sendReply'])->name('send.reply');
+	
+	//Facebook inbox
+	Route::get('/facebook-pages', [FacebookAuthController::class, 'getPages'])->name('facebook-pages');
+	Route::get('/facebook-inboxes/{pageId}', [FacebookAuthController::class, 'getMessages'])->name('facebook-inboxes');
+	Route::post('/facebook/conversation', [FacebookAuthController::class, 'getConversationMessages'])->name('facebook-conversation');
+	Route::post('/facebook/send-message', [FacebookAuthController::class, 'sendMessage']);
+	// Route::get('/facebook/pages', [FacebookAuthController::class, 'getPages']);
+	// Route::get('/facebook/messages/{pageId}', [FacebookAuthController::class, 'getMessages']);
 
 	//EmailSettings
 	Route::get('/email-settings', [EmailSettingsController::class, 'index'])->name('user.email-settings');

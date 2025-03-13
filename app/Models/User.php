@@ -43,6 +43,7 @@ class User extends Authenticatable
         'latitude',
         'longitude',
         'status',
+        'stripe_paymethod_id',
     ];
 
     /**

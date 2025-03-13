@@ -450,6 +450,10 @@
     max-width: 70px;
     text-align: center;
 }
+
+.dash-widget-icon img {
+	max-width: 60%;
+}
 .remove-file {
 	position: absolute;
     top: -5px;
