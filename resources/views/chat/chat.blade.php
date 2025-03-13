@@ -386,11 +386,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let userId = clickedElement.getAttribute('data-userid');
         //alert(userId);
-
-        fetch(`/chat/updateReadStatus?receiverId=${userId}`)
+		var app_url =  "{{ env('APP_URL') }}";
+        fetch(`${app_url}/chat/updateReadStatus?receiverId=${userId}`)
             .then(response => response.text())
             .then(html => {
-                window.location.href = `/chat?receiverId=${userId}`;
+				//alert(html);
+                window.location.href = app_url + '/chat?receiverId=' + userId;
             })
             .catch(error => console.error('Error fetching user list:', error));
     });
@@ -643,7 +644,11 @@ function getFileIcon(extension) {
 		var rec_id = $('#receiverId').val();
 		if (userLink) {
 			// Move user to the top by reloading the chat user list
-			fetch('/chat/latest-users?receiverId=' + rec_id)
+			//fetch(`${app_url}/chat/updateReadStatus?receiverId=${userId}`)
+			//fetch('/chat/latest-users?receiverId=' + rec_id)
+			 
+			var app_url =  "{{ env('APP_URL') }}";
+			fetch(`${app_url}/chat/latest-users?receiverId=${rec_id}`)
 				.then(response => response.text())
 				.then(html => {
 					//alert(html);
