@@ -84,7 +84,7 @@
 		let accessToken = document.getElementById("access_token").value;
 		let message = document.getElementById("message").value;
 
-		fetch("/facebook/send-message", {
+		fetch("{{ url('/facebook/send-message') }}", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
