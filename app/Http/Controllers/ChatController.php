@@ -329,8 +329,7 @@ class ChatController extends Controller
 	{
 		$data[] = '';
 		return view('channel.index', $data);
-	}
-	
+	}	
 	public function getChatUsers(Request $request)
 	{
 		$receiverId = $request->query('receiverId'); // Get receiver ID from request
