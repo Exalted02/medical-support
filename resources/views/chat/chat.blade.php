@@ -323,7 +323,7 @@ $messages2 = $messages;
 							<div class="message-inner">
 								<a class="link attach-icon" id="triggerFileUpload" href="#"  data-bs-target="#drag_files"><img src="{{ url('static-image/attachment.png') }}" alt="Attachment Icon"></a>
 								
-								
+							    <span id="error-message"></span>
 								<form id="chat-file-upload-form" enctype="multipart/form-data">
 									<div class="message-area">
 										<div class="input-group">
@@ -363,67 +363,34 @@ $messages2 = $messages;
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
 
 <script>
-/*document.addEventListener("DOMContentLoaded", function () {
-    let userLinks = document.querySelectorAll('.user-link');
-
-    function getChatContent() {
-        let chatContent = document.querySelector('#chat-content');
-        if (!chatContent) {
-            console.error('Error: #chat-content element not found! Retrying...');
-            setTimeout(getChatContent, 500); // Retry after 500ms
-            return null;
-        }
-        return chatContent;
-    }
-
-    let chatContent = getChatContent(); // ✅ Corrected function call
-
-    userLinks.forEach(link => {
-        link.addEventListener('click', function (event) {
-            event.preventDefault(); // Prevent full reload
-
-            // Remove active class from all links
-            userLinks.forEach(l => l.classList.remove('active'));
-
-            // Add active class to the clicked user
-            this.classList.add('active');
-
-            // Get user ID
-            let userId = this.getAttribute('data-userid');
-
-            // Ensure chat-content div exists before updating
-            chatContent = getChatContent(); // ✅ Ensure it exists before using
-            if (chatContent) {
-                // Load chat messages dynamically
-                fetch('/chat?receiverId=' + userId)
-                    .then(response => response.text())
-                    .then(html => {
-                        chatContent.innerHTML = html; // Update chat content
-                        history.pushState(null, '', '/chat?receiverId=' + userId); // Update URL without reload
-                    })
-                    .catch(error => console.error('Error fetching chat:', error));
-            }
-        });
-    });
-
-    // Highlight user based on URL after page load
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentReceiverId = urlParams.get('receiverId');
-
-    userLinks.forEach(link => {
-        if (link.getAttribute('data-userid') === currentReceiverId) {
-            link.classList.add('active');
-        }
-    });
-});*/
-
-
-
-
-
-
 
 document.addEventListener("DOMContentLoaded", function () {
+    document.querySelector('.chat-user-list').addEventListener('click', function (event) {
+        let clickedElement = event.target.closest('.user-link');
+        if (!clickedElement) return; // If click is not on a .user-link, do nothing
+        
+        event.preventDefault(); // Prevent default link behavior
+
+        // Remove active class from all user links
+        document.querySelectorAll('.user-link').forEach(link => link.classList.remove('active'));
+
+        // Add active class to clicked link
+        clickedElement.classList.add('active');
+
+        let userId = clickedElement.getAttribute('data-userid');
+        //alert(userId);
+
+        fetch(`/chat/updateReadStatus?receiverId=${userId}`)
+            .then(response => response.text())
+            .then(html => {
+                window.location.href = `/chat?receiverId=${userId}`;
+            })
+            .catch(error => console.error('Error fetching user list:', error));
+    });
+});
+
+
+/*document.addEventListener("DOMContentLoaded", function () {
 	let userLinks = document.querySelectorAll('.user-link');
 
 	userLinks.forEach(link => {
@@ -436,16 +403,26 @@ document.addEventListener("DOMContentLoaded", function () {
 			
 			event.preventDefault(); // Prevent default link behavior
             let userId = this.getAttribute('data-userid');
-			//alert(userId);
-            window.location.href = `/chat?receiverId=${userId}`; // Manually update URL
+			alert(userId);
+			
+			fetch('/chat/updateReadStatus?receiverId=' + userId)
+				.then(response => response.text())
+				.then(html => {
+					alert(html);
+					window.location.href = `/chat?receiverId=${userId}`;
+				})
+				.catch(error => console.error('Error fetching user list:', error));
+			
+            //window.location.href = `/chat?receiverId=${userId}`; // Manually update URL
 			
 		});
 	});
-});
+});*/
 
 let selectedFiles = [];
 $(document).ready(function() {
-    var receiverId = {!! json_encode($receiverId) !!};
+	
+	var receiverId = {!! json_encode($receiverId) !!};
 	//var authUserId = {!! json_encode(auth()->id()) !!};
 	$('#receiverId').val(receiverId);
 	 var receiverDept = {!! json_encode($receiverDepartment) !!};
@@ -461,7 +438,7 @@ $(document).ready(function() {
 		//let URL = $(this).data('url');
 		let URL = "{{ route('send.message') }}";
 		var receiverId = $('#receiverId').val();
-		 alert("receiverId ->" + receiverId);
+		//alert("receiverId ->" + receiverId);
 		var department_id = $('#receiver_department').val();
 		
 		let files = $('#chat-files')[0].files;
@@ -487,21 +464,7 @@ $(document).ready(function() {
 				success: function(response) {
 					console.log("Message sent:", response);
 					
-					/*let chatHTML = '<div class="chat-content" data-id=" '+ response.id + '">' + response.message ? '<p>' +response.message +'</p> : ''}';
-
-					// If files exist, append them
-					if (response.files && response.files.length > 0) {
-						response.files.forEach(file => {
-							// Check if the file is an image or another file type
-							if (/\.(jpg|jpeg|png|gif)$/i.test(file)) {
-								chatHTML += '<img src="' + file + '" class="chat-image-preview">';
-							} else {
-								chatHTML += '<a href="' + file + '" target="_blank" class="chat-file-link">📎 Download File</a>';
-							}
-						});
-					}
-
-					chatHTML += '</div>';*/
+					//alert(response.message);
 					
 					// Clear input & file preview after sending
 					$('#msg').val('');
@@ -521,8 +484,21 @@ $(document).ready(function() {
 					// Scroll to latest message
 					$('.chat-box').scrollTop($('.chat-box')[0].scrollHeight);
 				},
-				error: function(xhr) {
+				error: function(xhr, status, error) {
 					console.error("Error sending message:", xhr.responseText);
+					let response = xhr.responseJSON;
+					if (response && response.message) {
+						let errorMessage = response.message;
+						$("#error-message").text(errorMessage).css("color", "red").fadeIn();
+
+						// Hide the message after 5 seconds
+						setTimeout(function() {
+							$("#error-message").fadeOut();
+						}, 5000);
+						
+					} else {
+						alert("Something went wrong!"); 
+					}
 				}
 			});
 		//}
@@ -653,13 +629,31 @@ function getFileIcon(extension) {
 
     channel.bind('message-sent', function(data) {
         console.log("New message received: ", data);
-		/*if (!data.files || !Array.isArray(data.files)) {
-			console.log("No files received.");
-			data.files = []; // Ensure it is an empty array to avoid errors
-		}*/
-		//alert(chat_group_id);
+		
+		//--for show latest message that users send
+		let userId = data.sender_id;
+		let userLink = document.querySelector('.user-link[data-userid="' + userId + '"]');
+		var rec_id = $('#receiverId').val();
+		if (userLink) {
+			// Move user to the top by reloading the chat user list
+			fetch('/chat/latest-users?receiverId=' + rec_id)
+				.then(response => response.text())
+				.then(html => {
+					//alert(html);
+					//$('.chat-user-list').html = html;
+					document.querySelector('.chat-user-list').innerHTML = html;
+				})
+				.catch(error => console.error('Error fetching user list:', error));
+
+			// Change text color to black if unread
+			//userLink.style.color = "black";
+			//userLink.style.fontWeight = "bold";
+		}
+		
+		//-------------
 		var chat_group_id = $('#chat_group_id').val();
 		//alert(chat_group_id);
+		// for instant chat show 
 		if(chat_group_id =='')
 		{
 			$('#chat_group_id').val(data.chat_group_id);

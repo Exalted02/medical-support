@@ -12,6 +12,7 @@ use App\Events\MessageSent;
 use App\Events\MessageUpdated;
 use App\Events\MessageDeleted;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator; 
 
 class ChatController extends Controller
 {
@@ -147,9 +148,32 @@ class ChatController extends Controller
 
 	public function sendMessage(Request $request)
     {
-		$request->validate([
+		/*$request->validate([
 			'files.*' => 'file|max:2048', // Max 2MB per file
+		]);*/
+		$validator = Validator::make($request->all(), [
+			'files.*' => 'file|max:2048|mimes:jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip,rar', 
 		]);
+		
+		if ($request->hasFile('files')) {
+			foreach ($request->file('files') as $file) {
+				$mimeType = $file->getMimeType(); // Get MIME type
+
+				if (str_starts_with($mimeType, 'audio/') || str_starts_with($mimeType, 'video/')) {
+					return response()->json([
+						'status' => 'error',
+						'message' => 'Audio and video files are not allowed.'
+					], 422);
+				}
+			}
+		}
+		
+		if ($validator->fails()) {
+			return response()->json([
+				'status' => 'error',
+				'message' => 'Only images, PDFs, Word, Excel, PowerPoint, TXT, ZIP, and RAR files are allowed. File size should not exceed 2MB.'
+			], 422);
+		}
 		
 		$uploadedFiles = [];
 		$files = '';
@@ -223,17 +247,6 @@ class ChatController extends Controller
 			}
 			
 			
-			
-			/*$chatData = Manage_chat::where(function ($query) use ($request) {
-				$query->where('sender_id', auth()->id())
-					  ->where('receiver_id', $request->receiver_id);
-			})
-			->orWhere(function ($query) use ($request) {
-				$query->where('sender_id', $request->receiver_id)
-					  ->where('receiver_id', auth()->id());
-			})
-			->first();*/
-			
 			if($chatData && !empty($chatData->chat_group_id))
 			{
 				$chat_group_id =  $chatData->chat_group_id;
@@ -276,6 +289,11 @@ class ChatController extends Controller
 			}
 			//broadcast(new MessageSent($message))->toOthers();
 			broadcast(new MessageSent($message,$uploadedFiles))->toOthers();
+			
+			/*return response()->json([
+				'status' => 'success',
+				'message' => 'Message sent successfully.'
+			]);*/
 		}
     }
 	public function message_delete(Request $request)
@@ -306,9 +324,64 @@ class ChatController extends Controller
 
 		return response()->json(['success' => false, 'message' => 'Message not found.'], 404);
 	}
+
 	public function channel_list()
 	{
 		$data[] = '';
 		return view('channel.index', $data);
+	}
+	
+	public function getChatUsers(Request $request)
+	{
+		$receiverId = $request->query('receiverId'); // Get receiver ID from request
+
+		// Fetch chat users where the authenticated user is sender or receiver
+		$chatUsers = Manage_chat::where('receiver_id', auth()->id())
+			->orWhere('sender_id', auth()->id())
+			->with(['sender', 'receiver'])
+			->orderBy('created_at', 'desc') // Sort by latest message
+			->get()
+			->groupBy(function ($message) {
+				return $message->sender_id == auth()->id() ? $message->receiver_id : $message->sender_id;
+			});
+
+		// If no receiverId is provided, default to the first user in the list
+		if (!$receiverId && $chatUsers->isNotEmpty()) {
+			$receiverId = $chatUsers->keys()->first();
+		}
+
+		// Fetch messages for the selected receiver
+		$messages = collect();
+		if (!empty($receiverId)) {
+			$messages = Manage_chat::where(function ($query) use ($receiverId) {
+					$query->where('sender_id', auth()->id())
+						->where('receiver_id', $receiverId);
+				})
+				->orWhere(function ($query) use ($receiverId) {
+					$query->where('sender_id', $receiverId)
+						->where('receiver_id', auth()->id());
+				})
+				->orderBy('id', 'asc')
+				->get();
+		}
+
+		// Sort chat users: Unread messages first, then latest messages first
+		$sortedChatUsers = $chatUsers->sortByDesc(function ($messages) {
+			$latestMessage = $messages->sortByDesc('created_at')->first();
+			$hasUnreadMessages = $messages->where('receiver_id', auth()->id())->where('user_type', 1)->where('is_read', 0)->count() > 0;
+			return [$hasUnreadMessages, $latestMessage->created_at];
+		});
+
+		// Return view with correctly named variable
+		return view('partials.chat_user_list', [
+			'sortedChatUsers' => $sortedChatUsers, // Make sure Blade file expects this
+			'receiverId' => $receiverId
+		]);
+	}
+	public function update_chat_read_status(Request $request)
+	{
+		$receiverId = $request->query('receiverId');
+		Manage_chat::where('sender_id',$receiverId)->where('receiver_id',auth()->user()->id)->update(['is_read'=>1]);
+		return 1;
 	}
 }

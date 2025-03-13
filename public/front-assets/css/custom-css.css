@@ -502,6 +502,23 @@
     font-weight: bold;
 }
 
+#chat-file-upload-form .message-area {
+    width: 100%; /* Ensure message area takes full width */
+}
+
+#chat-file-upload-form .input-group {
+    flex-wrap: nowrap; /* Prevent wrapping */
+    width: 100%; /* Ensure full width */
+}
+
+#chat-file-upload-form textarea {
+    flex-grow: 1; /* Allow textarea to expand */
+    width: 100%; /* Ensure it stretches fully */
+    min-height: 40px; /* Adjust as needed */
+    resize: none; /* Optional: Prevent resizing */
+}
+
+
 
 
 
