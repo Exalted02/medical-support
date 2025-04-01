@@ -16,8 +16,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Api\RegisteredUserController;
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\GmailLoginAuthController;
 use App\Http\Controllers\GmailAuthController;
 use App\Http\Controllers\FacebookAuthController;
+use App\Http\Controllers\WhatsAppAuthController;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -55,10 +57,16 @@ Route::get('db-seed', function () {
     \Artisan::call('db:seed');
     dd("Database seeded");
 });
+Route::get('/auth/google-login/{type}', [GmailLoginAuthController::class, 'redirectToGoogleLogin'])->name('google-login.auth');
+Route::get('/auth/google-login-callback', [GmailLoginAuthController::class, 'handleGoogleLoginCallback']);
+
 Route::get('/auth/google', [GmailAuthController::class, 'redirectToGoogle'])->name('gmail.auth');
 Route::get('/auth/callback', [GmailAuthController::class, 'handleGoogleCallback']);
 // Route::get('/gmail/messages', [GmailAuthController::class, 'getMessages'])->name('gmail.messages');
 // Route::get('/gmail/inbox', [GmailAuthController::class, 'getMessages'])->name('gmail.inbox');
+
+	//WhatsApp inbox
+	Route::get('/whatsapp/webhook', [WhatsAppAuthController::class, 'receiveWhatsAppMessages']);
 
 Route::get('/auth/facebook', [FacebookAuthController::class, 'redirectToFacebook'])->name('facebook.auth');
 Route::get('/facebook/callback', [FacebookAuthController::class, 'handleFacebookCallback']);
@@ -128,6 +136,7 @@ Route::middleware('auth')->group(function () {
 	Route::post('/facebook/send-message', [FacebookAuthController::class, 'sendMessage']);
 	// Route::get('/facebook/pages', [FacebookAuthController::class, 'getPages']);
 	// Route::get('/facebook/messages/{pageId}', [FacebookAuthController::class, 'getMessages']);
+
 
 	//EmailSettings
 	Route::get('/email-settings', [EmailSettingsController::class, 'index'])->name('user.email-settings');

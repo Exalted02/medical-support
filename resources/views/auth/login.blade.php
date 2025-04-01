@@ -9,6 +9,11 @@
 						<label for="email">Username</label>
 						<input type="email" name="email" id="email" placeholder="Enter Your Username" :value="old('email')" required autofocus autocomplete="username">
 						<x-input-error :messages="$errors->get('email')" class="mt-2" />
+						@if(session('error'))
+						<ul class="text-sm text-red-600 space-y-1 mt-2">
+							<li>{{ session('error') }}</li>
+						</ul>
+						@endif
 					</div>
 
 					<div class="m_banner-content-main">
@@ -41,12 +46,26 @@
 			</form>
 			<div class="m_banner-bottom-2 text-center">
 				<div class="row">
-					<div class="col-md-6 mt-2">
+					<div class="col-md-6 mt-2 p-l-0">
 						<div class="m_banner-bottom-button">
-							<a href="#"><img src="{{ url('front-assets/img/google.svg') }}">Sign in with Google</a>
+							<a href="{{route('google-login.auth', ['type' => 2])}}"><img src="{{ url('front-assets/img/google.svg') }}">Client Sign in</a>
 						</div>
 					</div>
-					<div class="col-md-6 mt-2">
+					<div class="col-md-6 mt-2 p-r-0">
+						<div class="m_banner-bottom-button">
+							<a href="#"><img src="{{ url('front-assets/img/apple-logo.svg') }}">Sign in Apple ID</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="m_banner-bottom-2 text-center">
+				<div class="row">
+					<div class="col-md-6 mt-2 p-l-0">
+						<div class="m_banner-bottom-button">
+							<a href="{{route('google-login.auth', ['type' => 1])}}"><img src="{{ url('front-assets/img/google.svg') }}">Employee Sign in</a>
+						</div>
+					</div>
+					<div class="col-md-6 mt-2 p-r-0">
 						<div class="m_banner-bottom-button">
 							<a href="#"><img src="{{ url('front-assets/img/apple-logo.svg') }}">Sign in Apple ID</a>
 						</div>
@@ -57,9 +76,9 @@
 			<div class="m_banner-bottom-3 text-center">
 				<p>Are you a Client?  <a href="{{ route('client-register') }}"> Sign up</a></p>
 
-				<p class="mt-4">Are you an employee? <a href="{{ route('employee-register') }}"> Sign up</a></p>
+				<p class="mt-4">Are you an Employee? <a href="{{ route('employee-register') }}"> Sign up</a></p>
 				
-				<p class="mt-4">Are you an patient? <a href="{{ route('patient-request') }}"> Send request</a></p>
+				<p class="mt-4">Are you an Patient? <a href="{{ route('patient-request') }}"> Send request</a></p>
 			</div>
 		</div>
 	</div>

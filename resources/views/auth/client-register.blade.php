@@ -90,7 +90,7 @@
 				<div class="row">
 					<div class="col-md-6 mt-2">
 						<div class="m_banner-bottom-button">
-							<a href="#"><img src="{{ url('front-assets/img/google.svg') }}">Sign in with Google</a>
+							<a href="{{route('google-login.auth', ['type' => 2])}}"><img src="{{ url('front-assets/img/google.svg') }}">Sign in with Google</a>
 						</div>
 					</div>
 					<div class="col-md-6 mt-2">
