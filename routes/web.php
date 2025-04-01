@@ -83,11 +83,11 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::get('/employee-dashboard', [DashboardController::class, 'index'])
+Route::get('/employee-dashboard', [DashboardController::class, 'employee_dashboard'])
     ->middleware(['auth', 'verified'])
     ->name('employee-dashboard');
 
-Route::get('/client-dashboard', [DashboardController::class, 'index'])
+Route::get('/client-dashboard', [DashboardController::class, 'client_dashboard'])
     ->middleware(['auth', 'verified'])
     ->name('client-dashboard');		
 
