@@ -107,11 +107,13 @@
 					</div></a>
 				</div>
 				@endforeach
+				@if($chats_data->isNotEmpty()) 
 				<div class="col-lg-12">
 					<div class="load-more-btn text-center">
 						<a href="#" class="btn btn-primary">Load More Contacts<i class="spinner-border"></i></a>
 					</div>
 				</div>
+				@endif
 			</div>
 			{{--<div class="row">
 				<div class="col-md-12">

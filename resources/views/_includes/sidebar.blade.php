@@ -32,7 +32,7 @@
 					<a href="{{ route('employee-dashboard')}}"><i class="fa-solid fa-gauge"></i> <span> {{ __('dashboard') }} </span></a>
 				</li>
 				@elseif(auth()->user()->user_type==2)
-				<li class="{{ request()->routeIs('client-dashboard') ? 'active' : '' }}">
+				<li class="{{ request()->routeIs('client-dashboard') || request()->routeIs('start-new-chat') ? 'active' : '' }}">
 					<a href="{{ route('client-dashboard')}}"><i class="fa-solid fa-gauge"></i> <span> {{ __('dashboard') }} </span></a>
 				</li>
 				@endif

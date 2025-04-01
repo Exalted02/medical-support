@@ -12,6 +12,7 @@ class Manage_chat extends Model
 	protected $fillable = [
         'source',
         'user_type',
+        'reason',
         'chat_group_id',
         'sender_id',
         'receiver_id',

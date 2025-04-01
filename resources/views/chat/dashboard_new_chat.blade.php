@@ -4,7 +4,15 @@
 @php 
 //echo "<pre>";print_r($messages->toArray());die;
 //echo "<pre>";print_r($chatUsers->toArray());die;
-$messages2 = $messages;
+
+if(!empty($messages))
+{
+ $messages2 = $messages;
+}
+else{
+	 $messages2 = [];
+}
+
 @endphp
 <div class="page-wrapper">
 	<div class="chat-main-row">
@@ -143,7 +151,7 @@ $messages2 = $messages;
 						</div>
 					</div>
 					@php 
-						//echo "<pre>";print_r($messages->toArray());die;
+						//echo "<pre>";print_r($messages2);die;
 					@endphp
 					<div class="chat-contents">
 						<div class="chat-content-wrap">
@@ -346,7 +354,7 @@ $messages2 = $messages;
 						</div>
 					</form>
 					</div>
-					<input type="hidden" id="reason_id" value=''>
+					<input type="hidden" id="reason_id" value='{{ $reason_id ?? ''}}'>
 				</div>
 			</div>
 		</div>
@@ -391,7 +399,7 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch(`${app_url}/chat/updateReadStatus?receiverId=${userId}`)
             .then(response => response.text())
             .then(html => {
-				//alert(html);
+				alert(html);
                 window.location.href = app_url + '/chat?receiverId=' + userId;
             })
             .catch(error => console.error('Error fetching user list:', error));
@@ -462,7 +470,7 @@ $(document).ready(function() {
         formData.append('department_id', department_id);
         formData.append('_token', "{{ csrf_token() }}");
 		
-		formData.append('reason_id', reason_id);
+        formData.append('reason_id', reason_id);
 		
 		//alert(receiverId);
 		//if (message.trim() !== '') 
@@ -624,7 +632,6 @@ function getFileIcon(extension) {
 <script>
 	var receiver_id = {!! json_encode($receiverId) !!};
 	var chat_group_id = {!! json_encode($chat_group_id) !!};
-	//alert(chat_group_id);
 	$('#chat_group_id').val(chat_group_id);
 	dayjs.extend(dayjs_plugin_utc);
 	dayjs.extend(dayjs_plugin_relativeTime);
@@ -670,7 +677,6 @@ function getFileIcon(extension) {
 		//-------------
 		var chat_group_id = $('#chat_group_id').val();
 		//alert(chat_group_id);
-		//alert(data.chat_group_id);
 		// for instant chat show 
 		if(chat_group_id =='')
 		{

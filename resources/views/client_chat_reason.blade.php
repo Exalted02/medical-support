@@ -19,24 +19,23 @@
 	
 		<div class="row">
 			<div class="col-md-12">
-			
-				<div class="col-md-12">
-						
-					<!-- Annual Leave -->
-					<div class="card leave-box">
-						<div class="card-body">
-							<div class="d-flex flex-wrap gap-2">
-								@foreach($chat_reasons as $chat_reason)
-									<div class="reason-box">
-										{{ $chat_reason->reason ?? '' }}
-									</div>
-								@endforeach
-							</div>
+				<!-- reason -->
+				<div class="card leave-box">
+					<div class="card-body">
+						<div class="row">
+							<span><h3><strong>What is the reason for new chat ?</strong></h3></span>
+						</div>
+						<div class="grid-details-underline"></div>
+						<div class="d-flex flex-wrap gap-2 mt-5">
+							@foreach($chat_reasons as $chat_reason)
+								<a href="{{ route('open-new-chat', $chat_reason->id) }}"><div class="reason-box">
+									{{ $chat_reason->reason ?? '' }}
+								</div></a>
+							@endforeach
 						</div>
 					</div>
-					<!-- /Annual Leave -->
 				</div>
-				
+				<!-- /reason -->
 			</div>
 		</div>
 	</div>
