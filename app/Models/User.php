@@ -44,6 +44,8 @@ class User extends Authenticatable
         'longitude',
         'status',
         'stripe_paymethod_id',
+        'auth_provider',
+        'auth_provider_id',
     ];
 
     /**

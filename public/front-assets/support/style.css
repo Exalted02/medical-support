@@ -1011,6 +1011,20 @@ a {
 .m_medi-table-2 .m_medi-table-button-1 img {
 	margin-right: 7px;
 }
+
+.m-l-5 {
+	margin-left: 5px !important;
+}
+.p-r-0 {
+	padding-right: 0 !important;
+}
+.p-l-0 {
+	padding-left: 0 !important;
+}
+.p-rl-0 {
+	padding-right: 0 !important;
+	padding-left: 0 !important;
+}
 @media (max-width: 767px) {
     .m_banner-content-2 {
         max-width: 100%;
