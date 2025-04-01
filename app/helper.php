@@ -698,6 +698,63 @@ use App\Models\Manage_chat;
 			return $users[0];
 		}
 	}
+	
+	function generate_chat_unique_id($model, $column, $receiver_id){
+		// Get the last record
+		//$lastRecord = $model::orderBy('id', 'desc')->first();
+		
+		/*$lastRecord = Manage_chat::where(function ($query) use ($receiver_id) {
+				$query->where('sender_id', auth()->id())
+					  ->where('receiver_id', $receiver_id);
+				})
+				->orWhere(function ($query) use ($receiver_id) {
+					$query->where('sender_id', $receiver_id)
+						  ->where('receiver_id', auth()->id());
+				})
+				->exists();*/
+		
+		$max_record = $model::orderByRaw('LPAD(chat_group_id, 5, "0") desc')->first();
+		//$max_record = $model::select('chat_group_id')->max('chat_group_id');
+		
+		//$newId = $max_record ? $max_record->chat_group_id + 1 : str_pad(1, 5, '0', STR_PAD_LEFT);
+		
+		if($max_record)
+		{
+			$lastIdNumber = intval($max_record->chat_group_id);
+			$newIdNumber = $lastIdNumber + 1;
+			$newId = str_pad($newIdNumber, 5, '0', STR_PAD_LEFT);
+		}
+		else{
+			 $newId =  str_pad(1, 5, '0', STR_PAD_LEFT);
+		}
+
+		// Check if there is any previous record
+		/*if (!$lastRecord) {
+			
+			$count = $model::orderBy('id', 'desc')->count();
+			if($count > 0)
+			{
+				$hasRecord = $model::orderBy('id', 'desc')->first();
+				$lastIdNumber = intval(str_replace($lastRecord->$column));
+			}
+			else
+				$newId = str_pad(1, 5, '0', STR_PAD_LEFT);
+			}
+		}*/ 
+		
+		/*else {
+			// Extract numeric part from the last ID (e.g., L00001 -> 00001)
+			$lastIdNumber = intval(str_replace($lastRecord->$column));
+
+			// Increment the numeric part by 1
+			$newIdNumber = $lastIdNumber + 1;
+
+			// Create new ID with padded zeros (e.g., 1 -> 00001)
+			$newId = str_pad($newIdNumber, 5, '0', STR_PAD_LEFT);
+		}*/
+
+		return $newId;  // Return the new unique ID (e.g., L00002)
+	}
 
 
 

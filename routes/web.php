@@ -91,11 +91,11 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::get('/employee-dashboard', [DashboardController::class, 'index'])
+Route::get('/employee-dashboard', [DashboardController::class, 'employee_dashboard'])
     ->middleware(['auth', 'verified'])
     ->name('employee-dashboard');
 
-Route::get('/client-dashboard', [DashboardController::class, 'index'])
+Route::get('/client-dashboard', [DashboardController::class, 'client_dashboard'])
     ->middleware(['auth', 'verified'])
     ->name('client-dashboard');		
 
@@ -155,6 +155,9 @@ Route::middleware('auth')->group(function () {
 	Route::get('account-remove-list', [CommonController::class,'account_remove_list'])->name('account-remove-list');
 	Route::post('remove-account-update-status', [CommonController::class,'account_remove_update_status'])->name('remove-account-update-status');
 	Route::post('remove-account-delete', [CommonController::class,'remove_account_delete'])->name('remove-account-delete');
+	
+	// client dashboard 
+	Route::get('start-new-chat', [DashboardController::class,'start_new_chat'])->name('start-new-chat');
 	
 });
 

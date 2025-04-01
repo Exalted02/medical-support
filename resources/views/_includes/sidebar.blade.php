@@ -23,9 +23,19 @@
 				<li class="menu-title"> 
 					<span>Main</span>
 				</li>
+				@if(auth()->user()->user_type==0)
 				<li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
 					<a href="{{ route('dashboard')}}"><i class="fa-solid fa-gauge"></i> <span> {{ __('dashboard') }} </span></a>
 				</li>
+				@elseif(auth()->user()->user_type==1)
+				<li class="{{ request()->routeIs('employee-dashboard') ? 'active' : '' }}">
+					<a href="{{ route('employee-dashboard')}}"><i class="fa-solid fa-gauge"></i> <span> {{ __('dashboard') }} </span></a>
+				</li>
+				@elseif(auth()->user()->user_type==2)
+				<li class="{{ request()->routeIs('client-dashboard') ? 'active' : '' }}">
+					<a href="{{ route('client-dashboard')}}"><i class="fa-solid fa-gauge"></i> <span> {{ __('dashboard') }} </span></a>
+				</li>
+				@endif
 				<li class="{{ request()->routeIs('channel') ? 'active' : '' }}">
 					<a href="{{ route('channel')}}"><i class="fa-solid fa-gauge"></i> <span> Channel </span></a>
 				</li>

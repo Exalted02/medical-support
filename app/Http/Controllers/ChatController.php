@@ -29,7 +29,7 @@ class ChatController extends Controller
     public function ticket_chat()
     {
       $data[] = '';
-	  //$ticketArray[] = '';
+	  $ticketArray = [];
 	  $user = Auth::user();
 	 
 	  $ticketData = Employee_manage_tickets::select('ticket_id')->where('emp_id',$user->id)->get();
@@ -256,7 +256,8 @@ class ChatController extends Controller
 			}
 			else	
 			{
-				$chat_group_id = substr(sha1(mt_rand()),17,6);
+				//$chat_group_id = substr(sha1(mt_rand()),17,6);
+				$chat_group_id = generate_chat_unique_id(Manage_chat::class,'chat_group_id', $receiver_id);
 			}
 			
 			//$userType = User::where('id',$receiver_id)->first()->user_type;
@@ -386,5 +387,19 @@ class ChatController extends Controller
 		$receiverId = $request->query('receiverId');
 		Manage_chat::where('sender_id',$receiverId)->where('receiver_id',auth()->user()->id)->update(['is_read'=>1]);
 		return 1;
+	}
+	public function next_chat_group_id($rev_id)
+	{
+		$countChat = Manage_chat::count();
+		if($countChat>0)
+		{
+			$chat_id = '00001';
+		}
+		else
+		{
+
+		}			
+				
+		
 	}
 }
