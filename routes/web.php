@@ -147,6 +147,9 @@ Route::middleware('auth')->group(function () {
 	Route::post('remove-account-update-status', [CommonController::class,'account_remove_update_status'])->name('remove-account-update-status');
 	Route::post('remove-account-delete', [CommonController::class,'remove_account_delete'])->name('remove-account-delete');
 	
+	// client dashboard 
+	Route::get('start-new-chat', [DashboardController::class,'start_new_chat'])->name('start-new-chat');
+	
 });
 
 

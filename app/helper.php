@@ -714,7 +714,19 @@ use App\Models\Manage_chat;
 				->exists();*/
 		
 		$max_record = $model::orderByRaw('LPAD(chat_group_id, 5, "0") desc')->first();
-		$newId = $max_record ? $max_record->chat_group_id : str_pad(1, 5, '0', STR_PAD_LEFT);
+		//$max_record = $model::select('chat_group_id')->max('chat_group_id');
+		
+		//$newId = $max_record ? $max_record->chat_group_id + 1 : str_pad(1, 5, '0', STR_PAD_LEFT);
+		
+		if($max_record)
+		{
+			$lastIdNumber = intval($max_record->chat_group_id);
+			$newIdNumber = $lastIdNumber + 1;
+			$newId = str_pad($newIdNumber, 5, '0', STR_PAD_LEFT);
+		}
+		else{
+			 $newId =  str_pad(1, 5, '0', STR_PAD_LEFT);
+		}
 
 		// Check if there is any previous record
 		/*if (!$lastRecord) {

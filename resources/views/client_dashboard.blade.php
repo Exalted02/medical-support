@@ -1,5 +1,9 @@
 @extends('layouts.app')
 @section('content')
+@php 
+//echo "<pre>";print_r($chats_data);die;
+
+@endphp
 		<!-- Chart CSS -->
 		<link rel="stylesheet" href="{{ url('front-assets/plugins/morris/morris.css') }}">
     <!-- Page Wrapper -->
@@ -32,7 +36,7 @@
 					</li>
 					<li>
 						<div class="form-sort">
-							<button type="button" class="chat-button">Start new chat</button>
+							<a href="{{ route('start-new-chat')}}"><button type="button" class="chat-button">Start new chat</button></a>
 						</div>
 					</li>
 					<li>
@@ -45,8 +49,13 @@
 			</div>
             
 			<div class="row mt-4">
-				@for($i=1;$i<10;$i++)
+				@foreach($chats_data as $chats)
+				
+				@php 
+					$sender = App\Models\User::where('id', $chats->sender_id)->first();
+				@endphp
 				<div class="col-xxl-3 col-xl-4 col-md-6">
+					<a href="{{ route('chat')}}">
 					<div class="contact-grid">
 						<div class="grid-head">
 							<div class="users-profile">
@@ -63,16 +72,16 @@
 									<div class="col-md-6">
 										<span>Residence</span>
 									</div>
-									<div class="col-md-6 text-end">
+									<div class="col-md-4 text-end ms-2 text-nowrap">
 										<span>Timestamp</span>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-md-6">
-										<span>Kolkata</span>
+										<span>{{ $chats->user_type}}</span>
 									</div>
-									<div class="col-md-6 text-end">
-										<span>Nov 9 2025 10:15am</span>
+									<div class="col-md-4 text-end ms-2 text-nowrap">
+										<span>{{ \Carbon\Carbon::parse($chats->created_at ?? '')->format('M j Y g:iA') }}</span>
 									</div>
 								</div>
 								
@@ -80,24 +89,24 @@
 									<div class="col-md-6">
 										<span>Issue</span>
 									</div>
-									<div class="col-md-6 text-end">
+									<div class="col-md-4 text-end ms-2 text-nowrap">
 										<span>Assigned to :</span>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-md-6">
-										<span>aasasasasa</span>
+										<span>{{ $chats->message ?? ''}}</span>
 									</div>
-									<div class="col-md-6 text-end">
-										<span>Raj</span>
+									<div class="col-md-4 text-end ms-2 text-nowrap">
+										<span>{{ $sender->name ?? '' }}</span>
 									</div>
 								</div>
 							</div>
+							
 						</div>
-						
-					</div>
+					</div></a>
 				</div>
-				@endfor
+				@endforeach
 				<div class="col-lg-12">
 					<div class="load-more-btn text-center">
 						<a href="#" class="btn btn-primary">Load More Contacts<i class="spinner-border"></i></a>

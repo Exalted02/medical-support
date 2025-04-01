@@ -589,6 +589,34 @@
     transition: 0.3s;
 }
 
+.address-info .row {
+    margin-bottom: 10px;  
+}
+
+.address-info .col-md-6 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+	margin-right: 25px;  
+}
+
+.reason-box {
+    background-color: #E6E6FA;
+    color: #4B0082; 
+    padding: 10px 20px;
+    border-radius: 20px;
+    display: inline-block;
+    margin: 5px; 
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+}
+
+
+
+
+
 
 
 
