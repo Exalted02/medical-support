@@ -10,7 +10,7 @@
             <div class="page-header">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h3 class="page-title">Master Dashboard</h3>
+                        <h3 class="page-title">Client Dashboard</h3>
                         <ul class="breadcrumb">
                             <li class="breadcrumb-item active">Dashboard</li>
                         </ul>
@@ -18,112 +18,93 @@
                 </div>
             </div>
             <!-- /Page Header -->
-        
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="row">
-						<div class="col-md-3 col-sm-3 col-lg-3 col-xl-3">
-							<div class="card">
-								<div class="card-body">
-									<div class="d-flex justify-content-between mb-3">
-										<div>
-											<span class="d-block">Ongoing Queries</span>
-										</div>
-										{{--<div>
-											<span class="text-success">+10%</span>
-										</div>--}}
+			<hr>
+			<div class="filter-section">
+				<ul>
+					<li>
+						<div class="form-sort client-chat-menu">
+							<button type="button" class="client-chat-button">Open chats</button>  
+							<div class="vertical-divider"></div>
+							<button type="button" class="client-chat-button">Client chats</button>
+							 <div class="vertical-divider"></div>
+							<button type="button" class="client-chat-button">Transffer to supervisor</button>
+						</div>
+					</li>
+					<li>
+						<div class="form-sort">
+							<button type="button" class="chat-button">Start new chat</button>
+						</div>
+					</li>
+					<li>
+						<div class="view-icons">
+							<a href="contact-list.html" class="list-view btn btn-link"><i class="las la-list"></i></a>
+							<a href="contact-grid.html" class="grid-view btn btn-link active"><i class="las la-th"></i></a>
+						</div>
+					</li>
+				</ul>
+			</div>
+            
+			<div class="row mt-4">
+				@for($i=1;$i<10;$i++)
+				<div class="col-xxl-3 col-xl-4 col-md-6">
+					<div class="contact-grid">
+						<div class="grid-head">
+							<div class="users-profile">
+								<h5 class="name-user">
+									<span>Ticket</span>
+								</h5>
+							</div>
+							<div class="active-ticket">Active ticket</div>
+						</div>
+						<div class="grid-details-underline"></div>
+						<div class="grid-body">
+							<div class="address-info">
+								<div class="row">
+									<div class="col-md-6">
+										<span>Residence</span>
 									</div>
-									<h3 class="mb-3">125</h3>
-									<div class="progress height-five mb-2">
-										<div class="progress-bar bg-purple w-70" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+									<div class="col-md-6 text-end">
+										<span>Timestamp</span>
 									</div>
-									{{--<p class="mb-0">Overall Employees 218</p>--}}
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+										<span>Kolkata</span>
+									</div>
+									<div class="col-md-6 text-end">
+										<span>Nov 9 2025 10:15am</span>
+									</div>
+								</div>
+								
+								<div class="row mt-2">
+									<div class="col-md-6">
+										<span>Issue</span>
+									</div>
+									<div class="col-md-6 text-end">
+										<span>Assigned to :</span>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+										<span>aasasasasa</span>
+									</div>
+									<div class="col-md-6 text-end">
+										<span>Raj</span>
+									</div>
 								</div>
 							</div>
 						</div>
-						<div class="col-md-3 col-sm-3 col-lg-3 col-xl-3">
-							<div class="card">
-								<div class="card-body">
-									<div class="d-flex justify-content-between mb-3">
-										<div>
-											<span class="d-block">Solved Queries</span>
-										</div>
-										{{--<div>
-											<span class="text-success">+10%</span>
-										</div>--}}
-									</div>
-									<h3 class="mb-3">218</h3>
-									<div class="progress height-five mb-2">
-										<div class="progress-bar bg-danger w-70" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-									</div>
-									{{--<p class="mb-0">Overall Employees 218</p>--}}
-								</div>
-							</div>
-						</div>
-						<div class="col-md-3 col-sm-3 col-lg-3 col-xl-3">
-							<div class="card">
-								<div class="card-body">
-									<div class="d-flex justify-content-between mb-3">
-										<div>
-											<span class="d-block">Today's Tickets</span>
-										</div>
-										{{--<div>
-											<span class="text-success">+10%</span>
-										</div>--}}
-									</div>
-									<h3 class="mb-3">25</h3>
-									<div class="progress height-five mb-2">
-										<div class="progress-bar bg-success w-70" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-									</div>
-									{{--<p class="mb-0">Overall Employees 218</p>--}}
-								</div>
-							</div>
-						</div>
-						<div class="col-md-3 col-sm-3 col-lg-3 col-xl-3">
-							<div class="card">
-								<div class="card-body">
-									<div class="d-flex justify-content-between mb-3">
-										<div>
-											<span class="d-block">Total Solved Tickets</span>
-										</div>
-										{{--<div>
-											<span class="text-success">+10%</span>
-										</div>--}}
-									</div>
-									<h3 class="mb-3">2479</h3>
-									<div class="progress height-five mb-2">
-										<div class="progress-bar bg-warning w-70" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-									</div>
-									{{--<p class="mb-0">Overall Employees 218</p>--}}
-								</div>
-							</div>
-						</div>
+						
 					</div>
-                </div>
-            </div>
-			<div class="row">
-				<div class="col-md-12">
-					<div class="row">
-						<div class="col-md-6 text-center">
-							<div class="card">
-								<div class="card-body">
-									<h3 class="card-title">Tickets Analytics</h3>
-									<canvas id="line-chart" class="w-full m_medi-chart" height="150"></canvas>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6 text-center">
-							<div class="card">
-								<div class="card-body">
-									<h3 class="card-title">Support Provided</h3>
-									<canvas id="line-chart-2" class="w-full m_medi-chart" height="150"></canvas>
-								</div>
-							</div>
-						</div>
+				</div>
+				@endfor
+				<div class="col-lg-12">
+					<div class="load-more-btn text-center">
+						<a href="#" class="btn btn-primary">Load More Contacts<i class="spinner-border"></i></a>
 					</div>
 				</div>
 			</div>
-			<div class="row">
+			{{--<div class="row">
 				<div class="col-md-12">
 					<div class="card card-table">
 						<div class="card-header">
@@ -248,7 +229,7 @@
 						</div>
 					</div>
 				</div>				
-			</div>
+			</div>--}}
         </div>
         <!-- /Page Content -->
 
@@ -259,5 +240,13 @@
 @section('scripts')
 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js'></script>
 <script src="{{ url('front-assets/js/line-chart-1.js') }}"></script>
+
+<script>document.querySelectorAll(".client-chat-button").forEach(button => {
+    button.addEventListener("click", function() {
+        document.querySelectorAll(".client-chat-button").forEach(btn => btn.classList.remove("active"));
+        this.classList.add("active");
+    });
+});
+</script>
 @endsection
 

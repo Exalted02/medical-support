@@ -17,11 +17,11 @@ class DashboardController extends Controller
 	public function employee_dashboard()
 	{
 		$data = [];
-		return view('employee', $data);
+		return view('employee_dashboard', $data);
 	}
 	public function client_dashboard()
 	{
 		$data = [];
-		return view('client', $data);
+		return view('client_dashboard', $data);
 	}
 }
