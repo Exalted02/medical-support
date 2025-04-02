@@ -399,7 +399,7 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch(`${app_url}/chat/updateReadStatus?receiverId=${userId}`)
             .then(response => response.text())
             .then(html => {
-				alert(html);
+				//alert(html);
                 window.location.href = app_url + '/chat?receiverId=' + userId;
             })
             .catch(error => console.error('Error fetching user list:', error));
@@ -649,7 +649,13 @@ function getFileIcon(extension) {
 
     channel.bind('message-sent', function(data) {
         console.log("New message received: ", data);
-		
+		var chat_group_id = $('#chat_group_id').val();
+		 alert(chat_group_id);
+		if(chat_group_id =='')
+		{
+			$('#chat_group_id').val(data.chat_group_id);
+			$('#receiverId').val(data.receiver_id);
+		}
 		//--for show latest message that users send
 		let userId = data.sender_id;
 		let userLink = document.querySelector('.user-link[data-userid="' + userId + '"]');
@@ -675,15 +681,20 @@ function getFileIcon(extension) {
 		}
 		
 		//-------------
-		var chat_group_id = $('#chat_group_id').val();
+		//var chat_group_id = $('#chat_group_id').val();
 		//alert(chat_group_id);
 		// for instant chat show 
-		if(chat_group_id =='')
+		/*if(chat_group_id =='')
 		{
 			$('#chat_group_id').val(data.chat_group_id);
 			$('#receiverId').val(data.receiver_id);
 		}
 		else if (data.chat_group_id != chat_group_id)
+		{
+			return;
+		}*/
+		
+		if (data.chat_group_id != chat_group_id)
 		{
 			return;
 		}
