@@ -317,6 +317,7 @@ $messages2 = $messages;
 							</div>
 						</div>
 					</div>
+					
 					<div class="chat-footer">
 					<div id="file-preview" class=""></div>
 					<form id="chat-file-upload-form" enctype="multipart/form-data">
@@ -352,7 +353,7 @@ $messages2 = $messages;
 		</div>
 	</div>
 </div>
-<input type="hidden" id="receiverId">
+<input type="text" id="receiverId">
 <input type="hidden" id="receiver_department">
 <input type="hidden" id="chat_group_id">
 {{--<button class="btn btn-custom send-button" data-url="{{ route('send.message') }}"  type="button"><i class="fa-solid fa-paper-plane"></i></button>--}}
@@ -475,7 +476,7 @@ $(document).ready(function() {
 				contentType: false,
 				success: function(response) {
 					console.log("Message sent:", response);
-					
+					$('#reason_id').val('');
 					//alert(response.message);
 					
 					// Clear input & file preview after sending
@@ -492,9 +493,11 @@ $(document).ready(function() {
 						// Append new message as usual
 						//chatBox.append(chatHTML);
 					}
-
+   
 					// Scroll to latest message
 					$('.chat-box').scrollTop($('.chat-box')[0].scrollHeight);
+					
+					//first_chat();
 				},
 				error: function(xhr, status, error) {
 					console.error("Error sending message:", xhr.responseText);
@@ -619,6 +622,21 @@ function getFileIcon(extension) {
 
     return icons[extension] || '📁'; // Default file icon
 }
+
+/*function first_chat()
+{
+	var URL = 
+	$.ajax({
+		url: URL,
+		type: "POST",
+		data: formData,
+		processData: false,
+		contentType: false,
+		success: function(response) {
+			
+		}
+	});
+}*/
 </script>
 
 <script>
@@ -643,15 +661,21 @@ function getFileIcon(extension) {
     channel.bind('message-sent', function(data) {
         console.log("New message received: ", data);
 		
+		if(chat_group_id =='')
+		{
+			$('#chat_group_id').val(data.chat_group_id);
+			$('#receiverId').val(data.receiver_id);
+		}
 		//--for show latest message that users send
 		let userId = data.sender_id;
+		//alert(userId);
 		let userLink = document.querySelector('.user-link[data-userid="' + userId + '"]');
 		var rec_id = $('#receiverId').val();
-		if (userLink) {
+		//var rec_id = data.sender_id;
+		//alert("hi "+ rec_id);
+		//if (userLink) {
 			// Move user to the top by reloading the chat user list
-			//fetch(`${app_url}/chat/updateReadStatus?receiverId=${userId}`)
-			//fetch('/chat/latest-users?receiverId=' + rec_id)
-			 
+			//alert('ok');
 			var app_url =  "{{ env('APP_URL') }}";
 			fetch(`${app_url}/chat/latest-users?receiverId=${rec_id}`)
 				.then(response => response.text())
@@ -665,14 +689,14 @@ function getFileIcon(extension) {
 			// Change text color to black if unread
 			//userLink.style.color = "black";
 			//userLink.style.fontWeight = "bold";
-		}
+		//}
 		
 		//-------------
 		var chat_group_id = $('#chat_group_id').val();
 		//alert(chat_group_id);
 		//alert(data.chat_group_id);
 		// for instant chat show 
-		if(chat_group_id =='')
+		/*if(chat_group_id =='')
 		{
 			$('#chat_group_id').val(data.chat_group_id);
 			$('#receiverId').val(data.receiver_id);
@@ -680,7 +704,17 @@ function getFileIcon(extension) {
 		else if (data.chat_group_id != chat_group_id)
 		{
 			return;
+		}*/
+		
+		
+		
+		
+		if (data.chat_group_id != chat_group_id)
+		{
+			return;
 		}
+		
+		
 		
 		
 		var app_url =  "{{ env('APP_URL') }}";

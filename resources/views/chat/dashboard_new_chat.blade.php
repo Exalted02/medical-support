@@ -483,7 +483,7 @@ $(document).ready(function() {
 				contentType: false,
 				success: function(response) {
 					console.log("Message sent:", response);
-					
+					$('#reason_id').val('');
 					//alert(response.message);
 					
 					// Clear input & file preview after sending

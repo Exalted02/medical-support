@@ -253,12 +253,15 @@ class ChatController extends Controller
 			{
 				if($request->reason_id !='')
 				{
+					//echo '1';die;
 					$chat_group_id = generate_chat_unique_id(Manage_chat::class,'chat_group_id', $receiver_id);
 				}
 				else
 				{
+					//echo '2';die;
+					$chat_group_id =  $chatData->chat_group_id; // this is
 					
-					$chat_group_id = generate_chat_unique_id(Manage_chat::class,'chat_group_id', $receiver_id);
+					//$chat_group_id = generate_chat_unique_id(Manage_chat::class,'chat_group_id', $receiver_id);
 					
 					/*$isExists = Manage_chat::where(function ($query) {
 						$query->where('reason_id', null);
@@ -280,6 +283,7 @@ class ChatController extends Controller
 			}
 			else	
 			{
+				//echo '3';die;
 				//$chat_group_id = substr(sha1(mt_rand()),17,6);
 				$chat_group_id = generate_chat_unique_id(Manage_chat::class,'chat_group_id', $receiver_id);
 			}
@@ -359,7 +363,35 @@ class ChatController extends Controller
 		$data[] = '';
 		return view('channel.index', $data);
 	}	
+	
+	/*public function getChatUsers(Request $request)
+	{
+		$receiverId = $request->query('receiverId'); // Get receiver ID from request
+		\Log::info("Fetching chat users for receiverId: " . ($receiverId ?? 'null'));
 
+		// Fetch chat users where the authenticated user is sender or receiver
+		$chatUsers = Manage_chat::where('receiver_id', auth()->id())
+			->orWhere('sender_id', auth()->id())
+			->with(['sender', 'receiver'])
+			->orderBy('created_at', 'desc')
+			->get()
+			->groupBy(function ($message) {
+				return $message->sender_id == auth()->id() ? $message->receiver_id : $message->sender_id;
+			});
+
+		// Ensure receiverId is set
+		if (!$receiverId && $chatUsers->isNotEmpty()) {
+			$receiverId = $chatUsers->keys()->first();
+		}
+
+		\Log::info("Resolved receiverId: " . ($receiverId ?? 'null'));
+
+		return view('partials.chat_user_list', [
+			'sortedChatUsers' => $chatUsers,
+			'receiverId' => $receiverId
+		]);
+	}*/
+	
 	public function getChatUsers(Request $request)
 	{
 		$receiverId = $request->query('receiverId'); // Get receiver ID from request
@@ -407,6 +439,7 @@ class ChatController extends Controller
 			'receiverId' => $receiverId
 		]);
 	}
+	
 	public function update_chat_read_status(Request $request)
 	{
 		$receiverId = $request->query('receiverId');
