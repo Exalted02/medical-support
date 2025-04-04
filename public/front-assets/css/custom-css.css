@@ -215,6 +215,9 @@
 .select2-container {
 	width: 100% !important;
 }
+.m-t-20 {
+	margin-top: 20px !important;
+}
 .m-l-5 {
 	margin-left: 5px !important;
 }
@@ -589,7 +592,7 @@
     transition: 0.3s;
 }
 
-.address-info .row {
+/*.address-info .row {
     margin-bottom: 10px;  
 }
 
@@ -598,7 +601,7 @@
     justify-content: space-between;
     align-items: center;
 	margin-right: 25px;  
-}
+}*/
 
 .reason-box {
     background-color: #E6E6FA;

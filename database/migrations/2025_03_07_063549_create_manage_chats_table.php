@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
 			$table->tinyInteger('source')->default(0)->comment('0=website,1=facebook,2=whatapp');
 			$table->integer('user_type')->nullable();
+			$table->string('unique_chat_id')->nullable();
 			$table->string('chat_group_id')->nullable();
 			$table->integer('sender_id')->nullable();
 			$table->integer('receiver_id')->nullable();

@@ -111,6 +111,7 @@ Route::middleware('auth')->group(function () {
 	//Chat Page
 	Route::get('/chat', [ChatController::class, 'chatPage'])->name('chat');
 	Route::post('/send-message', [ChatController::class, 'sendMessage'])->name('send.message');
+	Route::post('/send-rason-message', [ChatController::class, 'sendRasonMessage'])->name('send.reason-message');
 	//Route::get('/chat/{receiverId}', [ChatController::class, 'chatWithUser'])->name('chat.with');
 	Route::post('/message-delete', [ChatController::class, 'message_delete'])->name('message.delete');
 	Route::get('/chat/latest-users', [ChatController::class, 'getChatUsers'])->name('chat.users');
@@ -158,7 +159,7 @@ Route::middleware('auth')->group(function () {
 	
 	// client dashboard 
 	Route::get('start-new-chat', [DashboardController::class,'start_new_chat'])->name('start-new-chat');
-	Route::get('open-new-chat/{slug}', [ChatController::class,'open_new_chat'])->name('open-new-chat');
+	Route::get('open-new-chat/{slug}/{unique_chat_id}', [ChatController::class,'open_new_chat'])->name('open-new-chat');
 	
 });
 

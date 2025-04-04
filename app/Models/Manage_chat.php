@@ -13,6 +13,7 @@ class Manage_chat extends Model
         'source',
         'user_type',
         'reason',
+        'unique_chat_id',
         'chat_group_id',
         'sender_id',
         'receiver_id',

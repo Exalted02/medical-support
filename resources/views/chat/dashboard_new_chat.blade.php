@@ -17,7 +17,7 @@ else{
 <div class="page-wrapper">
 	<div class="chat-main-row">
 		<div class="chat-main-wrapper">
-			<div class="col-lg-3 message-view chat-profile-view chat-sidebar" id="task_window">
+			{{--<div class="col-lg-3 message-view chat-profile-view chat-sidebar" id="task_window">
 				<div class="content-full">
 					<div class="display-table">
 						<div class="table-row">
@@ -53,7 +53,7 @@ else{
 						</div>
 					</div>
 				</div>
-			</div>
+			</div>--}}
 			<!-- /Chat Right Sidebar -->
 			<!-- Chats View -->
 			<div class="col-lg-9 message-view task-view">
@@ -68,8 +68,8 @@ else{
 									</a>
 								</div>
 								<div class="user-info float-start">
-									<a href="profile.html" title="Mike Litorus"><span>{{ $receiverName ?? '' }}</span> {{--<i class="typing-text">Typing...</i>--}}</a>
-									<span class="last-seen">{{ $receiverEmail ?? '' }} {{ $receiverPhone ? '('.  $receiverPhone .')' : '' }}</span>
+									<a href="profile.html" title="Mike Litorus"><span>{{ $chatReason ?? '' }}</span> {{--<i class="typing-text">Typing...</i>--}}</a>
+									{{--<span class="last-seen">{{ $receiverEmail ?? '' }} {{ $receiverPhone ? '('.  $receiverPhone .')' : '' }}</span>--}}
 								</div>
 							</div>
 							{{--<div class="search-box">
@@ -355,6 +355,7 @@ else{
 					</form>
 					</div>
 					<input type="hidden" id="reason_id" value='{{ $reason_id ?? ''}}'>
+					<input type="hidden" id="unique_chat_id" value='{{ $unique_chat_id ?? ''}}'>
 				</div>
 			</div>
 		</div>
@@ -451,10 +452,11 @@ $(document).ready(function() {
 		let formData = new FormData($('#chat-file-upload-form')[0]); // Get form data
 		
 		let reason_id = $('#reason_id').val();
+		let unique_chat_id = $('#unique_chat_id').val();
 		let message = $('#msg').val();
 		let edit_id = $('#edit_id').val();
 		//let URL = $(this).data('url');
-		let URL = "{{ route('send.message') }}";
+		let URL = "{{ route('send.reason-message') }}";
 		var receiverId = $('#receiverId').val();
 		//alert("receiverId ->" + receiverId);
 		var department_id = $('#receiver_department').val();
@@ -471,6 +473,7 @@ $(document).ready(function() {
         formData.append('_token', "{{ csrf_token() }}");
 		
         formData.append('reason_id', reason_id);
+        formData.append('unique_chat_id', unique_chat_id);
 		
 		//alert(receiverId);
 		//if (message.trim() !== '') 
@@ -650,7 +653,7 @@ function getFileIcon(extension) {
     channel.bind('message-sent', function(data) {
         console.log("New message received: ", data);
 		var chat_group_id = $('#chat_group_id').val();
-		 alert(chat_group_id);
+		 // alert(chat_group_id);
 		if(chat_group_id =='')
 		{
 			$('#chat_group_id').val(data.chat_group_id);
@@ -694,10 +697,10 @@ function getFileIcon(extension) {
 			return;
 		}*/
 		
-		if (data.chat_group_id != chat_group_id)
+		/*if (data.chat_group_id != chat_group_id)
 		{
 			return;
-		}
+		}*/
 		
 		
 		var app_url =  "{{ env('APP_URL') }}";
@@ -801,7 +804,8 @@ function getFileIcon(extension) {
 			Fancybox.bind("[data-fancybox='chat-gallery']", {});
 		}
 		
-		//alert(chatHTML);
+		// alert(chatHTML);
+		// console.log(chatHTML);
 		chatBox.append(chatHTML);
 		chatBox.scrollTop(chatBox.prop("scrollHeight"));
 	});

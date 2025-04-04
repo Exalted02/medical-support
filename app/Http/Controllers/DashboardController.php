@@ -27,7 +27,8 @@ class DashboardController extends Controller
 		$data['chats_data'] = Manage_chat::where(function ($query) {
 				$query->where('sender_id', auth()->id())
 					  ->orWhere('receiver_id', auth()->id());
-			})->get();
+			})->get()->groupBy('chat_group_id');
+		// dd($data['chats_data']);
 		return view('client_dashboard', $data);
 	}
 	public function start_new_chat()

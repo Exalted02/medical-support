@@ -28,7 +28,7 @@
 						<div class="grid-details-underline"></div>
 						<div class="d-flex flex-wrap gap-2 mt-5">
 							@foreach($chat_reasons as $chat_reason)
-								<a href="{{ route('open-new-chat', $chat_reason->id) }}"><div class="reason-box">
+								<a href="{{ route('open-new-chat', [$chat_reason->id, auth()->user()->id.time()]) }}"><div class="reason-box">
 									{{ $chat_reason->reason ?? '' }}
 								</div></a>
 							@endforeach
