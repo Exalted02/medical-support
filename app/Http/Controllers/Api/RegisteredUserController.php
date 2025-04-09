@@ -186,7 +186,7 @@ class RegisteredUserController extends Controller
         ]);
     }
 	
-	public function store_customer(Request $request)
+	public function store_client(Request $request)
 	{
 		//echo  "<pre>";print_r($request->all());die;
 		$validator = Validator::make($request->all(), [
@@ -210,14 +210,11 @@ class RegisteredUserController extends Controller
 		$model->email = $request->email ?? null;
 		$model->password = Hash::make($request->password);
 		$model->company_name = $request->company_name ?? null;
-		$model->address = $request->address ?? null;
-		$model->city = $request->city ?? null;
-		$model->country = $request->country ?? null;
-		$model->state = $request->state ?? null;
-		$model->zipcode = $request->zipcode ?? null;
+		$model->username = $request->user_name ?? null;
 		$model->phone_number = $request->phone_number ?? null;
+		$model->fax = $request->fax ?? null;
 		$model->status = 1;
-		$model->user_type = 1 ?? null; // customer
+		$model->user_type = 2 ?? null; // client
 
 		if ($model->save()) {
 			$lastid = $model->id;
@@ -236,7 +233,7 @@ class RegisteredUserController extends Controller
 					// 'ccEmails' => array('exaltedsol04@gmail.com'),
 					// 'files' => [public_path('images/logo.jpg'), public_path('css/app.css'),],
 				];
-			send_email($data);
+			//send_email($data);
 			/*try {
     			$get_email = get_email(2);
     			$data = [
@@ -260,16 +257,16 @@ class RegisteredUserController extends Controller
 			
 			//-----
 			$response['status'] = 200;
-			$response['message'] = "Customer added successfully";
+			$response['message'] = "Client added successfully";
 		} else {
 			$response['status'] = 500;
-			$response['message'] = "Failed to add customer";
+			$response['message'] = "Failed to add client";
 		}
 		
 		return $response;
 	}
 	
-	public function store_retailer(Request $request)
+	public function store_employee(Request $request)
 	{
 		//echo  "<pre>";print_r($request->all());die;
 		$validator = Validator::make($request->all(), [
@@ -287,14 +284,14 @@ class RegisteredUserController extends Controller
 		}
 		
 		//echo  "<pre>";print_r($request->all());die;
-		$filename = '';
+		/*$filename = '';
 		if ($request->hasFile('upload_tax_lisence')) {
 			$file = $request->file('upload_tax_lisence');
 			$filename = time().'_'.$file->getClientOriginalName();
 			$ext = $file->getClientOriginalExtension();
 			$destinationPath =  public_path('uploads/retailer');
 			$file->move($destinationPath,$filename);
-		}
+		}*/
 		
 		$model = new User();
 		$model->name = $request->first_name . ' ' . $request->last_name;
@@ -302,16 +299,18 @@ class RegisteredUserController extends Controller
 		$model->last_name = $request->last_name ?? null;
 		$model->email = $request->email ?? null;
 		$model->password = Hash::make($request->password);
-		$model->company_name = $request->company_name ?? null;
+		$model->department = $request->department ?? null;
+		$model->username = $request->username ?? null;
+		/*$model->company_name = $request->company_name ?? null;
 		$model->address = $request->address ?? null;
 		$model->city = $request->city ?? null;
 		$model->country = $request->country ?? null;
 		$model->state = $request->state ?? null;
 		$model->zipcode = $request->zipcode ?? null;
-		$model->phone_number = $request->phone_number ?? null;
-		$model->user_type = 2 ?? null; // retailer
-		$model->upload_tax_lisence = $filename ?? null;
-		$model->status = 0;
+		$model->phone_number = $request->phone_number ?? null;*/
+		$model->user_type = 1 ?? null; // employee
+		//$model->upload_tax_lisence = $filename ?? null;
+		$model->status = 1;
 		
         //echo  "<pre>";print_r($request->all());die;
 		if ($model->save()) {
@@ -331,13 +330,13 @@ class RegisteredUserController extends Controller
 				// 'ccEmails' => array('exaltedsol04@gmail.com'),
 				// 'files' => [public_path('images/logo.jpg'), public_path('css/app.css'),],
 			];
-			send_email($data);
+			//send_email($data);
 			
 			$response['status'] = 200;
-			$response['message'] = "Retailer added successfully";
+			$response['message'] = "Employee added successfully";
 		} else {
 			$response['status'] = 500;
-			$response['message'] = "Failed to add retailer";
+			$response['message'] = "Failed to add employee";
 		}
 
 		return $response;

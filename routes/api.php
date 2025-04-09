@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RegisteredUserController;
+use App\Http\Controllers\Api\ChatController;
+
+
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ArtistController;
@@ -33,14 +36,22 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::post('/google/callback', [RegisteredUserController::class, 'googleLogin']);
 Route::post('login', [RegisteredUserController::class, 'login'])->name('login');
-Route::post('store-customer', [RegisteredUserController::class, 'store_customer'])->name('store-customer');
-Route::post('store-retailer', [RegisteredUserController::class, 'store_retailer'])->name('store-retailer');
+Route::post('store-client', [RegisteredUserController::class, 'store_client'])->name('store-client');
+Route::post('store-employee', [RegisteredUserController::class, 'store_employee'])->name('store-employee');
 Route::post('forgot-password', [RegisteredUserController::class, 'forgotPassword'])->name('forgot-password');
 Route::post('forgot-password-verify-otp', [RegisteredUserController::class, 'forget_password_verify_otp'])->name('forgot-password-verify-otp');
 Route::post('reset-password', [RegisteredUserController::class, 'resetpassword'])->name('reset-password');
 
 Route::post('register-verify-otp', [RegisteredUserController::class, 'register_verify_otp'])->name('register-verify-otp');
 
+Route::get('/chat-reasons', [ChatController::class, 'chat_reason_list']);
+Route::get('/chats-list', [ChatController::class, 'chats_list']);
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////
 Route::post('category-list',[CategoryController::class, 'getCategories']);
 Route::post('get-subcategory-list',[CategoryController::class, 'get_subcategory_list']);
 Route::post('get-product-list',[ProductController::class, 'get_product_list']);
