@@ -52,6 +52,7 @@ class MessageSent implements ShouldBroadcastNow
             'id' => $this->message->id,
             'sender_id' => $this->message->sender_id,
             'receiver_id' => $this->message->receiver_id,
+			'unique_chat_id' => $this->message->unique_chat_id,
 			'chat_group_id' => $this->message->chat_group_id,
             'message' => $this->message->message,
             //'created_at' => $this->message->created_at->toDateTimeString(),
