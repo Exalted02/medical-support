@@ -32,12 +32,12 @@ class ChatController extends Controller
 		$data = [];
 		$login_user_id = Auth::guard('sanctum')->user()->id;
 		
-		$chats = Manage_chat::where(function ($query) use($login_user_id) {
+		$chat_values = Manage_chat::where(function ($query) use($login_user_id) {
 				$query->where('sender_id', $login_user_id)
 					  ->orWhere('receiver_id', $login_user_id);
 			})->get()->groupBy('chat_group_id');
 		
-		foreach($chats as $k=>$chats_data){
+		foreach($chat_values as $k=>$chats_data){
 			$chats = $chats_data[0];
 			$sender = User::where('id', $chats->receiver_id)->first();
 			$issue = Chat_reason::where('id', $chats->reason)->first();
@@ -48,6 +48,10 @@ class ChatController extends Controller
 				'timestamp' => Carbon::parse($chats->created_at ?? '')->format('M j Y g:iA'),
 				'issue' => $issue->reason ?? '',
 				'assigned_to' => $sender->name ?? '',
+				'reason_id' => $chats->reason ?? 0,
+				'receiver_id' => $chats->receiver_id ?? '',
+				'chat_group_id' => $chats->chat_group_id ?? '',
+				'unique_chat_id' => $chats->unique_chat_id ?? '',
 			];
 		}
 		return response()->json([
@@ -57,6 +61,7 @@ class ChatController extends Controller
 	}
 	public function send_reason_message(Request $request)
     {
+		//\Log::info('Request data: '.json_encode($request->all()));
 		/*$request->validate([
 			'files.*' => 'file|max:2048', // Max 2MB per file
 		]);*/
@@ -110,7 +115,7 @@ class ChatController extends Controller
 		}*/
 		
 		//$chat_group_id = substr(sha1(mt_rand()),17,6);
-		\Log::info('Test send message');
+		//\Log::info('Test send message');
 		$edit_id = $request->edit_id;
 		if($edit_id!='')
 		{
@@ -144,7 +149,7 @@ class ChatController extends Controller
 			
 			if($chatData && !empty($chatData->chat_group_id))
 			{
-				if($request->reason_id !='')
+				/*if($request->reason_id !='')
 				{
 					//echo '1';die;
 					$chat_group_id = generate_chat_unique_id(Manage_chat::class,'chat_group_id', $receiver_id);
@@ -153,7 +158,8 @@ class ChatController extends Controller
 				{
 					//echo '2';die;
 					$chat_group_id =  $chatData->chat_group_id; // this is
-				}
+				}*/
+				$chat_group_id =  $chatData->chat_group_id; // this is
 			}
 			else	
 			{
@@ -176,7 +182,6 @@ class ChatController extends Controller
 				'is_read' => 0,
 				'created_at' => date('Y-m-d h:i:s'),
 			]);
-			
 			
 			foreach($uploadedFiles as $file)
 			{
@@ -203,5 +208,14 @@ class ChatController extends Controller
 				'message' => 'Message sent successfully.'
 			]);*/
 		}
+    }
+	public function chat_message_data(Request $request)
+    {
+		\Log::info('Request data: '.json_encode($request->all()));
+		$messages = Manage_chat::where('chat_group_id', $request->chat_group_id)->orderBy('created_at', 'asc')->get();
+		return response()->json([
+            'success' => true,
+            'messages' => $messages,
+        ], 200);
     }
 }

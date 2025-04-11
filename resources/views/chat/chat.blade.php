@@ -23,17 +23,17 @@ $messages2 = $messages;
 												$chatUser = $messages->first()->sender_id == auth()->id()
 													? $messages->first()->receiver
 													: $messages->first()->sender;
-												$isActive = ($receiverId == $chatUser->id); // Active only if receiverId matches
+												$isActive = ($receiverId == $chatUser?->id); // Active only if receiverId matches
 												
 												// Check if any message from this user is unread
 												$hasUnreadMessages = $messages->where('receiver_id', auth()->id())->where('user_type',1)->where('is_read', 0)->count() > 0;
 											@endphp
 											<li class="nav-item me-0" role="presentation">
 												<a class="nav-link text-break mw-100 user-link {{ $isActive ? 'active' : '' }} {{ $hasUnreadMessages ? 'unread-message' : '' }} message-chat-info"
-												   href="{{ route('chat', ['receiverId' => $chatUser->id]) }}"
-												   data-userid="{{ $chatUser->id }}">
+												   href="{{ route('chat', ['receiverId' => $chatUser?->id]) }}"
+												   data-userid="{{ $chatUser?->id }}">
 													<i class="feather-user me-2 align-middle d-inline-block"></i>
-													{{ $chatUser->name }}
+													{{ $chatUser?->name }}
 												</a>
 											</li>
 										@endforeach
