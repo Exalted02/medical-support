@@ -159,6 +159,7 @@ Route::middleware('auth')->group(function () {
 	
 	// client dashboard 
 	Route::get('start-new-chat', [DashboardController::class,'start_new_chat'])->name('start-new-chat');
+	Route::post('add-new-reason', [DashboardController::class,'add_new_reason'])->name('add-new-reason');
 	Route::get('open-new-chat/{slug}/{unique_chat_id}', [ChatController::class,'open_new_chat'])->name('open-new-chat');
 	
 });

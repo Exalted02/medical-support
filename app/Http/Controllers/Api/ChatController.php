@@ -211,8 +211,31 @@ class ChatController extends Controller
     }
 	public function chat_message_data(Request $request)
     {
-		\Log::info('Request data: '.json_encode($request->all()));
+		//\Log::info('Request chat_message_data: '.json_encode($request->all()));
 		$messages = Manage_chat::where('chat_group_id', $request->chat_group_id)->orderBy('created_at', 'asc')->get();
+		return response()->json([
+            'success' => true,
+            'messages' => $messages,
+        ], 200);
+    }
+	public function update_message(Request $request)
+    {
+		//\Log::info('Request update_message: '.json_encode($request->all()));
+		$messages = Manage_chat::find($request->message_id);
+		$messages->message = $request->message;
+		$messages->save();
+		event(new MessageUpdated($messages));
+		return response()->json([
+            'success' => true,
+            'messages' => $messages,
+        ], 200);
+    }
+	public function delete_message(Request $request)
+    {
+		//\Log::info('Request delete_message: '.json_encode($request->all()));
+		$messages = Manage_chat::find($request->message_id);
+		$messages->delete();
+		broadcast(new MessageDeleted($request->message_id))->toOthers();
 		return response()->json([
             'success' => true,
             'messages' => $messages,

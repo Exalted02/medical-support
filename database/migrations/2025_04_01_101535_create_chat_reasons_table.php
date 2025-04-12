@@ -13,6 +13,7 @@ return new class extends Migration
     {
        Schema::create('chat_reasons', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('user_id')->nullable();
             $table->text('reason')->nullable();
             $table->tinyInteger('status')->default(1)->comment('0=inactive; 1=active');
             $table->timestamps();

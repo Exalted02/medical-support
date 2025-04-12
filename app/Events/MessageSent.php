@@ -57,6 +57,7 @@ class MessageSent implements ShouldBroadcastNow
             'message' => $this->message->message,
             //'created_at' => $this->message->created_at->toDateTimeString(),
 			'created_at' => $this->message->created_at->diffForHumans(),
+			'created_at_original' => $this->message->created_at,
             'files' => $this->files,
         ];
     }

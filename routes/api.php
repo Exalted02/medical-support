@@ -47,6 +47,8 @@ Route::post('register-verify-otp', [RegisteredUserController::class, 'register_v
 Route::get('/chat-reasons', [ChatController::class, 'chat_reason_list']);
 Route::get('/chats-list', [ChatController::class, 'chats_list']);
 Route::post('/chat-message-data', [ChatController::class, 'chat_message_data']);
+Route::post('/update-message', [ChatController::class, 'update_message']);
+Route::post('/delete-message', [ChatController::class, 'delete_message']);
 Route::post('/send-reason-message', [ChatController::class, 'send_reason_message']);
 
 

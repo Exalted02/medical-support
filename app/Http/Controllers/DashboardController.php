@@ -8,6 +8,8 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Manage_chat;
 use App\Models\Chat_reason;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class DashboardController extends Controller
 {
@@ -34,7 +36,33 @@ class DashboardController extends Controller
 	public function start_new_chat()
 	{
 		$data = [];
-		$data['chat_reasons'] = Chat_reason::where('status','!=',2)->get();
+		$data['chat_reasons'] = Chat_reason::whereIn('user_id', [Auth::id(), 1])->where('status','!=',2)->get();
 		return view('client_chat_reason', $data);
+	}
+	public function add_new_reason(Request $request)
+	{
+		$data = [];
+		$request->validate([
+            'reason' => 'required'
+        ]);
+		
+		$chk_reason = Chat_reason::whereIn('user_id', [Auth::id(), 1])->where('reason', $request->reason)->first();
+		if($chk_reason){
+			return response()->json([
+                'errors' => [
+                    'reason' => ['This reason already exists.']
+                ]
+            ], 422);
+		}
+		
+		$reason = new Chat_reason();
+		$reason->user_id = Auth::id();
+		$reason->reason = $request->reason;
+		if($reason->save()){
+			echo 'success';
+		}else{
+			echo 'error';
+		}
+		//echo json_encode($data);
 	}
 }
