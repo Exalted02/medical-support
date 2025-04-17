@@ -241,4 +241,31 @@ class ChatController extends Controller
             'messages' => $messages,
         ], 200);
     }
+	public function add_new_reason(Request $request)
+    {
+		$login_user_id = Auth::guard('sanctum')->user()->id;
+		$chk_reason = Chat_reason::whereIn('user_id', [$login_user_id, 1])->where('reason', $request->reason)->first();
+		if($chk_reason){
+			return response()->json([
+				'success' => false,
+				'messages' => 'This reason already exists.',
+			], 200);
+		}
+		
+		$reason = new Chat_reason();
+		$reason->user_id = $login_user_id;
+		$reason->reason = $request->reason;
+		if($reason->save()){
+			return response()->json([
+				'success' => true,
+				'messages' => 'Reason added successfully.',
+			], 200);
+		}else{
+			return response()->json([
+				'success' => false,
+				'messages' => 'Reason not added.',
+			], 200);
+		}
+		
+    }
 }

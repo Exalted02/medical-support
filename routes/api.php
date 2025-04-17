@@ -50,6 +50,7 @@ Route::post('/chat-message-data', [ChatController::class, 'chat_message_data']);
 Route::post('/update-message', [ChatController::class, 'update_message']);
 Route::post('/delete-message', [ChatController::class, 'delete_message']);
 Route::post('/send-reason-message', [ChatController::class, 'send_reason_message']);
+Route::post('/add-new-reason', [ChatController::class, 'add_new_reason']);
 
 
 
