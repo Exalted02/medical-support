@@ -36,7 +36,7 @@ class DashboardController extends Controller
 	public function start_new_chat()
 	{
 		$data = [];
-		$data['chat_reasons'] = Chat_reason::whereIn('user_id', [Auth::id(), 1])->where('status','!=',2)->get();
+		$data['chat_reasons'] = Chat_reason::whereIn('user_id', [Auth::id(), 1])->where('status', 1)->get();
 		return view('client_chat_reason', $data);
 	}
 	public function add_new_reason(Request $request)
@@ -64,5 +64,41 @@ class DashboardController extends Controller
 			echo 'error';
 		}
 		//echo json_encode($data);
+	}
+	public function add_new_other_reason(Request $request)
+	{
+		$data = [];
+		$request->validate([
+            'other_reason' => 'required'
+        ],[
+			'other_reason' => 'Please type reason'
+		]);
+		
+		/*$chk_reason = Chat_reason::whereIn('user_id', [Auth::id(), 1])->where('reason', $request->other_reason)->first();
+		if($chk_reason){
+			return response()->json([
+                'errors' => [
+                    'reason' => ['This reason already exists.']
+                ]
+            ], 422);
+		}*/
+		
+		$reason = new Chat_reason();
+		$reason->user_id = Auth::id();
+		$reason->reason = $request->other_reason;
+		$reason->status = 0;
+		if($reason->save()){
+			return response()->json([
+				'status' => 200,
+				'reason_id' => $reason->id,
+				'chat_url' => route('open-new-chat', [$reason->id, auth()->user()->id.time()])
+			]);
+		}else{
+			return response()->json([
+				'status' => 400
+			]);
+		}
+		
+		echo json_encode($data);
 	}
 }
