@@ -27,10 +27,10 @@
 				<ul>
 					<li>
 						<div class="form-sort client-chat-menu">
-							<button type="button" class="client-chat-button">Open chats</button>  
+							<button type="button" class="client-chat-button active" data-id="open-chats">Open chats</button>  
 							<div class="vertical-divider"></div>
-							<button type="button" class="client-chat-button">Client chats</button>
-							 <div class="vertical-divider"></div>
+							<button type="button" class="client-chat-button" data-id="closed-chats">Closed chats</button>
+							<div class="vertical-divider"></div>
 							<button type="button" class="client-chat-button">Transffer to supervisor</button>
 						</div>
 					</li>
@@ -48,7 +48,7 @@
 				</ul>
 			</div>
             
-			<div class="row mt-4">
+			<div class="row mt-4 chat-list" id="open-chats">
 				@foreach($chats_data as $k=>$chats_data)
 				
 				@php 
@@ -76,7 +76,7 @@
 												Resident:
 											</div>
 											<div class="font-weight-bold text-dark">
-												<strong></strong>
+												<strong>{{ auth()->user()->name }}</strong>
 											</div>
 										</div>
 									</div>
@@ -126,6 +126,9 @@
 					</div>
 				</div>--}}
 				@endif
+			</div>
+			<div class="row mt-4 chat-list" id="closed-chats" style="display: none;">
+				No Chat Found!!!
 			</div>
 			{{--<div class="row">
 				<div class="col-md-12">
@@ -264,12 +267,24 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js'></script>
 <script src="{{ url('front-assets/js/line-chart-1.js') }}"></script>
 
-<script>document.querySelectorAll(".client-chat-button").forEach(button => {
+<script>
+$(document).on('click','.client-chat-button', function(){
+	var id = $(this).data('id');
+	
+	$('.client-chat-button').removeClass('active');
+	$(this).addClass('active');
+	
+	$('.chat-list').hide();
+	$('#'+id).show();
+	
+	
+});
+/*document.querySelectorAll(".client-chat-button").forEach(button => {
     button.addEventListener("click", function() {
         document.querySelectorAll(".client-chat-button").forEach(btn => btn.classList.remove("active"));
         this.classList.add("active");
     });
-});
+});*/
 </script>
 @endsection
 

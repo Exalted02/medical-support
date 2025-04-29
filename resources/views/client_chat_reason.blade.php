@@ -28,14 +28,46 @@
 						</div>
 						<div class="grid-details-underline"></div>
 						<div class="d-flex flex-wrap gap-2 mt-5">
-							@foreach($chat_reasons as $chat_reason)
+							@foreach($chat_reasons[0] as $chat_reason)
 								<a href="{{ route('open-new-chat', [$chat_reason->id, auth()->user()->id.time()]) }}"><div class="reason-box">
 									{{ $chat_reason->reason ?? '' }}
 								</div></a>
 							@endforeach
-							<a href="javascript:void(0)" id="other-reason"><div class="reason-box">
+							{{--<a href="javascript:void(0)" id="other-reason"><div class="reason-box">
 								Other
-							</div></a>
+							</div></a>--}}
+						</div>
+						
+						<div class="row mt-5">
+							<div class="col-md-6"><span><h3><strong>Customer Service /Complaint </strong></h3></span></div>
+							{{--<div class="col-md-6 text-end"><button type="button" class="chat-button m-0 add-reason">Add New Reasoon</button></div>--}}
+						</div>
+						<div class="grid-details-underline"></div>
+						<div class="d-flex flex-wrap gap-2 mt-5">
+							@foreach($chat_reasons[1] as $chat_reason)
+								<a href="{{ route('open-new-chat', [$chat_reason->id, auth()->user()->id.time()]) }}"><div class="reason-box-warning">
+									{{ $chat_reason->reason ?? '' }}
+								</div></a>
+							@endforeach
+							{{--<a href="javascript:void(0)" id="other-reason"><div class="reason-box">
+								Other
+							</div></a>--}}
+						</div>
+						
+						<div class="row mt-5">
+							<div class="col-md-6"><span><h3><strong>Urgent Answer  </strong></h3></span></div>
+							{{--<div class="col-md-6 text-end"><button type="button" class="chat-button m-0 add-reason">Add New Reasoon</button></div>--}}
+						</div>
+						<div class="grid-details-underline"></div>
+						<div class="d-flex flex-wrap gap-2 mt-5">
+							@foreach($chat_reasons[2] as $chat_reason)
+								<a href="{{ route('open-new-chat', [$chat_reason->id, auth()->user()->id.time()]) }}"><div class="reason-box-danger">
+									{{ $chat_reason->reason ?? '' }}
+								</div></a>
+							@endforeach
+							{{--<a href="javascript:void(0)" id="other-reason"><div class="reason-box">
+								Other
+							</div></a>--}}
 						</div>
 					</div>
 				</div>

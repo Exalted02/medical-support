@@ -36,7 +36,7 @@ class DashboardController extends Controller
 	public function start_new_chat()
 	{
 		$data = [];
-		$data['chat_reasons'] = Chat_reason::whereIn('user_id', [Auth::id(), 1])->where('status', 1)->get();
+		$data['chat_reasons'] = Chat_reason::whereIn('user_id', [Auth::id(), 1])->where('status', 1)->get()->groupBy('group_value');
 		return view('client_chat_reason', $data);
 	}
 	public function add_new_reason(Request $request)
