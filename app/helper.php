@@ -683,10 +683,26 @@ use App\Models\Manage_chat;
 		{
 			//$users = User::where('department', $departmentId)->where('user_type',1)->orderBy('id', 'asc')->pluck('id')->toArray();
 			
-			$users = User::where('user_type',1)->orderBy('id', 'asc')->pluck('id')->toArray();
+			//$users = User::where('user_type',1)->orderBy('id', 'asc')->pluck('id')->toArray();
+			$users = User::where('user_type', 1)
+				->when($departmentId == 1, function ($query) {
+					return $query->where('department', 1);
+				})
+				->when($departmentId == 2, function ($query) {
+					return $query->where('department', 2);
+				})
+				->when($departmentId == 3, function ($query) {
+					return $query->where('department', 3);
+				})
+				->orderBy('id', 'asc')
+				->pluck('id')
+				->toArray();
 
 			if (empty($users)) {
-				return null;
+				$users = User::where('user_type',1)->orderBy('id', 'asc')->pluck('id')->toArray();
+				if (empty($users)) {
+					return null;
+				}
 			}
 
 			$currentIndex = array_search($currentUserId, $users);

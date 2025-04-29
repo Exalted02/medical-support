@@ -653,6 +653,9 @@ class ChatController extends Controller
 	{
 		//echo $slug; die;
 		//$reason_id='';
+		
+		$chat_reason = Chat_reason::where('id', $reason_id)->first();
+		
 		$messages = '';
 		$chatUsers = [];
 		$receiverId = '';
@@ -660,7 +663,8 @@ class ChatController extends Controller
 		$receiverName = '';
 		$receiverEmail = '';
 		$receiverPhone = '';
-		$receiverDepartment = '';
+		// $receiverDepartment = '';
+		$receiverDepartment = $chat_reason->department;
 		$chatReason = '';
 		
 		$chatUsers = Manage_chat::where('receiver_id', auth()->id())
@@ -704,7 +708,7 @@ class ChatController extends Controller
 			}
 		}
 		
-		$chat_reason = Chat_reason::where('id', $reason_id)->first();
+		//$chat_reason = Chat_reason::where('id', $reason_id)->first();
 		$chatReason = $chat_reason->reason;
 		
 		return view('chat.dashboard_new_chat', compact('reason_id','unique_chat_id','chatReason','messages', 'chatUsers', 'receiverId','chat_group_id','receiverName','receiverEmail','receiverPhone','receiverDepartment'));
