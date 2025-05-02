@@ -28,9 +28,9 @@
 					<a href="{{ route('dashboard')}}"><i class="fa-solid fa-gauge"></i> <span> {{ __('dashboard') }} </span></a>
 				</li>
 				@elseif(auth()->user()->user_type==1)
-				<li class="{{ request()->routeIs('employee-dashboard') ? 'active' : '' }}">
+				{{--<li class="{{ request()->routeIs('employee-dashboard') ? 'active' : '' }}">
 					<a href="{{ route('employee-dashboard')}}"><i class="fa-solid fa-gauge"></i> <span> {{ __('dashboard') }} </span></a>
-				</li>
+				</li>--}}
 				@elseif(auth()->user()->user_type==2)
 				<li class="{{ request()->routeIs('client-dashboard') || request()->routeIs('start-new-chat') ? 'active' : '' }}">
 					<a href="{{ route('client-dashboard')}}"><i class="fa-solid fa-gauge"></i> <span> {{ __('dashboard') }} </span></a>
@@ -54,6 +54,11 @@
 				<li class="{{ request()->routeIs('ticket-chat') ? 'active' : '' }}">
 					<a href="{{ route('ticket-chat')}}"><i class="fa-brands fa-rocketchat"></i> <span> {{ __('ticket-chat') }} </span></a>
 				</li>
+				@if(auth()->user()->user_type==1)
+				<li class="{{ request()->routeIs('employee-dashboard') ? 'active' : '' }}">
+					<a href="{{ route('employee-dashboard')}}"><i class="fa-solid fa-gauge"></i> <span> Stats </span></a>
+				</li>
+				@endif
 				{{--<li class="{{ request()->routeIs('user.category') ? 'active' : '' }}">
 					<a href="{{ route('user.category')}}"><i class="fa-solid fa-brain"></i> <span> {{ __('category') }} </span></a>
 				</li>
