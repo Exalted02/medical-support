@@ -162,6 +162,8 @@ Route::middleware('auth')->group(function () {
 	Route::post('add-new-reason', [DashboardController::class,'add_new_reason'])->name('add-new-reason');
 	Route::post('add-new-other-reason', [DashboardController::class,'add_new_other_reason'])->name('add-new-other-reason');
 	Route::get('open-new-chat/{slug}/{unique_chat_id}', [ChatController::class,'open_new_chat'])->name('open-new-chat');
+	Route::post('get-department-employee', [ChatController::class,'get_department_employee'])->name('get-department-employee');
+	Route::post('submit-assign-employee', [ChatController::class,'submit_assign_employee'])->name('submit-assign-employee');
 	
 });
 

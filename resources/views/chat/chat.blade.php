@@ -18,20 +18,33 @@ $messages2 = $messages;
 									<div class="chat-user-list">
 										<ul class="nav nav-tabs flex-column vertical-tabs-3" role="tablist">
 										
-										@foreach ($chatUsers as $userId => $messages)
+										@foreach ($chatUsers as $cg => $messages)
 											@php
-												$chatUser = $messages->first()->sender_id == auth()->id()
-													? $messages->first()->receiver
-													: $messages->first()->sender;
+												//$chatUser = $messages->first()->sender_id == auth()->id() ? $messages->first()->receiver : $messages->first()->sender;
+												$firstMessage = $messages->first();
+												$senderIds = explode(',', $firstMessage->sender_id);
+												$receiverIds = explode(',', $firstMessage->receiver_id);
+
+												if (in_array(auth()->id(), $senderIds)) {
+													$chatUser = $firstMessage->receiver;
+												} else {
+													$chatUser = $firstMessage->sender;
+												}
 												$isActive = ($receiverId == $chatUser?->id); // Active only if receiverId matches
 												
 												// Check if any message from this user is unread
-												$hasUnreadMessages = $messages->where('receiver_id', auth()->id())->where('user_type',1)->where('is_read', 0)->count() > 0;
+												//$hasUnreadMessages = $messages->where('receiver_id', auth()->id())->where('user_type',1)->where('is_read', 0)->count() > 0;
+												$hasUnreadMessages = $messages->filter(function ($message) {
+													$receiverIds = explode(',', $message->receiver_id);
+													return in_array(auth()->id(), $receiverIds)
+														&& $message->user_type == 1
+														&& $message->is_read == 0;
+												})->count() > 0;
 											@endphp
 											<li class="nav-item me-0" role="presentation">
 												<a class="nav-link text-break mw-100 user-link {{ $isActive ? 'active' : '' }} {{ $hasUnreadMessages ? 'unread-message' : '' }} message-chat-info"
-												   href="{{ route('chat', ['receiverId' => $chatUser?->id]) }}"
-												   data-userid="{{ $chatUser?->id }}">
+												   href="{{ route('chat', ['receiverId' => $chatUser?->id, 'chatGroup' => $cg]) }}"
+												   data-userid="{{ $chatUser?->id }}" data-chat="{{ $cg }}">
 													<i class="feather-user me-2 align-middle d-inline-block"></i>
 													{{ $chatUser?->name }}
 												</a>
@@ -155,15 +168,16 @@ $messages2 = $messages;
 										
 										@php 
 										  $fileData = App\Models\Manage_chat_file::where('manage_chat_id', $message->id)->get();
+											$senderIds = explode(',', $message->sender_id);
 										@endphp
-										@if($message->sender_id == auth()->id())
+										@if(isset($senderIds[0]) && $senderIds[0] == auth()->id())
 											<div class="chat chat-right">
 												@if ($message->sender_id != auth()->id())
-													<div class="chat-avatar">
+												{{--<div class="chat-avatar">
 														<a href="#" class="avatar">
 															<img src="{{ url('static-image/avatar-05.jpg') }}" alt="User Image">
 														</a>
-													</div>
+													</div>--}}
 												@endif
 												
 												@if(!empty($message->message))
@@ -238,16 +252,19 @@ $messages2 = $messages;
 											@else
 												<div class="chat chat-left">
 												@if ($message->sender_id != auth()->id())
-													<div class="chat-avatar">
+												{{--<div class="chat-avatar">
 														<a href="#" class="avatar">
 															<img src="{{ url('static-image/avatar-05.jpg') }}" alt="User Image">
 														</a>
-													</div>
+													</div>--}}
 												@endif
 												@if(!empty($message->message))
+												@php
+													$gray = explode(',', $message->chat_view_gray);
+												@endphp
 												<div class="chat-body">
 													<div class="chat-bubble">
-														<div class="chat-content">
+														<div class="chat-content {{ in_array(auth()->id(), $gray) ? 'hasGray' : '' }}">
 															<p>{{ $message->message }}</p>
 															<span class="chat-time">{{ \Carbon\Carbon::parse($message->created_at)->diffForHumans() }}</span>
 														</div>
@@ -374,7 +391,7 @@ $messages2 = $messages;
 <script>
 
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelector('.chat-user-list').addEventListener('click', function (event) {
+    /*document.querySelector('.chat-user-list').addEventListener('click', function (event) {
         let clickedElement = event.target.closest('.user-link');
         if (!clickedElement) return; // If click is not on a .user-link, do nothing
         
@@ -387,16 +404,17 @@ document.addEventListener("DOMContentLoaded", function () {
         clickedElement.classList.add('active');
 
         let userId = clickedElement.getAttribute('data-userid');
-        //alert(userId);
+        let cg = clickedElement.getAttribute('data-chat');
+        // alert(cg);
 		var app_url =  "{{ env('APP_URL') }}";
-        fetch(`${app_url}/chat/updateReadStatus?receiverId=${userId}`)
+        fetch(`${app_url}/chat/updateReadStatus?receiverId=${userId}&chatGroup=${cg}`)
             .then(response => response.text())
             .then(html => {
 				//alert(html);
-                window.location.href = app_url + '/chat?receiverId=' + userId;
+                window.location.href = app_url + '/chat?receiverId=' + userId + '&chatGroup=' + cg;
             })
             .catch(error => console.error('Error fetching user list:', error));
-    });
+    });*/
 });
 
 
@@ -451,6 +469,7 @@ $(document).ready(function() {
 		var receiverId = $('#receiverId').val();
 		//alert("receiverId ->" + receiverId);
 		var department_id = $('#receiver_department').val();
+		var chat_group_id = $('#chat_group_id').val();
 		
 		let files = $('#chat-files')[0].files;
 		$.each(files, function (index, file) {
@@ -461,6 +480,7 @@ $(document).ready(function() {
         formData.append('receiver_id', receiverId);
         formData.append('edit_id', edit_id);
         formData.append('department_id', department_id);
+        formData.append('chat_group_id', chat_group_id);
         formData.append('_token', "{{ csrf_token() }}");
 		
 		formData.append('reason_id', reason_id);
@@ -730,8 +750,16 @@ function getFileIcon(extension) {
 	
 		var messageTime = dayjs.utc(data.created_at).local().fromNow(true) + " ago";
 		
-		
-		var chatClass = (data.sender_id == authUserId) ? 'chat-right' : 'chat-left';
+		var senderIds = [];
+
+		// Normalize and split if needed
+		if (typeof data.sender_id === 'string' && data.sender_id.includes(',')) {
+			senderIds = data.sender_id.split(',');
+		} else {
+			senderIds = [String(data.sender_id)];
+		}
+		// var chatClass = (data.sender_id == authUserId) ? 'chat-right' : 'chat-left';
+		var chatClass = (senderIds[0] == authUserId) ? 'chat-right' : 'chat-left';
 		
 		var editdeleteDiv = '';
 		if(chatClass=='chat-right')
@@ -751,7 +779,7 @@ function getFileIcon(extension) {
 		var avatar = '';
 		if(chatClass=='chat-left')
 		{
-			avatar = '<div class="chat-avatar"><a href="#" class="avatar"><img src="' + userImageUrl + '" alt="User Image"></a></div>';
+			//avatar = '<div class="chat-avatar"><a href="#" class="avatar"><img src="' + userImageUrl + '" alt="User Image"></a></div>';
 		}
 			
 		//alert(data.message.message); data.sender_id != authUserId

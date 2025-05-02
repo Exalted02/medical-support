@@ -61,15 +61,17 @@ else{
 					<div class="fixed-header">
 						<div class="navbar">
 							<div class="user-details me-auto">
-								<div class="float-start user-img">
+								{{--<div class="float-start user-img">
 									<a class="avatar" href="profile.html" title="Mike Litorus">
 										<img src="{{ url('static-image/avatar-05.jpg') }}" alt="User Image" class="rounded-circle">
 										<span class="status online"></span>
 									</a>
 								</div>
 								<div class="user-info float-start">
-									<a href="profile.html" title="Mike Litorus"><span>{{ $chatReason ?? '' }}</span> {{--<i class="typing-text">Typing...</i>--}}</a>
-									{{--<span class="last-seen">{{ $receiverEmail ?? '' }} {{ $receiverPhone ? '('.  $receiverPhone .')' : '' }}</span>--}}
+									<a href="profile.html" title="Mike Litorus"><span>{{ $chatReason ?? '' }}</span></a>
+								</div>--}}
+								<div class="user-info float-start">
+									<span class="last-seen">Add other members of your company or another company to this message (type in telephone number)</span>
 								</div>
 							</div>
 							{{--<div class="search-box">
@@ -80,9 +82,21 @@ else{
 							</div>--}}
 							<ul class="nav custom-menu">
 								<li class="nav-item">
-									<a class="nav-link task-chat profile-rightbar float-end" id="task_chat" href="#task_window"><i class="fa-solid fa-user"></i></a>
+									<a href="javascript:void(0)" class="nav-link assign-employee"><i class="fa-solid fa-tag"></i></a>
 								</li>
-								<li class="nav-item dropdown has-arrow flag-nav">
+								<li class="nav-item">
+									<a href="voice-call.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i></a>
+								</li>
+								<li class="nav-item">
+									<a href="voice-call.html" class="nav-link"><i class="fa-solid fa-phone"></i></a>
+								</li>
+								<li class="nav-item">
+									<a href="video-call.html" class="nav-link"><i class="fa-solid fa-video"></i></a>
+								</li>
+								<li class="nav-item">
+									<a href="video-call.html" class="nav-link"><i class="fa-solid fa-user-plus"></i></a>
+								</li>
+								{{--<li class="nav-item dropdown has-arrow flag-nav">
 									<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);" role="button" data-id="en">
 									<p><i class="fa-regular fa-circle-dot text-primary me-2"></i>Open</p>
 									</a>
@@ -132,12 +146,6 @@ else{
 										</a>
 									</div>
 								</li>
-								{{--<li class="nav-item">
-									<a href="voice-call.html" class="nav-link"><i class="fa-solid fa-phone"></i></a>
-								</li>
-								<li class="nav-item">
-									<a href="video-call.html" class="nav-link"><i class="fa-solid fa-video"></i></a>
-								</li>--}}
 								<li class="nav-item dropdown dropdown-action">
 									<a aria-expanded="false" data-bs-toggle="dropdown" class="nav-link dropdown-toggle" href="#"><i class="material-icons">more_vert</i></a>
 									<div class="dropdown-menu dropdown-menu-right">
@@ -146,7 +154,7 @@ else{
 										<a href="javascript:void(0)" class="dropdown-item">Delete Conversations</a>
 										<a href="javascript:void(0)" class="dropdown-item">Settings</a>
 									</div>
-								</li>
+								</li>--}}
 							</ul>
 						</div>
 					</div>
@@ -365,7 +373,69 @@ else{
 <input type="hidden" id="receiver_department">
 <input type="hidden" id="chat_group_id">
 {{--<button class="btn btn-custom send-button" data-url="{{ route('send.message') }}"  type="button"><i class="fa-solid fa-paper-plane"></i></button>--}}
-
+<div id="assign_employee" class="modal custom-modal fade" role="dialog">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Assign Employee</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="input-block">
+							<label class="col-form-label">Department<span class="text-danger">*</span></label>
+							<select class="select form-control" name="department" id="select_department">
+							<option value="">Please Select</option>
+							@foreach($departments as $val)
+								<option value="{{  $val->id }}">{{ $val->name }}</option>
+							@endforeach
+							</select>
+							 <div class="invalid-feedback"></div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="input-block">
+							<label class="col-form-label">Employee<span class="text-danger">*</span></label>
+							<select class="select form-control" name="assign_user" id="assign_user">
+								<option value="">Please Select</option>
+							</select>
+							 <div class="invalid-feedback"></div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-btn mt-3" id="assign_employee_button_div" style="display: none;">
+					<div class="row">
+						<div class="col-6">
+							<a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-sm w-100 btn-secondary">Cancel</a>
+						</div>
+						<div class="col-6">
+							<a href="javascript:void(0);" class="btn btn-sm w-100 btn-primary save-assign">Create <i class="la la-arrow-circle-right"></i></a>
+						</div>
+					</div>
+				</div>	
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal custom-modal fade" id="assign_user_msg" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="success-message text-center">
+					<div class="success-popup-icon bg-success price-update-pop-up-icon">
+						<i class="la la-check-circle"></i>
+					</div>
+					<h3>Employee added successfully!!!</h3>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 @endsection 
 @section('scripts')
 <script src="{{ url('front-assets/js/page/chat.js') }}"></script>
@@ -380,7 +450,45 @@ else{
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
 
 <script>
-
+$(document).ready(function() {
+	$(document).on('click','.assign-employee', function(){
+		$('#assign_employee').modal('show');
+	});
+	$(document).on('change','#select_department', function(){
+		var id = $(this).val();
+		var URL = "{{ route('get-department-employee') }}";
+		$.ajax({
+			url: URL,
+			type: "POST",
+			data: {id:id, _token: csrfToken},
+			dataType: 'json',
+			success: function(response) {
+				//console.log(response);
+				$('#assign_user').html(response);
+				$('#assign_employee_button_div').show();
+			}
+		});
+	});
+	$(document).on('click','.save-assign', function(){
+		var chat_group_id = $('#chat_group_id').val();
+		var assign_user = $('#assign_user').val();
+		var URL = "{{ route('submit-assign-employee') }}";
+		$.ajax({
+			url: URL,
+			type: "POST",
+			data: {chat_group_id:chat_group_id, assign_user:assign_user, _token: csrfToken},
+			dataType: 'json',
+			success: function(response) {
+				if(response == 1){
+					$('#assign_user_msg').modal('show');
+					setTimeout(() => {
+						window.location.reload();
+					}, "2000");
+				}
+			}
+		});
+	});
+});
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelector('.chat-user-list').addEventListener('click', function (event) {
         let clickedElement = event.target.closest('.user-link');
@@ -737,7 +845,7 @@ function getFileIcon(extension) {
 		var avatar = '';
 		if(chatClass=='chat-left')
 		{
-			avatar = '<div class="chat-avatar"><a href="#" class="avatar"><img src="' + userImageUrl + '" alt="User Image"></a></div>';
+			//avatar = '<div class="chat-avatar"><a href="#" class="avatar"><img src="' + userImageUrl + '" alt="User Image"></a></div>';
 		}
 			
 		//alert(data.message.message); data.sender_id != authUserId

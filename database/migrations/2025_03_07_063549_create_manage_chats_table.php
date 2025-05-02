@@ -17,8 +17,9 @@ return new class extends Migration
 			$table->integer('user_type')->nullable();
 			$table->string('unique_chat_id')->nullable();
 			$table->string('chat_group_id')->nullable();
-			$table->integer('sender_id')->nullable();
-			$table->integer('receiver_id')->nullable();
+			$table->string('sender_id')->nullable();
+			$table->string('receiver_id')->nullable();
+			$table->string('chat_view_gray')->nullable();
 			$table->text('message')->nullable();
 			$table->tinyInteger('is_read')->default(0)->comment('0=unread,1=read');
             $table->timestamps();

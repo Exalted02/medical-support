@@ -12,6 +12,7 @@ use App\Models\Chat_reason;
 use App\Events\MessageSent;
 use App\Events\MessageUpdated;
 use App\Events\MessageDeleted;
+use App\Models\Department;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator; 
 
@@ -96,18 +97,32 @@ class ChatController extends Controller
 	public function chatPage(Request $request)
 	{
 		$receiverId = $request->query('receiverId'); // Get from URL
+		$cg_id = $request->query('chatGroup'); // Get from URL
 		
 		//\Log::info('Receiver ID from URL:', ['receiverId' => $receiverId]); // Debug
 
-		$chatUsers = Manage_chat::where('receiver_id', auth()->id())
+		/*$chatUsers = Manage_chat::where('receiver_id', auth()->id())
 			->orWhere('sender_id', auth()->id())
 			->with(['sender', 'receiver'])
 			->orderBy('created_at', 'desc')
 			->get()
 			->groupBy(function ($message) {
 				return $message->sender_id == auth()->id() ? $message->receiver_id : $message->sender_id;
-			});
-			
+			});*/
+		$chatUsers = Manage_chat::where(function ($query) {
+				$query->whereRaw("FIND_IN_SET(?, receiver_id)", [auth()->id()])
+					->orWhereRaw("FIND_IN_SET(?, sender_id)", [auth()->id()]);
+				})
+				->with(['sender', 'receiver'])
+				->orderBy('created_at', 'desc')
+				->get()
+				->groupBy('chat_group_id');
+				/*->groupBy(function ($message) {
+					return in_array(auth()->id(), explode(',', $message->sender_id)) 
+						? $message->receiver_id 
+						: $message->sender_id;
+				});*/	
+		// dd($chatUsers);	
 		if (!$receiverId && $chatUsers->isNotEmpty()) {
 			//\Log::info('Receiver ID was not found, setting to first user.');
 			$receiverId = $chatUsers->keys()->first();
@@ -123,8 +138,8 @@ class ChatController extends Controller
 		
 		$messages = collect();
 		
-		if (!empty($receiverId)) {
-			$messages = Manage_chat::where(function ($query) use ($receiverId) {
+		if (!empty($receiverId) && !empty($cg_id)) {
+			/*$messages = Manage_chat::where(function ($query) use ($receiverId) {
 					$query->where('sender_id', auth()->id())
 						->where('receiver_id', $receiverId);
 				})
@@ -133,9 +148,22 @@ class ChatController extends Controller
 						->where('receiver_id', auth()->id());
 				})
 				->orderBy('id', 'asc')
-				->get();
-				
-			$chat_group_id = $messages[0]->chat_group_id ?? null;
+				->get();*/
+			$messages = Manage_chat::where(function ($query) use ($receiverId, $cg_id) {
+					$query->where('chat_group_id', $cg_id);
+					$query->whereRaw("FIND_IN_SET(?, sender_id)", [auth()->id()])
+						  ->whereRaw("FIND_IN_SET(?, receiver_id)", [$receiverId]);
+				})
+				->orWhere(function ($query) use ($receiverId, $cg_id) {
+					$query->where('chat_group_id', $cg_id);
+					$query->whereRaw("FIND_IN_SET(?, sender_id)", [$receiverId])
+						  ->whereRaw("FIND_IN_SET(?, receiver_id)", [auth()->id()]);
+				})
+				->orderBy('id', 'asc')
+				->get();	
+			// dd($messages);	
+			// $chat_group_id = $messages[0]->chat_group_id ?? null;
+			$chat_group_id = $cg_id ?? null;
 			
 			$userData = User::where('id',$receiverId)->first();
 			$receiverName = $userData->name;
@@ -148,6 +176,7 @@ class ChatController extends Controller
 
 	public function sendMessage(Request $request)
     {
+		// dd($request->all());
 		/*$request->validate([
 			'files.*' => 'file|max:2048', // Max 2MB per file
 		]);*/
@@ -212,12 +241,28 @@ class ChatController extends Controller
 		}
 		else
 		{
-			$exists = Manage_chat::where(function ($query) {
-				$query->where('sender_id', auth()->id())
-					  ->orWhere('receiver_id', auth()->id());
-			})->exists();
-				
-			if($exists)
+			/*$exists = Manage_chat::where(function ($query) {
+				$query->whereRaw("FIND_IN_SET(?, receiver_id)", [auth()->id()])
+					->orWhereRaw("FIND_IN_SET(?, sender_id)", [auth()->id()]);
+			})->exists();*/
+			$chat_group_id = $request->chat_group_id;
+			$first_chat = Manage_chat::where('chat_group_id', $request->chat_group_id)->first();
+			$receiver_id = $request->receiver_id;
+			$userType = User::where('id',$receiver_id)->first()->user_type;
+			$my_id = auth()->id();
+			$userArray = explode(',', $first_chat->receiver_id); // Convert to array
+			
+			// Reorder: put $my_id first, remove it from its original place
+			$userArray = array_values(array_filter($userArray, function ($id) use ($my_id) {
+				return $id != $my_id;
+			}));
+			
+			
+			array_unshift($userArray, $my_id); // Prepend $my_id
+			
+			$reordered = implode(',', $userArray); // Convert back to string
+			// dd($exists);	
+			/*if($exists)
 			{
 				$receiver_id = $request->receiver_id;
 				$chatData = Manage_chat::where(function ($query) use ($request) {
@@ -247,47 +292,19 @@ class ChatController extends Controller
 				->first();
 				
 				$userType = User::where('id',$receiver_id)->first()->user_type;
-			}
+			}*/
 			
 			
-			if($chatData && !empty($chatData->chat_group_id))
+			/*if($chatData && !empty($chatData->chat_group_id))
 			{
-				if($request->reason_id !='')
-				{
-					//echo '1';die;
-					$chat_group_id = generate_chat_unique_id(Manage_chat::class,'chat_group_id', $receiver_id);
-				}
-				else
-				{
-					//echo '2';die;
-					$chat_group_id =  $chatData->chat_group_id; // this is
-					
-					//$chat_group_id = generate_chat_unique_id(Manage_chat::class,'chat_group_id', $receiver_id);
-					
-					/*$isExists = Manage_chat::where(function ($query) {
-						$query->where('reason_id', null);
-						$query->where('sender_id', auth()->id())
-							  ->orWhere('receiver_id', auth()->id());
-						})->exists();
-
-					if(!$isExists)
-					{
-						$chat_group_id = generate_chat_unique_id(Manage_chat::class,'chat_group_id', $receiver_id);
-					}
-					else 
-					{
-						$chat_group_id =  $chatData->chat_group_id;
-					}*/
-				}
-				
-				//$chat_group_id =  $chatData->chat_group_id;
+				$chat_group_id =  $chatData->chat_group_id;
 			}
 			else	
 			{
 				//echo '3';die;
 				//$chat_group_id = substr(sha1(mt_rand()),17,6);
 				$chat_group_id = generate_chat_unique_id(Manage_chat::class,'chat_group_id', $receiver_id);
-			}
+			}*/
 			
 			//$userType = User::where('id',$receiver_id)->first()->user_type;
 			
@@ -296,7 +313,7 @@ class ChatController extends Controller
 				'user_type' => $userType,
 				'reason' => $request->reason_id ?? null,
 				'chat_group_id' => $chat_group_id,
-				'sender_id' => auth()->id(),
+				'sender_id' => $reordered,
 				'receiver_id' => $receiver_id,
 				'message' => $request->message,
 				'is_read' => 0,
@@ -418,7 +435,7 @@ class ChatController extends Controller
 			
 			if($chatData && !empty($chatData->chat_group_id))
 			{
-				if($request->reason_id !='')
+				/*if($request->reason_id !='')
 				{
 					//echo '1';die;
 					$chat_group_id = generate_chat_unique_id(Manage_chat::class,'chat_group_id', $receiver_id);
@@ -427,7 +444,8 @@ class ChatController extends Controller
 				{
 					//echo '2';die;
 					$chat_group_id =  $chatData->chat_group_id; // this is
-				}
+				}*/
+				$chat_group_id =  $chatData->chat_group_id;
 			}
 			else	
 			{
@@ -710,7 +728,63 @@ class ChatController extends Controller
 		
 		//$chat_reason = Chat_reason::where('id', $reason_id)->first();
 		$chatReason = $chat_reason->reason;
+		$departments = Department::all();
 		
-		return view('chat.dashboard_new_chat', compact('reason_id','unique_chat_id','chatReason','messages', 'chatUsers', 'receiverId','chat_group_id','receiverName','receiverEmail','receiverPhone','receiverDepartment'));
+		return view('chat.dashboard_new_chat', compact('reason_id','unique_chat_id','chatReason','messages', 'chatUsers', 'receiverId','chat_group_id','receiverName','receiverEmail','receiverPhone','receiverDepartment','departments'));
+	}
+	public function get_department_employee(Request $request){
+		$employee = User::where('user_type', 1)->where('department', $request->id)->get();
+		/*$html = '<div class="d-flex1">';
+		foreach($employee as $val){
+			$html .= '<div class="mt-1">
+				<label class="custom_check">
+					<input type="checkbox" class="css_advantage_feature" name="assign_user[]" value="'.$val->id.'">
+					<span class="checkmark" style="margin-top: -1px;"></span>
+				</label>
+				<label class="col-form-label ms-4">'.$val->name.'</label>
+			</div>';
+		}
+		$html .= '</div>';*/
+		$html = '<option value="">Please Select</option>';
+		foreach($employee as $val){
+			$html .= '<option value="'.$val->id.'">'.$val->name.'</option>';
+		}
+		
+		echo json_encode($html);
+	}
+	public function submit_assign_employee(Request $request){
+		//dd($request->all());
+		$first_chat = Manage_chat::where('chat_group_id', $request->chat_group_id)->first();
+		$all_chat = Manage_chat::where('chat_group_id', $request->chat_group_id)->get();
+		foreach($all_chat as $all_chat_val){
+			if($all_chat_val->user_type == 1){
+				$receiver = explode(',', $all_chat_val->receiver_id);
+				if(!in_array($request->assign_user, $receiver)) {
+					$new_receiver = $all_chat_val->receiver_id.','.$request->assign_user;
+					$up = Manage_chat::where('id', $all_chat_val->id)->update(['receiver_id' => $new_receiver]);
+					
+					$chat_gray = explode(',', $all_chat_val->chat_view_gray);
+					if(!in_array($request->assign_user, $chat_gray)) {
+						array_push($chat_gray, $request->assign_user);
+						$new_chat_gray = trim(implode(',', $chat_gray), ',');
+						$up = Manage_chat::where('id', $all_chat_val->id)->update(['chat_view_gray' => $new_chat_gray]);
+					}
+				}
+			}else if($all_chat_val->user_type == 2){
+				$sender = explode(',', $all_chat_val->sender_id);
+				if(!in_array($request->assign_user, $sender)) {
+					$new_sender = $all_chat_val->sender_id.','.$request->assign_user;
+					$up = Manage_chat::where('id', $all_chat_val->id)->update(['sender_id' => $new_sender]);
+					
+					$chat_gray = explode(',', $all_chat_val->chat_view_gray);
+					if(!in_array($request->assign_user, $chat_gray)) {
+						array_push($chat_gray, $request->assign_user);
+						$new_chat_gray = trim(implode(',', $chat_gray), ',');
+						$up = Manage_chat::where('id', $all_chat_val->id)->update(['chat_view_gray' => $new_chat_gray]);
+					}
+				}
+			}
+		}
+		echo 1;
 	}
 }
