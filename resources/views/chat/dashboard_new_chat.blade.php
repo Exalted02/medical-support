@@ -327,6 +327,15 @@ else{
 											</div>
 											@endif
 										@endforeach
+										@if(isset($chk_chat_status))
+											@if($chk_chat_status->chat_status == 0)
+												<div class="text-end"><button type="button" class="btn btn-success close-ticket">Close this ticket</button></div>
+											@else
+												<div class="text-center"><span class="badge badge-soft-danger">Ticket closed</span></div>
+											@endif
+										@else
+											<div class="text-end"><button type="button" class="btn btn-success close-ticket">Close this ticket</button></div>
+										@endif
 									</div>
 									
 								</div>
@@ -422,6 +431,61 @@ else{
 		</div>
 	</div>
 </div>
+<div id="happy_feedback" class="modal custom-modal fade" role="dialog">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Drop your Feedback here!</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="input-block">
+							<textarea class="form-control" name="feedback_text" id="feedback_text" rows="3" placeholder="Write your feedback here" style="height: auto; line-height: auto;"></textarea>
+							<div class="invalid-feedback"></div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-btn mt-3">
+					<div class="row">
+						<div class="col-12">
+							<a href="javascript:void(0);" class="btn btn-sm w-100 btn-primary save-feedback">Create <i class="la la-arrow-circle-right"></i></a>
+						</div>
+					</div>
+				</div>	
+			</div>
+		</div>
+	</div>
+</div>
+<div id="close_ticket" class="modal custom-modal fade" role="dialog">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Chat has been closed</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<label>Click here if you were NOT satisfied with the resolution to your request to speak to Supervisor</label>
+						<button type="button" class="btn btn-primary w-100 mt-3 speak-supervisor">Speak to Supervisor</button>
+					</div>
+				</div>
+				<div class="row mt-5">
+					<div class="col-lg-12">
+						<label>Click here to leave positive feedback</label>
+						<button type="button" class="btn btn-success w-100 mt-3 happy-feedback">Happy with the conversation</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 <div class="modal custom-modal fade" id="assign_user_msg" role="dialog">
 	<div class="modal-dialog modal-dialog-centered">
 		<div class="modal-content">
@@ -431,6 +495,20 @@ else{
 						<i class="la la-check-circle"></i>
 					</div>
 					<h3>Employee added successfully!!!</h3>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal custom-modal fade" id="close_ticket_msg" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="success-message text-center">
+					<div class="success-popup-icon bg-success price-update-pop-up-icon">
+						<i class="la la-check-circle"></i>
+					</div>
+					<h3>Ticket closed successfully!!!</h3>
 				</div>
 			</div>
 		</div>
@@ -453,6 +531,67 @@ else{
 $(document).ready(function() {
 	$(document).on('click','.assign-employee', function(){
 		$('#assign_employee').modal('show');
+	});
+	$(document).on('click','.close-ticket', function(){
+		var chat_group_id = $('#chat_group_id').val();
+		var URL = "{{ route('entry-chat-status') }}";
+		$.ajax({
+			url: URL,
+			type: "POST",
+			data: {chat_group_id:chat_group_id, _token: csrfToken},
+			dataType: 'json',
+			success: function(response) {
+				$('#close_ticket').modal('show');
+			}
+		});
+	});
+	$(document).on('click','.speak-supervisor', function(){
+		var chat_group_id = $('#chat_group_id').val();
+		var URL = "{{ route('change-chat-status') }}";
+		var status = 2;
+		$.ajax({
+			url: URL,
+			type: "POST",
+			data: {chat_group_id:chat_group_id, status:status, _token: csrfToken},
+			dataType: 'json',
+			success: function(response) {
+				$('#close_ticket_msg').modal('show');				
+				setTimeout(() => {
+					window.location.reload();
+				}, "2000");
+			}
+		});
+	});
+	$(document).on('click','.happy-feedback', function(){
+		var chat_group_id = $('#chat_group_id').val();
+		var URL = "{{ route('change-chat-status') }}";
+		var status = 1;
+		$.ajax({
+			url: URL,
+			type: "POST",
+			data: {chat_group_id:chat_group_id, status:status, _token: csrfToken},
+			dataType: 'json',
+			success: function(response) {
+				$('#happy_feedback').modal('show');
+			}
+		});
+	});
+	$(document).on('click','.save-feedback', function(){
+		var chat_group_id = $('#chat_group_id').val();
+		var feedback_text = $('#feedback_text').val();
+		var URL = "{{ route('save-feedback-text') }}";
+		$.ajax({
+			url: URL,
+			type: "POST",
+			data: {chat_group_id:chat_group_id, feedback_text:feedback_text, _token: csrfToken},
+			dataType: 'json',
+			success: function(response) {
+				$('#close_ticket_msg').modal('show');
+				setTimeout(() => {
+					window.location.reload();
+				}, "2000");
+			}
+		});
 	});
 	$(document).on('change','#select_department', function(){
 		var id = $(this).val();

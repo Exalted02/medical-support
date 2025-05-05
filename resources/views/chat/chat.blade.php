@@ -46,7 +46,8 @@ $messages2 = $messages;
 												   href="{{ route('chat', ['receiverId' => $chatUser?->id, 'chatGroup' => $cg]) }}"
 												   data-userid="{{ $chatUser?->id }}" data-chat="{{ $cg }}">
 													<i class="feather-user me-2 align-middle d-inline-block"></i>
-													{{ $chatUser?->name }}
+													{{--{{ $chatUser?->name }}--}}
+													Ticket #{{ $cg }}
 												</a>
 											</li>
 										@endforeach

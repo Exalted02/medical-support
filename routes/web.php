@@ -122,6 +122,9 @@ Route::middleware('auth')->group(function () {
 	Route::get('/ticket-chat', [ChatController::class, 'ticket_chat'])->name('ticket-chat');
 	Route::post('/ticket-message-list', [ChatController::class, 'ticket_chat_list'])->name('ticket-message-list');
 	Route::post('/ticket-send-message', [ChatController::class, 'ticket_send_message'])->name('ticket-send-message');
+	Route::post('/entry-chat-status', [ChatController::class, 'entry_chat_status'])->name('entry-chat-status');
+	Route::post('/change-chat-status', [ChatController::class, 'change_chat_status'])->name('change-chat-status');
+	Route::post('/save-feedback-text', [ChatController::class, 'save_feedback_text'])->name('save-feedback-text');
 	
 	//Channel list
 	Route::get('/channel', [ChatController::class, 'channel_list'])->name('channel');

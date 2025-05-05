@@ -14,6 +14,7 @@ use App\Events\MessageUpdated;
 use App\Events\MessageDeleted;
 use App\Models\Department;
 use App\Models\User;
+use App\Models\Chat_feedback_status;
 use Illuminate\Support\Facades\Validator; 
 
 class ChatController extends Controller
@@ -569,9 +570,10 @@ class ChatController extends Controller
 			->with(['sender', 'receiver'])
 			->orderBy('created_at', 'desc') // Sort by latest message
 			->get()
-			->groupBy(function ($message) {
+			->groupBy('chat_group_id');
+			/*->groupBy(function ($message) {
 				return $message->sender_id == auth()->id() ? $message->receiver_id : $message->sender_id;
-			});
+			});*/
 
 		// If no receiverId is provided, default to the first user in the list
 		if (!$receiverId && $chatUsers->isNotEmpty()) {
@@ -730,7 +732,10 @@ class ChatController extends Controller
 		$chatReason = $chat_reason->reason;
 		$departments = Department::all();
 		
-		return view('chat.dashboard_new_chat', compact('reason_id','unique_chat_id','chatReason','messages', 'chatUsers', 'receiverId','chat_group_id','receiverName','receiverEmail','receiverPhone','receiverDepartment','departments'));
+		//Chat status
+		$chk_chat_status = Chat_feedback_status::where('chat_group_id', $chat_group_id)->first();
+		
+		return view('chat.dashboard_new_chat', compact('reason_id','unique_chat_id','chatReason','messages', 'chatUsers', 'receiverId','chat_group_id','receiverName','receiverEmail','receiverPhone','receiverDepartment','departments','chk_chat_status'));
 	}
 	public function get_department_employee(Request $request){
 		$employee = User::where('user_type', 1)->where('department', $request->id)->get();
@@ -784,6 +789,45 @@ class ChatController extends Controller
 					}
 				}
 			}
+		}
+		echo 1;
+	}
+	public function entry_chat_status(Request $request){
+		$chk_feedback = Chat_feedback_status::where('chat_group_id', $request->chat_group_id)->exists();
+		if(!$chk_feedback){
+			$feedback = new Chat_feedback_status();
+			$feedback->chat_group_id = $request->chat_group_id;
+			$feedback->save();
+		}
+		echo 1;
+	}
+	public function change_chat_status(Request $request){
+		$chk_feedback = Chat_feedback_status::where('chat_group_id', $request->chat_group_id)->exists();
+		if($chk_feedback){
+			$feedback = Chat_feedback_status::where('chat_group_id', $request->chat_group_id)->first();
+			$feedback->chat_status = $request->status;
+			$feedback->save();
+		}else{
+			$feedback = new Chat_feedback_status();
+			$feedback->chat_group_id = $request->chat_group_id;
+			$feedback->chat_status = $request->status;
+			$feedback->save();
+		}
+		echo 1;
+	}
+	public function save_feedback_text(Request $request){
+		$chk_feedback = Chat_feedback_status::where('chat_group_id', $request->chat_group_id)->exists();
+		if($chk_feedback){
+			$feedback = Chat_feedback_status::where('chat_group_id', $request->chat_group_id)->first();
+			$feedback->chat_status = 1;
+			$feedback->feedback_text = $request->feedback_text;
+			$feedback->save();
+		}else{
+			$feedback = new Chat_feedback_status();
+			$feedback->chat_group_id = $request->chat_group_id;
+			$feedback->chat_status = 1;
+			$feedback->feedback_text = $request->feedback_text;
+			$feedback->save();
 		}
 		echo 1;
 	}
