@@ -49,10 +49,22 @@
 			</div>
             
 			<div class="row mt-4 chat-list" id="open-chats">
-				@foreach($chats_data as $k=>$chats_data)
+				@foreach($chats_data as $k=>$chats_data_val)
 				
 				@php 
-					$chats = $chats_data[0];
+					$chats = $chats_data_val[0];
+					if(isset($chats->chat_feedback_status)){
+						if($chats->chat_feedback_status->chat_status == 0){
+							$ticket_status = 'open';
+						}else{
+							$ticket_status = 'close';
+						}
+					}else{
+						$ticket_status = 'open';
+					}
+				@endphp	
+				@if($ticket_status == 'open')
+				@php 	
 					$sender = App\Models\User::where('id', $chats->receiver_id)->first();
 					$issue = App\Models\Chat_reason::where('id', $chats->reason)->first();
 				@endphp
@@ -118,6 +130,7 @@
 						</div>
 					</div></a>
 				</div>
+				@endif
 				@endforeach
 				@if($chats_data->isNotEmpty()) 
 				{{--<div class="col-lg-12">
@@ -128,7 +141,96 @@
 				@endif
 			</div>
 			<div class="row mt-4 chat-list" id="closed-chats" style="display: none;">
-				No Chat Found!!!
+				@foreach($chats_data as $k=>$chats_data_val)
+				
+				@php 
+					$chats = $chats_data_val[0];
+					if(isset($chats->chat_feedback_status)){
+						if($chats->chat_feedback_status->chat_status == 0){
+							$ticket_status = 'open';
+						}else{
+							$ticket_status = 'close';
+						}
+					}else{
+						$ticket_status = 'open';
+					}
+				@endphp	
+				@if($ticket_status == 'close')
+				@php 	
+					$sender = App\Models\User::where('id', $chats->receiver_id)->first();
+					$issue = App\Models\Chat_reason::where('id', $chats->reason)->first();
+				@endphp
+				<div class="col-xxl-3 col-xl-4 col-md-6">
+					<a href="{{ route('open-new-chat', [$chats->reason, $chats->unique_chat_id]) }}">
+					<div class="contact-grid">
+						<div class="grid-head">
+							<div class="users-profile">
+								<h5 class="name-user">Ticket <strong class="text-muted">#{{$k}}</strong></h5>
+							</div>
+							{{--<div class="active-ticket">Active ticket</div>--}}
+							<button type="button" class="btn btn-sm btn-soft-success">Active ticket</button>
+						</div>
+						<div class="grid-details-underline"></div>
+						<div class="grid-body">
+							<div class="address-info1 m-t-20">
+								<div class="row w-1001">
+									<div class="col-md-6">
+										<div class="pro-deadline mb-2">
+											<div class="text-dark">
+												Resident:
+											</div>
+											<div class="font-weight-bold text-dark">
+												<strong>{{ auth()->user()->name }}</strong>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="pro-deadline mb-2">
+											<div class="text-dark">
+												Timestamp:
+											</div>
+											<div class="font-weight-bold text-dark">
+												<strong>{{ \Carbon\Carbon::parse($chats->created_at ?? '')->format('M j Y g:iA') }}</strong>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row w-1001">
+									<div class="col-md-6">
+										<div class="pro-deadline mb-2">
+											<div class="text-dark">
+												Issue :
+											</div>
+											<div class="font-weight-bold text-dark">
+												<strong>{{ $issue->reason ?? ''}}</strong>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="pro-deadline mb-2">
+											<div class="text-dark">
+												Assigned to :
+											</div>
+											<div class="font-weight-bold text-dark">
+												<strong>{{ $sender->name ?? '' }}</strong>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div></a>
+				</div>
+				@endif
+				@endforeach
+				@if($chats_data->isNotEmpty()) 
+				{{--<div class="col-lg-12">
+					<div class="load-more-btn text-center">
+						<a href="#" class="btn btn-primary">Load More Contacts<i class="spinner-border"></i></a>
+					</div>
+				</div>--}}
+				@endif
 			</div>
 			{{--<div class="row">
 				<div class="col-md-12">

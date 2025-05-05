@@ -35,4 +35,8 @@ class Manage_chat extends Model
 	{
 		 return $this->hasMany(Manage_chat_file::class, 'manage_chat_id');
 	}
+	public function chat_feedback_status()
+	{
+		 return $this->hasOne(Chat_feedback_status::class, 'chat_group_id', 'chat_group_id');
+	}
 }
