@@ -107,6 +107,7 @@ Route::middleware('auth')->group(function () {
 	
 	//My Profile Page
 	Route::get('/my-profile', [MyProfileController::class, 'index'])->name('my-profile');
+	Route::post('/my-profile-submit', [MyProfileController::class, 'my_profile_submit'])->name('my-profile-submit');
 	
 	//Chat Page
 	Route::get('/chat', [ChatController::class, 'chatPage'])->name('chat');

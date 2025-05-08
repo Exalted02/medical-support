@@ -196,6 +196,12 @@
 }
 
 /* start custom filter section */
+.iti{
+	width: 100%;
+}
+.form-control{
+	line-height: 4;
+}
 .filter-filelds .form-control,
  .filter-filelds .filter-row .select2-container .select2-selection.select2-selection--single {
 	height: 38px !important;
