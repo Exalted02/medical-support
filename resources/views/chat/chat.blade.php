@@ -74,7 +74,7 @@ $messages2 = $messages;
 									</a>
 								</div>
 								<div class="user-info float-start">
-									<a href="profile.html" title="Mike Litorus"><span>{{ $receiverName ?? '' }}</span> {{--<i class="typing-text">Typing...</i>--}}</a>
+									<a href="javascript:void(0)" title="Mike Litorus"><span>{{ $receiverName ?? '' }}</span> {{--<i class="typing-text">Typing...</i>--}}</a>
 									<span class="last-seen">{{ $receiverEmail ?? '' }} {{ $receiverPhone ? '('.  $receiverPhone .')' : '' }}</span>
 								</div>
 							</div>
@@ -86,6 +86,18 @@ $messages2 = $messages;
 							</div>--}}
 							<ul class="nav custom-menu">
 								<li class="nav-item">
+									<a href="voice-call.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i></a>
+								</li>
+								<li class="nav-item">
+									<a href="javascript:void(0)" class="nav-link call-employee"><i class="fa-solid fa-phone"></i></a>
+								</li>
+								<li class="nav-item">
+									<a href="video-call.html" class="nav-link"><i class="fa-solid fa-video"></i></a>
+								</li>
+								<li class="nav-item">
+									<a href="video-call.html" class="nav-link"><i class="fa-solid fa-user-plus"></i></a>
+								</li>
+								{{--<li class="nav-item">
 									<a class="nav-link task-chat profile-rightbar float-end" id="task_chat" href="#task_window"><i class="fa-solid fa-user"></i></a>
 								</li>
 								<li class="nav-item dropdown has-arrow flag-nav">
@@ -138,12 +150,6 @@ $messages2 = $messages;
 										</a>
 									</div>
 								</li>
-								{{--<li class="nav-item">
-									<a href="voice-call.html" class="nav-link"><i class="fa-solid fa-phone"></i></a>
-								</li>
-								<li class="nav-item">
-									<a href="video-call.html" class="nav-link"><i class="fa-solid fa-video"></i></a>
-								</li>--}}
 								<li class="nav-item dropdown dropdown-action">
 									<a aria-expanded="false" data-bs-toggle="dropdown" class="nav-link dropdown-toggle" href="#"><i class="material-icons">more_vert</i></a>
 									<div class="dropdown-menu dropdown-menu-right">
@@ -152,7 +158,7 @@ $messages2 = $messages;
 										<a href="javascript:void(0)" class="dropdown-item">Delete Conversations</a>
 										<a href="javascript:void(0)" class="dropdown-item">Settings</a>
 									</div>
-								</li>
+								</li>--}}
 							</ul>
 						</div>
 					</div>
@@ -330,12 +336,19 @@ $messages2 = $messages;
 											@endif
 										@endforeach
 									</div>
-									
+									@if(isset($chk_chat_status))
+										@if($chk_chat_status->chat_status == 0)
+											
+										@else
+											<div class="text-center"><span class="badge badge-soft-danger">Ticket closed</span></div>
+										@endif
+									@endif
 								</div>
 							</div>
 						</div>
 					</div>
 					
+					@if(!isset($chk_chat_status) || $chk_chat_status->chat_status == 0)
 					<div class="chat-footer">
 					<div id="file-preview" class=""></div>
 					<form id="chat-file-upload-form" enctype="multipart/form-data">
@@ -365,13 +378,14 @@ $messages2 = $messages;
 						</div>
 					</form>
 					</div>
+					@endif
 					<input type="hidden" id="reason_id" value=''>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-<input type="text" id="receiverId">
+<input type="hidden" id="receiverId">
 <input type="hidden" id="receiver_department">
 <input type="hidden" id="chat_group_id">
 {{--<button class="btn btn-custom send-button" data-url="{{ route('send.message') }}"  type="button"><i class="fa-solid fa-paper-plane"></i></button>--}}
@@ -678,7 +692,14 @@ function getFileIcon(extension) {
     });
 
     var channel = pusher.subscribe('chat-channel');
-
+	
+	channel.bind('chat-close', function(data) {
+		if(chat_group_id != ''){
+			if(chat_group_id == data.chat_group_id){
+				location.reload();
+			}
+		}
+	});	
     channel.bind('message-sent', function(data) {
         console.log("New message received: ", data);
 		
@@ -850,6 +871,18 @@ function getFileIcon(extension) {
 		//alert(chatHTML);
 		chatBox.append(chatHTML);
 		chatBox.scrollTop(chatBox.prop("scrollHeight"));
+	});
+	channel.bind('chat-assign', function(data) {
+		var rec_id = $('#receiverId').val();
+		var app_url =  "{{ env('APP_URL') }}";
+			fetch(`${app_url}/chat/latest-users?receiverId=${rec_id}`)
+				.then(response => response.text())
+				.then(html => {
+					//alert(html);
+					//$('.chat-user-list').html = html;
+					document.querySelector('.chat-user-list').innerHTML = html;
+				})
+				.catch(error => console.error('Error fetching user list:', error));
 	});
 	
 	channel.bind('message-updated', function(data) {

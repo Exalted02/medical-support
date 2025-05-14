@@ -12,10 +12,13 @@ use App\Models\Chat_reason;
 use App\Events\MessageSent;
 use App\Events\MessageUpdated;
 use App\Events\MessageDeleted;
+use App\Events\ChatAssign;
+use App\Events\ChatClose;
 use App\Models\Department;
 use App\Models\User;
 use App\Models\Chat_feedback_status;
 use Illuminate\Support\Facades\Validator; 
+use App\Services\RingCentralService;
 
 class ChatController extends Controller
 {
@@ -172,7 +175,10 @@ class ChatController extends Controller
 			$receiverPhone = $userData->phone_number;
 			$receiverDepartment = $userData->department;
 		}
-		return view('chat.chat', compact('messages', 'chatUsers', 'receiverId','chat_group_id','receiverName','receiverEmail','receiverPhone','receiverDepartment'));
+		
+		$chk_chat_status = Chat_feedback_status::where('chat_group_id', $chat_group_id)->first();
+		
+		return view('chat.chat', compact('messages', 'chatUsers', 'receiverId','chat_group_id','receiverName','receiverEmail','receiverPhone','receiverDepartment','chk_chat_status'));
 	}
 
 	public function sendMessage(Request $request)
@@ -565,15 +571,23 @@ class ChatController extends Controller
 		$receiverId = $request->query('receiverId'); // Get receiver ID from request
 
 		// Fetch chat users where the authenticated user is sender or receiver
-		$chatUsers = Manage_chat::where('receiver_id', auth()->id())
+		/*$chatUsers = Manage_chat::where('receiver_id', auth()->id())
 			->orWhere('sender_id', auth()->id())
 			->with(['sender', 'receiver'])
 			->orderBy('created_at', 'desc') // Sort by latest message
 			->get()
-			->groupBy('chat_group_id');
+			->groupBy('chat_group_id');*/
 			/*->groupBy(function ($message) {
 				return $message->sender_id == auth()->id() ? $message->receiver_id : $message->sender_id;
 			});*/
+		$chatUsers = Manage_chat::where(function ($query) {
+				$query->whereRaw("FIND_IN_SET(?, receiver_id)", [auth()->id()])
+					->orWhereRaw("FIND_IN_SET(?, sender_id)", [auth()->id()]);
+				})
+				->with(['sender', 'receiver'])
+				->orderBy('created_at', 'desc')
+				->get()
+				->groupBy('chat_group_id');	
 
 		// If no receiverId is provided, default to the first user in the list
 		if (!$receiverId && $chatUsers->isNotEmpty()) {
@@ -739,6 +753,14 @@ class ChatController extends Controller
 	}
 	public function get_department_employee(Request $request){
 		$employee = User::where('user_type', 1)->where('department', $request->id)->get();
+		
+		$first_chat = Manage_chat::where('chat_group_id', $request->chat_group_id)->first();
+		$assign_user = [];
+		if($first_chat->user_type == 1){
+			$assign_user = explode(',', $first_chat->receiver_id);			
+		}else if($first_chat->user_type == 2){
+			$assign_user = explode(',', $first_chat->sender_id);			
+		}
 		/*$html = '<div class="d-flex1">';
 		foreach($employee as $val){
 			$html .= '<div class="mt-1">
@@ -750,9 +772,24 @@ class ChatController extends Controller
 			</div>';
 		}
 		$html .= '</div>';*/
-		$html = '<option value="">Please Select</option>';
-		foreach($employee as $val){
-			$html .= '<option value="'.$val->id.'">'.$val->name.'</option>';
+		
+		$html = '';
+		if(count($employee) > 0){
+			$i = 0;
+			foreach($employee as $val){
+				if(!in_array($val->id, $assign_user)){
+					if($i == 0){
+						$html .=  '<option value="">Please Select</option>';
+					}
+					$html .= '<option value="'.$val->id.'">'.$val->name.' ('.$val->username.')</option>';
+					$i++;
+				}
+			}
+			if($i == 0){
+				$html .=  '<option value="">All employee already assigned</option>';
+			}
+		}else{
+			$html .= '<option value="">No employee found</option>';
 		}
 		
 		echo json_encode($html);
@@ -790,6 +827,7 @@ class ChatController extends Controller
 				}
 			}
 		}
+		broadcast(new ChatAssign())->toOthers();
 		echo 1;
 	}
 	public function entry_chat_status(Request $request){
@@ -799,6 +837,7 @@ class ChatController extends Controller
 			$feedback->chat_group_id = $request->chat_group_id;
 			$feedback->save();
 		}
+		broadcast(new ChatClose($request->chat_group_id))->toOthers();
 		echo 1;
 	}
 	public function change_chat_status(Request $request){
@@ -813,6 +852,7 @@ class ChatController extends Controller
 			$feedback->chat_status = $request->status;
 			$feedback->save();
 		}
+		broadcast(new ChatClose($request->chat_group_id))->toOthers();
 		echo 1;
 	}
 	public function save_feedback_text(Request $request){
@@ -829,6 +869,19 @@ class ChatController extends Controller
 			$feedback->feedback_text = $request->feedback_text;
 			$feedback->save();
 		}
+		broadcast(new ChatClose($request->chat_group_id))->toOthers();
 		echo 1;
+	}
+	public function ring_employee(Request $request, RingCentralService $rc){
+		$first_chat = Manage_chat::where('chat_group_id', $request->chat_group_id)->first();
+		
+		$sender_details = User::where('id', $first_chat->sender_id)->first();
+		$from = $sender_details->phone_number;
+		
+		$receiver_details = User::where('id', $first_chat->receiver_id)->first();
+		$to = $receiver_details->phone_number;
+		
+		$response = $rc->makeCall($from, $to);
+		return response()->json($response);
 	}
 }

@@ -16,6 +16,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Api\RegisteredUserController;
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\RingCentralController ;
 use App\Http\Controllers\GmailLoginAuthController;
 use App\Http\Controllers\GmailAuthController;
 use App\Http\Controllers\FacebookAuthController;
@@ -126,6 +127,7 @@ Route::middleware('auth')->group(function () {
 	Route::post('/entry-chat-status', [ChatController::class, 'entry_chat_status'])->name('entry-chat-status');
 	Route::post('/change-chat-status', [ChatController::class, 'change_chat_status'])->name('change-chat-status');
 	Route::post('/save-feedback-text', [ChatController::class, 'save_feedback_text'])->name('save-feedback-text');
+	Route::post('/ring-employee', [RingCentralController ::class, 'ring_employee'])->name('ring-employee');
 	
 	//Channel list
 	Route::get('/channel', [ChatController::class, 'channel_list'])->name('channel');

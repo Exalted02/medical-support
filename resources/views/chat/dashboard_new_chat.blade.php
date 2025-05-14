@@ -88,7 +88,7 @@ else{
 									<a href="voice-call.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i></a>
 								</li>
 								<li class="nav-item">
-									<a href="voice-call.html" class="nav-link"><i class="fa-solid fa-phone"></i></a>
+									<a href="javascript:void(0)" class="nav-link call-employee"><i class="fa-solid fa-phone"></i></a>
 								</li>
 								<li class="nav-item">
 									<a href="video-call.html" class="nav-link"><i class="fa-solid fa-video"></i></a>
@@ -327,50 +327,52 @@ else{
 											</div>
 											@endif
 										@endforeach
-										@if(isset($chk_chat_status))
-											@if($chk_chat_status->chat_status == 0)
-												<div class="text-end"><button type="button" class="btn btn-success close-ticket">Close this ticket</button></div>
-											@else
-												<div class="text-center"><span class="badge badge-soft-danger">Ticket closed</span></div>
-											@endif
-										@else
-											<div class="text-end"><button type="button" class="btn btn-success close-ticket">Close this ticket</button></div>
-										@endif
 									</div>
+									@if(isset($chk_chat_status))
+										@if($chk_chat_status->chat_status == 0)
+											<div class="text-end close-chat-btn"><button type="button" class="btn btn-success close-ticket">Close this ticket</button></div>
+										@else
+											<div class="text-center"><span class="badge badge-soft-danger">Ticket closed</span></div>
+										@endif
+									@else
+										<div class="text-end close-chat-btn"><button type="button" class="btn btn-success close-ticket">Close this ticket</button></div>
+									@endif
 									
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="chat-footer">
-					<div id="file-preview" class=""></div>
-					<form id="chat-file-upload-form" enctype="multipart/form-data">
-					<span id="error-message"></span>
-						<div class="message-bar">
-						
-							<div class="message-inner">
-								<a class="link attach-icon" id="triggerFileUpload" href="#"  data-bs-target="#drag_files"><img src="{{ url('static-image/attachment.png') }}" alt="Attachment Icon"></a>
-								
-							    
-								{{--<form id="chat-file-upload-form" enctype="multipart/form-data">--}}
-									<div class="message-area">
-										<div class="input-group">
-										<input type="file" id="chat-files" name="files[]" multiple class="d-none">
-											<textarea class="form-control" id="msg" placeholder="Type message..."></textarea>
-											<button type="button" class="clear-msg-btn cross-button" style="position: absolute; right: 50px; background: none; border: none; cursor: pointer;display:none;">
-												<i class="fa-solid fa-xmark"></i>
-											</button>
-											
-											<button class="btn btn-custom" type="button"><i class="fa-solid fa-paper-plane"></i></button>
-											<input type="hidden" id="edit_id" value="">
+					@if(!isset($chk_chat_status) || $chk_chat_status->chat_status == 0)
+						<div class="chat-footer">
+						<div id="file-preview" class=""></div>
+						<form id="chat-file-upload-form" enctype="multipart/form-data">
+						<span id="error-message"></span>
+							<div class="message-bar">
+							
+								<div class="message-inner">
+									<a class="link attach-icon" id="triggerFileUpload" href="#"  data-bs-target="#drag_files"><img src="{{ url('static-image/attachment.png') }}" alt="Attachment Icon"></a>
+									
+									
+									{{--<form id="chat-file-upload-form" enctype="multipart/form-data">--}}
+										<div class="message-area">
+											<div class="input-group">
+											<input type="file" id="chat-files" name="files[]" multiple class="d-none">
+												<textarea class="form-control" id="msg" placeholder="Type message..."></textarea>
+												<button type="button" class="clear-msg-btn cross-button" style="position: absolute; right: 50px; background: none; border: none; cursor: pointer;display:none;">
+													<i class="fa-solid fa-xmark"></i>
+												</button>
+												
+												<button class="btn btn-custom" type="button"><i class="fa-solid fa-paper-plane"></i></button>
+												<input type="hidden" id="edit_id" value="">
+											</div>
 										</div>
-									</div>
-									{{--</form>--}}
+										{{--</form>--}}
+								</div>
+							  
 							</div>
-						  
+						</form>
 						</div>
-					</form>
-					</div>
+					@endif
 					<input type="hidden" id="reason_id" value='{{ $reason_id ?? ''}}'>
 					<input type="hidden" id="unique_chat_id" value='{{ $unique_chat_id ?? ''}}'>
 				</div>
@@ -413,7 +415,7 @@ else{
 							<select class="select form-control" name="assign_user" id="assign_user">
 								<option value="">Please Select</option>
 							</select>
-							 <div class="invalid-feedback"></div>
+							 <div class="invalid-feedback assignError"></div>
 						</div>
 					</div>
 				</div>
@@ -423,7 +425,7 @@ else{
 							<a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-sm w-100 btn-secondary">Cancel</a>
 						</div>
 						<div class="col-6">
-							<a href="javascript:void(0);" class="btn btn-sm w-100 btn-primary save-assign">Create <i class="la la-arrow-circle-right"></i></a>
+							<a href="javascript:void(0);" class="btn btn-sm w-100 btn-primary save-assign">Assign <i class="la la-arrow-circle-right"></i></a>
 						</div>
 					</div>
 				</div>	
@@ -514,6 +516,20 @@ else{
 		</div>
 	</div>
 </div>
+<div class="modal custom-modal fade" id="ring-employee-modal" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="success-message text-center">
+					<div class="success-popup-icon bg-success price-update-pop-up-icon">
+						<i class="la la-check-circle"></i>
+					</div>
+					<h3>Call status - Calling...</h3>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 @endsection 
 @section('scripts')
 <script src="{{ url('front-assets/js/page/chat.js') }}"></script>
@@ -529,6 +545,20 @@ else{
 
 <script>
 $(document).ready(function() {
+	$(document).on('click','.call-employee', function(){
+		var chat_group_id = $('#chat_group_id').val();
+		var URL = "{{ route('ring-employee') }}";
+		$.ajax({
+			url: URL,
+			type: "POST",
+			data: {chat_group_id:chat_group_id, _token: csrfToken},
+			dataType: 'json',
+			success: function(response) {
+				console.log(response);
+				$('#ring-employee-modal').modal('show');
+			}
+		});
+	});
 	$(document).on('click','.assign-employee', function(){
 		$('#assign_employee').modal('show');
 	});
@@ -595,11 +625,12 @@ $(document).ready(function() {
 	});
 	$(document).on('change','#select_department', function(){
 		var id = $(this).val();
+		var chat_group_id = $('#chat_group_id').val();
 		var URL = "{{ route('get-department-employee') }}";
 		$.ajax({
 			url: URL,
 			type: "POST",
-			data: {id:id, _token: csrfToken},
+			data: {id:id, chat_group_id:chat_group_id, _token: csrfToken},
 			dataType: 'json',
 			success: function(response) {
 				//console.log(response);
@@ -612,6 +643,10 @@ $(document).ready(function() {
 		var chat_group_id = $('#chat_group_id').val();
 		var assign_user = $('#assign_user').val();
 		var URL = "{{ route('submit-assign-employee') }}";
+		if(assign_user == ''){
+			$('.assignError').text('Please select an employee.').show().fadeOut( 5000 );
+			return false;
+		}
 		$.ajax({
 			url: URL,
 			type: "POST",
