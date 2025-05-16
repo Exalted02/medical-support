@@ -12,7 +12,8 @@
 			} else {
 				$chatUser = $firstMessage->sender;
 			}
-			$isActive = ($receiverId == $chatUser?->id); // Active only if receiverId matches
+			// $isActive = ($receiverId == $chatUser?->id); // Active only if receiverId matches
+			$isActive = ($chat_group_id == $userId); // Active only if receiverId matches
 			
 			// Check if the user has unread messages
 			//$hasUnreadMessages = $messages->where('receiver_id', auth()->id())->where('user_type',1)->where('is_read', 0)->count() > 0;

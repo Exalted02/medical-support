@@ -53,6 +53,7 @@
 				
 				@php 
 					$chats = $chats_data_val[0];
+					//dd($chats);
 					if(isset($chats->chat_feedback_status)){
 						if($chats->chat_feedback_status->chat_status == 0){
 							$ticket_status = 'open';
@@ -68,6 +69,7 @@
 					$sender = App\Models\User::where('id', $chats->receiver_id)->first();
 					$issue = App\Models\Chat_reason::where('id', $chats->reason)->first();
 				@endphp
+				@if($chats->unique_chat_id != null)
 				<div class="col-xxl-3 col-xl-4 col-md-6">
 					<a href="{{ route('open-new-chat', [$chats->reason, $chats->unique_chat_id]) }}">
 					<div class="contact-grid">
@@ -130,6 +132,7 @@
 						</div>
 					</div></a>
 				</div>
+				@endif
 				@endif
 				@endforeach
 				@if($chats_data->isNotEmpty()) 

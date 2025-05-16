@@ -118,7 +118,7 @@ class ChatController extends Controller
 					->orWhereRaw("FIND_IN_SET(?, sender_id)", [auth()->id()]);
 				})
 				->with(['sender', 'receiver'])
-				->orderBy('created_at', 'desc')
+				// ->orderBy('created_at', 'desc')
 				->get()
 				->groupBy('chat_group_id');
 				/*->groupBy(function ($message) {
@@ -127,11 +127,11 @@ class ChatController extends Controller
 						: $message->sender_id;
 				});*/	
 		// dd($chatUsers);	
-		if (!$receiverId && $chatUsers->isNotEmpty()) {
+		/*if (!$receiverId && $chatUsers->isNotEmpty()) {
 			//\Log::info('Receiver ID was not found, setting to first user.');
 			$receiverId = $chatUsers->keys()->first();
 			
-		}
+		}*/
 		
 		$chat_group_id = '';
 		$receiverName = '';
@@ -141,6 +141,7 @@ class ChatController extends Controller
 		$receiverDepartment = User::where('id',auth()->user()->id)->first()->department;
 		
 		$messages = collect();
+		// dd($receiverId);
 		
 		if (!empty($receiverId) && !empty($cg_id)) {
 			/*$messages = Manage_chat::where(function ($query) use ($receiverId) {
@@ -177,11 +178,10 @@ class ChatController extends Controller
 		}
 		
 		$chk_chat_status = Chat_feedback_status::where('chat_group_id', $chat_group_id)->first();
-		
 		return view('chat.chat', compact('messages', 'chatUsers', 'receiverId','chat_group_id','receiverName','receiverEmail','receiverPhone','receiverDepartment','chk_chat_status'));
 	}
 
-	public function sendMessage(Request $request)
+	public function sendMessage(Request $request) 
     {
 		// dd($request->all());
 		/*$request->validate([
@@ -252,22 +252,38 @@ class ChatController extends Controller
 				$query->whereRaw("FIND_IN_SET(?, receiver_id)", [auth()->id()])
 					->orWhereRaw("FIND_IN_SET(?, sender_id)", [auth()->id()]);
 			})->exists();*/
-			$chat_group_id = $request->chat_group_id;
-			$first_chat = Manage_chat::where('chat_group_id', $request->chat_group_id)->first();
-			$receiver_id = $request->receiver_id;
+			if($request->receiver_id!=''){
+				$chat_group_id = $request->chat_group_id;
+				$first_chat = Manage_chat::where('chat_group_id', $request->chat_group_id)->first();
+				
+				$receiver_id = $request->receiver_id;
+				
+				$my_id = auth()->id();
+				$userArray = explode(',', $first_chat->receiver_id); // Convert to array
+				
+				if(in_array($my_id, $userArray)){
+					// Reorder: put $my_id first, remove it from its original place
+					$userArray = array_values(array_filter($userArray, function ($id) use ($my_id) {
+						return $id != $my_id;
+					}));
+					
+					
+					array_unshift($userArray, $my_id); // Prepend $my_id
+					
+					$reordered = implode(',', $userArray); // Convert back to string
+				}else{
+					$reordered = $my_id;
+				}
+				// dd($reordered);
+			}else{
+				$receiver_id = assignChatReceiverId($request->department_id);
+				$reordered = auth()->id();
+				
+				$chat_group_id = generate_chat_unique_id(Manage_chat::class,'chat_group_id', $receiver_id);
+			}
+			
 			$userType = User::where('id',$receiver_id)->first()->user_type;
-			$my_id = auth()->id();
-			$userArray = explode(',', $first_chat->receiver_id); // Convert to array
 			
-			// Reorder: put $my_id first, remove it from its original place
-			$userArray = array_values(array_filter($userArray, function ($id) use ($my_id) {
-				return $id != $my_id;
-			}));
-			
-			
-			array_unshift($userArray, $my_id); // Prepend $my_id
-			
-			$reordered = implode(',', $userArray); // Convert back to string
 			// dd($exists);	
 			/*if($exists)
 			{
@@ -569,7 +585,7 @@ class ChatController extends Controller
 	public function getChatUsers(Request $request)
 	{
 		$receiverId = $request->query('receiverId'); // Get receiver ID from request
-
+		$cg_id = $request->query('chatGroup');
 		// Fetch chat users where the authenticated user is sender or receiver
 		/*$chatUsers = Manage_chat::where('receiver_id', auth()->id())
 			->orWhere('sender_id', auth()->id())
@@ -619,14 +635,17 @@ class ChatController extends Controller
 		// Return view with correctly named variable
 		return view('partials.chat_user_list', [
 			'sortedChatUsers' => $sortedChatUsers, // Make sure Blade file expects this
-			'receiverId' => $receiverId
+			'receiverId' => $receiverId,
+			'chat_group_id' => $cg_id
 		]);
 	}
 	
 	public function update_chat_read_status(Request $request)
 	{
 		$receiverId = $request->query('receiverId');
-		Manage_chat::where('sender_id',$receiverId)->where('receiver_id',auth()->user()->id)->update(['is_read'=>1]);
+		$cgId = $request->query('cgId');
+		// Manage_chat::where('sender_id',$receiverId)->where('receiver_id',auth()->user()->id)->update(['is_read'=>1]);
+		Manage_chat::where('chat_group_id',$cgId)->update(['is_read'=>1]);
 		return 1;
 	}
 	

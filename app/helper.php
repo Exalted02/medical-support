@@ -677,6 +677,86 @@ use App\Models\Manage_chat;
 			}
 		}
 	}
+	function assignAnotherChatReceiverId($c_receiver = '', $departmentId = '')
+	{
+		$today = date('Y-m-d');
+
+		// Get last assigned receiver_id
+		$lastRecord = Manage_chat::where('user_type', 1)
+			->orderBy('id', 'desc')
+			->first();
+		//return $lastRecord->receiver_id.' '.$departmentId;
+		// Get the next user (either after last receiver or first user)
+		$nextUserId = $lastRecord ? next_another_available_user($lastRecord->receiver_id, $c_receiver, $departmentId) : next_another_available_user(null, $c_receiver, $departmentId);
+		//return $nextUserId;
+		// If no valid user found, return null
+		if (!$nextUserId) {
+			return null;
+		}
+
+		// Store the first checked user to prevent infinite loops
+		$firstCheckedUser = $nextUserId;
+
+		// Infinite loop to find an available user
+		while (true) {
+			// Check if the user is unavailable
+			$isAvailable = Employee_availability_status::where('emp_id', $nextUserId)
+				->where('is_available', 0) // 0 means NOT available
+				->where('availability_date', $today)
+				->exists();
+
+			if (!$isAvailable) {
+				// Found an available user, return their ID
+				return $nextUserId;
+			}
+
+			// Move to the next user
+			$nextUserId = next_another_available_user($nextUserId, $c_receiver, $departmentId);
+
+			// If no new user found or it loops back to the first checked user, stop the loop
+			if (!$nextUserId || $nextUserId === $firstCheckedUser) {
+				return null; // No available user found
+			}
+		}
+	}
+	if (!function_exists('next_another_available_user')) 
+	{
+		function next_another_available_user($currentUserId, $c_receiver, $departmentId)
+		{
+			//$users = User::where('department', $departmentId)->where('user_type',1)->orderBy('id', 'asc')->pluck('id')->toArray();
+			
+			//$users = User::where('user_type',1)->orderBy('id', 'asc')->pluck('id')->toArray();
+			$users = User::where('user_type', 1)
+				->when($departmentId == 1, function ($query) {
+					return $query->where('department', 1);
+				})
+				->when($departmentId == 2, function ($query) {
+					return $query->where('department', 2);
+				})
+				->when($departmentId == 3, function ($query) {
+					return $query->where('department', 3);
+				})
+				->where('id', '!=', $c_receiver)
+				->orderBy('id', 'asc')
+				->pluck('id')
+				->toArray();
+
+			if (empty($users)) {
+				$users = User::where('user_type',1)->orderBy('id', 'asc')->pluck('id')->toArray();
+				if (empty($users)) {
+					return null;
+				}
+			}
+
+			$currentIndex = array_search($currentUserId, $users);
+
+			if ($currentIndex !== false) {
+				$nextIndex = ($currentIndex + 1) % count($users);
+				return $users[$nextIndex];
+			}
+			return $users[0];
+		}
+	}
 	if (!function_exists('next_available_user')) 
 	{
 		function next_available_user($currentUserId, $departmentId)

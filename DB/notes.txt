@@ -1,0 +1,2 @@
+1) From gmail list the chat message now open in popup, but client want this in page instead of popup.
+2) 

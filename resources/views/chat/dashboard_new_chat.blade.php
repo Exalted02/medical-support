@@ -81,10 +81,10 @@ else{
 								</div>
 							</div>--}}
 							<ul class="nav custom-menu">
-								<li class="nav-item">
+								{{--<li class="nav-item">
 									<a href="javascript:void(0)" class="nav-link assign-employee"><i class="fa-solid fa-tag"></i></a>
-								</li>
-								<li class="nav-item">
+								</li>--}}
+								{{--<li class="nav-item">
 									<a href="voice-call.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i></a>
 								</li>
 								<li class="nav-item">
@@ -95,7 +95,7 @@ else{
 								</li>
 								<li class="nav-item">
 									<a href="video-call.html" class="nav-link"><i class="fa-solid fa-user-plus"></i></a>
-								</li>
+								</li>--}}
 								{{--<li class="nav-item dropdown has-arrow flag-nav">
 									<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);" role="button" data-id="en">
 									<p><i class="fa-regular fa-circle-dot text-primary me-2"></i>Open</p>
@@ -175,11 +175,11 @@ else{
 										@if($message->sender_id == auth()->id())
 											<div class="chat chat-right">
 												@if ($message->sender_id != auth()->id())
-													<div class="chat-avatar">
+												{{--<div class="chat-avatar">
 														<a href="#" class="avatar">
 															<img src="{{ url('static-image/avatar-05.jpg') }}" alt="User Image">
 														</a>
-													</div>
+													</div>--}}
 												@endif
 												
 												@if(!empty($message->message))
@@ -254,11 +254,11 @@ else{
 											@else
 												<div class="chat chat-left">
 												@if ($message->sender_id != auth()->id())
-													<div class="chat-avatar">
+													{{--<div class="chat-avatar">
 														<a href="#" class="avatar">
 															<img src="{{ url('static-image/avatar-05.jpg') }}" alt="User Image">
 														</a>
-													</div>
+													</div>--}}
 												@endif
 												@if(!empty($message->message))
 												<div class="chat-body">

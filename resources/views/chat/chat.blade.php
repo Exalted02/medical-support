@@ -22,6 +22,7 @@ $messages2 = $messages;
 											@php
 												//$chatUser = $messages->first()->sender_id == auth()->id() ? $messages->first()->receiver : $messages->first()->sender;
 												$firstMessage = $messages->first();
+												//dd($messages);
 												$senderIds = explode(',', $firstMessage->sender_id);
 												$receiverIds = explode(',', $firstMessage->receiver_id);
 
@@ -30,7 +31,8 @@ $messages2 = $messages;
 												} else {
 													$chatUser = $firstMessage->sender;
 												}
-												$isActive = ($receiverId == $chatUser?->id); // Active only if receiverId matches
+												// $isActive = ($receiverId == $chatUser?->id); // Active only if receiverId matches
+												$isActive = ($chat_group_id == $cg); // Active only if receiverId matches
 												
 												// Check if any message from this user is unread
 												//$hasUnreadMessages = $messages->where('receiver_id', auth()->id())->where('user_type',1)->where('is_read', 0)->count() > 0;
@@ -41,6 +43,8 @@ $messages2 = $messages;
 														&& $message->is_read == 0;
 												})->count() > 0;
 											@endphp
+											@if(auth()->user()->user_type == 2)
+											@if($firstMessage->unique_chat_id == null)
 											<li class="nav-item me-0" role="presentation">
 												<a class="nav-link text-break mw-100 user-link {{ $isActive ? 'active' : '' }} {{ $hasUnreadMessages ? 'unread-message' : '' }} message-chat-info"
 												   href="{{ route('chat', ['receiverId' => $chatUser?->id, 'chatGroup' => $cg]) }}"
@@ -50,6 +54,18 @@ $messages2 = $messages;
 													Ticket #{{ $cg }}
 												</a>
 											</li>
+											@endif
+											@else
+											<li class="nav-item me-0" role="presentation">
+												<a class="nav-link text-break mw-100 user-link {{ $isActive ? 'active' : '' }} {{ $hasUnreadMessages ? 'unread-message' : '' }} message-chat-info"
+												   href="{{ route('chat', ['receiverId' => $chatUser?->id, 'chatGroup' => $cg]) }}"
+												   data-userid="{{ $chatUser?->id }}" data-chat="{{ $cg }}">
+													<i class="feather-user me-2 align-middle d-inline-block"></i>
+													{{--{{ $chatUser?->name }}--}}
+													Ticket #{{ $cg }}
+												</a>
+											</li>	
+											@endif
 										@endforeach
 
 										</ul>
@@ -85,6 +101,7 @@ $messages2 = $messages;
 								</div>
 							</div>--}}
 							<ul class="nav custom-menu">
+								@if(auth()->user()->user_type == 1)
 								<li class="nav-item">
 									<a href="voice-call.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i></a>
 								</li>
@@ -97,6 +114,7 @@ $messages2 = $messages;
 								<li class="nav-item">
 									<a href="video-call.html" class="nav-link"><i class="fa-solid fa-user-plus"></i></a>
 								</li>
+								@endif
 								{{--<li class="nav-item">
 									<a class="nav-link task-chat profile-rightbar float-end" id="task_chat" href="#task_window"><i class="fa-solid fa-user"></i></a>
 								</li>
@@ -433,7 +451,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-/*document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
 	let userLinks = document.querySelectorAll('.user-link');
 
 	userLinks.forEach(link => {
@@ -446,13 +464,14 @@ document.addEventListener("DOMContentLoaded", function () {
 			
 			event.preventDefault(); // Prevent default link behavior
             let userId = this.getAttribute('data-userid');
-			alert(userId);
-			
-			fetch('/chat/updateReadStatus?receiverId=' + userId)
+            let cgId = this.getAttribute('data-chat');
+			// alert(userId);
+			var app_url =  "{{ env('APP_URL') }}";
+			fetch('/chat/updateReadStatus?receiverId=' + userId + '&cgId=' + cgId)
 				.then(response => response.text())
 				.then(html => {
-					alert(html);
-					window.location.href = `/chat?receiverId=${userId}`;
+					// alert(html);
+					window.location.href = `${app_url}/chat?receiverId=${userId}&chatGroup=${cgId}`;
 				})
 				.catch(error => console.error('Error fetching user list:', error));
 			
@@ -460,7 +479,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			
 		});
 	});
-});*/
+});
 
 let selectedFiles = [];
 $(document).ready(function() {

@@ -185,7 +185,7 @@
 </div>
 
 <!-- Reply Modal -->
-{{--<div id="replyModal" class="modal fade" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+<div id="replyModal" class="modal fade" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -210,26 +210,6 @@
             </div>
         </div>
     </div>
-</div>--}}
-<div id="form-content">
-{{--<div id="replyFormContainer" class="mt-3 mb-3" style="display: none;">
-	<div class="card">
-		<div class="card-body">
-			<form id="replyForm" enctype="multipart/form-data">
-				@csrf
-				<input type="hidden" id="threadId" name="threadId">
-				<input type="hidden" id="toEmail" name="to">
-				<input type="hidden" id="emailSubject" name="subject">
-				<textarea id="emailBody" class="form-control" rows="4" name="body" placeholder="Type your reply..."></textarea>
-				<input type="file" id="attachment" class="mt-2" name="attachments[]" multiple onchange="showAttachments(event)">
-				<div id="attachmentPreview" class="attachment-preview"></div>
-			</form>
-		</div>
-		<div class="card-footer text-end">
-			<button type="button" class="btn btn-primary" onclick="sendReply()">Send</button>
-		</div>
-	</div>
-</div>--}}
 </div>
 
 @endsection 
@@ -278,7 +258,6 @@
 							</div>
 							<div class="email-body">${message.body}</div>
 							<button class="btn btn-primary btn-sm reply-btn" data-thread="${threadId}" data-to="${message.from}" data-subject="${thread.subject}">Reply</button>
-							<div class="reply-form"></div>
 						</div>
 					`;
 					threadContainer.innerHTML += messageHtml;
@@ -292,27 +271,6 @@
 		if (!threadFound) {
 			document.getElementById('email-thread-container').style.display = 'none';
 		}
-		
-		var html = `
-			<div id="replyFormContainer" class="mt-3 mb-3" style="display: none;">
-				<div class="card">
-					<div class="card-body">
-						<form id="replyForm" enctype="multipart/form-data">
-							<input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
-							<input type="hidden" id="threadId" name="threadId">
-							<input type="hidden" id="toEmail" name="to">
-							<input type="hidden" id="emailSubject" name="subject">
-							<textarea id="emailBody" class="form-control" rows="4" name="body" placeholder="Type your reply..."></textarea>
-							<input type="file" id="attachment" class="mt-2" name="attachments[]" multiple onchange="showAttachments(event)">
-							<div id="attachmentPreview" class="attachment-preview"></div>
-						</form>
-					</div>
-					<div class="card-footer text-end">
-						<button type="button" class="btn btn-primary" onclick="sendReply()">Send</button>
-					</div>
-				</div>
-			</div>`;
-			const threadContainer = document.getElementById('form-content').innerHTML = html;
 	}
 	
 	/*document.querySelectorAll('.reply-btn').forEach(button => {
@@ -325,10 +283,7 @@
     });*/
 	document.addEventListener('click', function (event) {
 		if (event.target.classList.contains('reply-btn')) {
-			// console.log("Reply button clicked via delegation!"); // Debugging line
-			const replyBtn = event.target;
-			const allReplyBtns = document.querySelectorAll('.reply-btn');
-			
+			console.log("Reply button clicked via delegation!"); // Debugging line
 			
 			// Get data attributes from the clicked button
 			let threadId = event.target.dataset.thread;
@@ -341,49 +296,8 @@
 			document.getElementById('emailSubject').value = emailSubject;
 
 			// Show the modal
-			//let modal = new bootstrap.Modal(document.getElementById('replyModal'));
-			//modal.show();
-			
-			if(replyBtn.textContent == 'Reply'){
-				// Reset all buttons to "Reply"
-				allReplyBtns.forEach(btn => {
-					btn.textContent = 'Reply';
-					btn.disabled = false;
-				});
-				// Move form below this button
-				const formContainer = document.getElementById('replyFormContainer');
-				formContainer.style.display = 'block';
-				
-				// Remove existing TinyMCE if any
-				if (tinymce.get('emailBody')) {
-					tinymce.get('emailBody').remove();
-				}
-
-				// Insert form after clicked reply button
-				replyBtn.closest('.email-thread').after(formContainer);
-				replyBtn.textContent = 'Cancel Reply';
-				
-				// Re-init TinyMCE on the new textarea
-				tinymce.init({
-					selector: '#emailBody', // Target the textarea
-					height: 200,
-					menubar: false,
-					plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste help wordcount',
-					toolbar: 'bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | link',
-					images_upload_url: '/upload-image',
-					automatic_uploads: true,
-					setup: function(editor) {
-						editor.on('change', function() {
-							tinymce.triggerSave(); // Ensures textarea value is updated
-						});
-					}
-				});
-			}else{
-				const formContainer = document.getElementById('replyFormContainer');
-				formContainer.style.display = 'none';
-				
-				replyBtn.textContent = 'Reply';
-			}
+			let modal = new bootstrap.Modal(document.getElementById('replyModal'));
+			modal.show();
 		}
 	});
 
