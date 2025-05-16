@@ -22,6 +22,7 @@ return new class extends Migration
 			$table->string('chat_view_gray')->nullable();
 			$table->text('message')->nullable();
 			$table->tinyInteger('is_read')->default(0)->comment('0=unread,1=read');
+			$table->timestamp('employee_assign_date')->nullable();
             $table->timestamps();
         });
     }

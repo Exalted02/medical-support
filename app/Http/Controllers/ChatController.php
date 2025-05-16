@@ -340,6 +340,7 @@ class ChatController extends Controller
 				'receiver_id' => $receiver_id,
 				'message' => $request->message,
 				'is_read' => 0,
+				'employee_assign_date' => date('Y-m-d h:i:s'),
 				'created_at' => date('Y-m-d h:i:s'),
 			]);
 			
@@ -489,6 +490,7 @@ class ChatController extends Controller
 				'receiver_id' => $receiver_id,
 				'message' => $request->message,
 				'is_read' => 0,
+				'employee_assign_date' => date('Y-m-d h:i:s'),
 				'created_at' => date('Y-m-d h:i:s'),
 			]);
 			

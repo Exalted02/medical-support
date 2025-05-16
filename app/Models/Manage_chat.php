@@ -19,6 +19,7 @@ class Manage_chat extends Model
         'receiver_id',
         'message',
         'is_read',
+        'employee_assign_date',
     ];
 	
 	public function sender()

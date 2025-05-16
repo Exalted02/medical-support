@@ -35,11 +35,11 @@ class AssignFreeEmployee extends Command
 			->pluck('chat_group_id');
 
 		$chats = Manage_chat::whereIn('chat_group_id', $groupIds)
-			->where('created_at', '<=', Carbon::now()->subMinutes(32))
+			->where('employee_assign_date', '<=', Carbon::now()->subMinutes(30))
 			->get();
 		foreach($chats as $chat_val){
 			$new_receiver = assignAnotherChatReceiverId($chat_val->receiver_id);
-			$up = Manage_chat::where('chat_group_id', $chat_val->chat_group_id)->update(['receiver_id' => $new_receiver]);
+			$up = Manage_chat::where('chat_group_id', $chat_val->chat_group_id)->update(['receiver_id' => $new_receiver, 'employee_assign_date' => date('Y-m-d h:i:s')]);
 			if($up){
 				Log::info('New employee assign successfully.');
 			}
