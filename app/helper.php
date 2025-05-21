@@ -92,6 +92,16 @@ use App\Models\Manage_chat;
 		$data = Carbon::createFromFormat($fromFormat, $date)->format($toFormat);
         return $data;
     }
+//Convert seconds to h:m:s format
+    function change_seconds_format($seconds){
+		$hours = floor($seconds / 3600);
+		$minutes = floor(($seconds % 3600) / 60);
+		$remainingSeconds = $seconds % 60;
+
+		$formatted = sprintf('%d:%02d:%02d', $hours, $minutes, $remainingSeconds);
+
+		return $formatted;
+    }
 //get website settings
     function web_settings(){
 		$data = array(

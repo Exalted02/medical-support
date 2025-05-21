@@ -19,7 +19,7 @@ class RingCentralController extends Controller
 		
 		$receiver_details = User::where('id', $first_chat->receiver_id)->first();
 		$to = $receiver_details->phone_number;
-		
+		// dd($from.'//'.$to);
         $rcsdk = new SDK(
             env('RINGCENTRAL_CLIENT_ID'),
             env('RINGCENTRAL_CLIENT_SECRET'),
@@ -44,6 +44,37 @@ class RingCentralController extends Controller
                 'status' => 'Call initiated',
                 'data' => $response->json()
             ]);
+        } catch (\RingCentral\SDK\Http\ApiException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'details' => json_decode((string) $e->apiResponse()->response()->getBody(), true)
+            ], 500);
+        }
+    }
+    public function call_log(Request $request)
+    {
+        $rcsdk = new SDK(
+            env('RINGCENTRAL_CLIENT_ID'),
+            env('RINGCENTRAL_CLIENT_SECRET'),
+            env('RINGCENTRAL_SERVER_URL')
+        );
+
+        $platform = $rcsdk->platform();
+
+        try {
+            $platform->login(['jwt' => env('RINGCENTRAL_JWT')]);
+			$queryParams = array(
+				// 'phoneNumber' => '+13104042226',
+				// 'dateFrom' => "2024-01-01T00:00:00.000Z",
+				// 'dateTo' => "2025-05-31T23:59:59.009Z",
+				'view' => "Detailed"
+			);
+			$endpoint = "/restapi/v1.0/account/~/extension/~/call-log";
+			$resp = $platform->get($endpoint, $queryParams);
+			$call_log = $resp->json()->records;
+			// dd($call_log[0]);
+			return view('employee-call-log', compact('call_log'));
         } catch (\RingCentral\SDK\Http\ApiException $e) {
             return response()->json([
                 'status' => 'error',
