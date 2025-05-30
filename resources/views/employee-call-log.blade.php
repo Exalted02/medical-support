@@ -69,7 +69,23 @@
 							</div>
 						</div>
 						<div class="card-footer">
-							<a href="clients.html">View all clients</a>
+							<nav>
+								<ul class="pagination justify-content-end">
+									@if ($page > 1)
+									<li class="page-item">
+										<a class="page-link" href="{{ url()->current() }}?page={{ $page - 1 }}">Previous</a>
+									</li>
+									@endif
+									
+									<li class="page-item active"><a class="page-link" href="#">{{ $page }}</a></li>
+									
+									@if (!empty($navigation['nextPage']))
+									<li class="page-item">
+										<a class="page-link" href="{{ url()->current() }}?page={{ $page + 1 }}">Next</a>
+									</li>
+									@endif
+								</ul>
+							</nav>
 						</div>
 					</div>
 				</div>				

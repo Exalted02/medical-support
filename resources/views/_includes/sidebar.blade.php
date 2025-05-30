@@ -61,6 +61,9 @@
 					<a href="{{ route('employee-dashboard')}}"><i class="fa-solid fa-gauge"></i> <span> Stats </span></a>
 				</li>
 				@endif
+				<li class="{{ request()->routeIs('call-log') ? 'active' : '' }}">
+					<a href="{{ route('call-log')}}"><i class="fa-solid fa-gauge"></i> <span> Call Log </span></a>
+				</li>
 				{{--<li class="{{ request()->routeIs('user.category') ? 'active' : '' }}">
 					<a href="{{ route('user.category')}}"><i class="fa-solid fa-brain"></i> <span> {{ __('category') }} </span></a>
 				</li>

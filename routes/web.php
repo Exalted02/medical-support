@@ -128,6 +128,7 @@ Route::middleware('auth')->group(function () {
 	Route::post('/change-chat-status', [ChatController::class, 'change_chat_status'])->name('change-chat-status');
 	Route::post('/save-feedback-text', [ChatController::class, 'save_feedback_text'])->name('save-feedback-text');
 	Route::post('/ring-employee', [RingCentralController ::class, 'ring_employee'])->name('ring-employee');
+	Route::post('/disconnect-call', [RingCentralController ::class, 'disconnect_call'])->name('disconnect-call');
 	Route::get('/call-log', [RingCentralController ::class, 'call_log'])->name('call-log');
 	
 	//Channel list

@@ -525,6 +525,7 @@ else{
 						<i class="la la-check-circle"></i>
 					</div>
 					<h3>Call status - Calling...</h3>
+					<button class="btn btn-danger mt-2 call-disconnect">Dicconnect</button>
 				</div>
 			</div>
 		</div>
@@ -555,7 +556,23 @@ $(document).ready(function() {
 			dataType: 'json',
 			success: function(response) {
 				console.log(response);
+				$('.call-disconnect').attr('session-id', response.data.id);
 				$('#ring-employee-modal').modal('show');
+				
+			}
+		});
+	});
+	$(document).on('click','.call-disconnect', function(){
+		var telephone_session_id = $(this).attr('session-id');
+		console.log(telephone_session_id);
+		var URL = "{{ route('disconnect-call') }}";
+		$.ajax({
+			url: URL,
+			type: "POST",
+			data: {telephone_session_id:telephone_session_id, _token: csrfToken},
+			dataType: 'json',
+			success: function(response) {
+				console.log(response);				
 			}
 		});
 	});

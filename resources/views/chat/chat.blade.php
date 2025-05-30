@@ -102,18 +102,26 @@ $messages2 = $messages;
 							</div>--}}
 							<ul class="nav custom-menu">
 								@if(auth()->user()->user_type == 1)
-								<li class="nav-item">
-									<a href="voice-call.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i></a>
-								</li>
-								<li class="nav-item">
+								{{--<li class="nav-item">
 									<a href="javascript:void(0)" class="nav-link call-employee"><i class="fa-solid fa-phone"></i></a>
+								</li>--}}
+								<li class="nav-item dropdown has-arrow flag-nav">
+									<a href="javascript:void(0)" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);"><i class="fa-solid fa-phone"></i></a>
+									<div class="dropdown-menu dropdown-menu-right">
+										<a href="javascript:void(0);" class="dropdown-item call-employee" data-id="en">
+											<p>{{ $receiverPhone ?? '' }}</p>
+										</a>
+									</div>
+								</li>
+								{{--<li class="nav-item">
+									<a href="voice-call.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i></a>
 								</li>
 								<li class="nav-item">
 									<a href="video-call.html" class="nav-link"><i class="fa-solid fa-video"></i></a>
 								</li>
 								<li class="nav-item">
 									<a href="video-call.html" class="nav-link"><i class="fa-solid fa-user-plus"></i></a>
-								</li>
+								</li>--}}
 								@endif
 								{{--<li class="nav-item">
 									<a class="nav-link task-chat profile-rightbar float-end" id="task_chat" href="#task_window"><i class="fa-solid fa-user"></i></a>
@@ -408,6 +416,33 @@ $messages2 = $messages;
 <input type="hidden" id="chat_group_id">
 {{--<button class="btn btn-custom send-button" data-url="{{ route('send.message') }}"  type="button"><i class="fa-solid fa-paper-plane"></i></button>--}}
 
+<div class="modal custom-modal fade" id="ring-employee-modal" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="success-message text-center">
+					<div class="success-popup-icon bg-success price-update-pop-up-icon">
+						<i class="la la-check-circle"></i>
+					</div>
+					<h3>Call status - Calling...</h3>
+					<button class="btn btn-danger mt-2 call-disconnect">Dicconnect</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal custom-modal fade" id="ring-employee-modal-error-message" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="success-message text-center">
+					<h3 class="ring-message"></h3>
+					<button class="btn btn-secondary mt-2" data-bs-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 @endsection 
 @section('scripts')
 <script src="{{ url('front-assets/js/page/chat.js') }}"></script>
@@ -422,7 +457,43 @@ $messages2 = $messages;
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
 
 <script>
-
+$(document).ready(function() {
+	$(document).on('click','.call-employee', function(){
+		var chat_group_id = $('#chat_group_id').val();
+		var URL = "{{ route('ring-employee') }}";
+		$.ajax({
+			url: URL,
+			type: "POST",
+			data: {chat_group_id:chat_group_id, _token: csrfToken},
+			dataType: 'json',
+			success: function(response) {
+				console.log(response);
+				if(response.status == 'success'){
+					$('.call-disconnect').attr('session-id', response.data.id);
+					$('#ring-employee-modal').modal('show');
+				}else{
+					$('.ring-message').text(response.message);
+					$('#ring-employee-modal-error-message').modal('show');
+				}				
+			}
+		});
+	});
+	$(document).on('click','.call-disconnect', function(){
+		var telephone_session_id = $(this).attr('session-id');
+		console.log(telephone_session_id);
+		var URL = "{{ route('disconnect-call') }}";
+		$.ajax({
+			url: URL,
+			type: "POST",
+			data: {telephone_session_id:telephone_session_id, _token: csrfToken},
+			dataType: 'json',
+			success: function(response) {
+				console.log(response);
+				window.location.href = "{{ route('call-log') }}";
+			}
+		});
+	});
+});
 document.addEventListener("DOMContentLoaded", function () {
     /*document.querySelector('.chat-user-list').addEventListener('click', function (event) {
         let clickedElement = event.target.closest('.user-link');
