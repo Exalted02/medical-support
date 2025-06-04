@@ -23,8 +23,8 @@
             </div>
             <!-- /Page Header -->
 			<hr>
-			<div class="filter-section">
-				<ul>
+			<div class="filter-section1">
+				<ul class="d-flex justify-between">
 					<li>
 						<div class="form-sort client-chat-menu">
 							<button type="button" class="client-chat-button active" data-id="open-chats">Open chats</button>  
@@ -36,7 +36,7 @@
 					</li>
 					<li>
 						<div class="form-sort">
-							<a href="{{ route('start-new-chat')}}"><button type="button" class="chat-button">Start new chat</button></a>
+							<a href="{{ route('start-new-chat')}}"><button type="button" class="btn chat-button">Start New Chat</button></a>
 						</div>
 					</li>
 					<li>
@@ -75,7 +75,7 @@
 					<div class="contact-grid">
 						<div class="grid-head">
 							<div class="users-profile">
-								<h5 class="name-user">Ticket <strong class="text-muted">#{{$k}}</strong></h5>
+								<h5 class="name-user">Ticket #{{$k}}</h5>
 							</div>
 							{{--<div class="active-ticket">Active ticket</div>--}}
 							<button type="button" class="btn btn-sm btn-soft-success">Active ticket</button>
@@ -86,20 +86,20 @@
 								<div class="row w-1001">
 									<div class="col-md-6">
 										<div class="pro-deadline mb-2">
-											<div class="text-dark">
+											<div class="text-dark font-14">
 												Resident:
 											</div>
-											<div class="font-weight-bold text-dark">
+											<div class="font-weight-bold text-dark font-14">
 												<strong>{{ auth()->user()->name }}</strong>
 											</div>
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="pro-deadline mb-2">
-											<div class="text-dark">
+											<div class="text-dark font-14">
 												Timestamp:
 											</div>
-											<div class="font-weight-bold text-dark">
+											<div class="font-weight-bold text-dark font-14">
 												<strong>{{ \Carbon\Carbon::parse($chats->created_at ?? '')->format('M j Y g:iA') }}</strong>
 											</div>
 										</div>
@@ -108,20 +108,20 @@
 								<div class="row w-1001">
 									<div class="col-md-6">
 										<div class="pro-deadline mb-2">
-											<div class="text-dark">
+											<div class="text-dark font-14">
 												Issue :
 											</div>
-											<div class="font-weight-bold text-dark">
+											<div class="font-weight-bold text-dark font-14">
 												<strong>{{ $issue->reason ?? ''}}</strong>
 											</div>
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="pro-deadline mb-2">
-											<div class="text-dark">
+											<div class="text-dark font-14">
 												Assigned to :
 											</div>
-											<div class="font-weight-bold text-dark">
+											<div class="font-weight-bold text-dark font-14">
 												<strong>{{ $sender->name ?? '' }}</strong>
 											</div>
 										</div>
