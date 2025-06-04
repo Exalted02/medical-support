@@ -130,6 +130,7 @@ Route::middleware('auth')->group(function () {
 	Route::post('/ring-employee', [RingCentralController ::class, 'ring_employee'])->name('ring-employee');
 	Route::post('/disconnect-call', [RingCentralController ::class, 'disconnect_call'])->name('disconnect-call');
 	Route::get('/call-log', [RingCentralController ::class, 'call_log'])->name('call-log');
+	Route::post('/call-log', [RingCentralController ::class, 'call_log'])->name('call-log');
 	
 	//Channel list
 	Route::get('/channel', [ChatController::class, 'channel_list'])->name('channel');

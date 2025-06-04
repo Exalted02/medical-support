@@ -16,6 +16,22 @@
                 </div>
             </div>
             <!-- /Page Header -->
+			<!-- Search Filter -->
+			<div class="filter-filelds">
+				<form name="search-frm" method="post" action="{{ route('call-log') }}" id="search-call-log">
+				@csrf
+					<div class="row filter-row">
+						<div class="col-xl-4 p-r-0">  
+							 <div class="input-block">
+								<input type="text" class="form-control date-range bookingrange" name="search_date_range"  id="search_date_range1" placeholder="{{ __('from_to_date')}}" value="{{ $request_date }}" />
+							 </div>
+						</div>
+						<div class="col-xl-2 p-r-0">  
+							<button type="submit" class="btn btn-success w-100 search-data"><i class="fa-solid fa-magnifying-glass"></i> Search </button> 
+						</div>
+					</div>
+				</form>
+			</div>
 			<div class="row">
 				<div class="col-md-12">
 					<div class="card card-table">
@@ -39,7 +55,7 @@
 									</thead>
 									<tbody>
 										@php
-											$my_number = '+13104042226';
+											$my_number = $user_phone;
 											//$type = 'Other';
 										@endphp
 										@foreach($call_log as $k=>$val)

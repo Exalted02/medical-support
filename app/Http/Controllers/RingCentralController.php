@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Manage_chat;
 use App\Models\User;
 use RingCentral\SDK\SDK;
+use Illuminate\Support\Facades\Auth;
 use DB;
+use Carbon\Carbon;
 
 class RingCentralController extends Controller
 {
@@ -134,6 +136,8 @@ class RingCentralController extends Controller
 	}
     public function call_log(Request $request, $page = '')
     {
+		$user = Auth::user();
+		$user_phone = $user->phone_number;
         $rcsdk = new SDK(
             env('RINGCENTRAL_CLIENT_ID'),
             env('RINGCENTRAL_CLIENT_SECRET'),
@@ -148,13 +152,29 @@ class RingCentralController extends Controller
 			// $response = $platform->get('/restapi/v1.0/account/~/extension/~');
 			// $extensionData = $response->json();
 			// dd($extensionData);
+			$request_date = '';
 			
-			
-			
+			if ($request->input('search_date_range') && $request->input('search_date_range') != '' && $request->input('search_date_range') != 'MM/DD/YYYY - MM/DD/YYYY') {
+				$request_date = $request->input('search_date_range');
+				
+				$dateRange = explode(' - ', $request->input('search_date_range'));
+				
+				if (count($dateRange) == 2) {
+					$dateFrom = Carbon::parse($dateRange[0])->startOfDay()->toIso8601String();
+					$dateTo = Carbon::parse($dateRange[1])->endOfDay()->toIso8601String();
+				}
+			}else{
+				$dateFrom = Carbon::now()->startOfDay()->toIso8601String();
+				$dateTo = Carbon::now()->endOfDay()->toIso8601String();
+			}
+			// dd($dateFrom.'///'.$dateTo);
 			$queryParams = array(
-				// 'phoneNumber' => '+13104042226',
-				// 'dateFrom' => "2024-01-01T00:00:00.000Z",
-				// 'dateTo' => "2025-05-31T23:59:59.009Z",
+				// 'phoneNumber' => '13104042226',
+				// 'dateFrom' => "2025-05-05T00:00:00.000Z",
+				// 'dateTo' => "2025-06-03T23:59:59.009Z",
+				'phoneNumber' => str_replace('+', '', $user_phone),
+				'dateFrom' => $dateFrom,
+				'dateTo' => $dateTo,
 				'view' => "Detailed"
 			);
 			$page = isset($request->page) && $request->page != null ? $request->page : 1;
@@ -166,8 +186,10 @@ class RingCentralController extends Controller
 				'nextPage' => $resp->json()->navigation->nextPage ?? null,
 				'prevPage' => $resp->json()->navigation->previousPage ?? null,
 			];
+			// dd($call_log);
 			// dd($resp->json());
-			return view('employee-call-log', compact('call_log', 'navigation', 'page'));
+			// dd($request_date);
+			return view('employee-call-log', compact('call_log', 'user_phone', 'navigation', 'page', 'request_date'));
         } catch (\RingCentral\SDK\Http\ApiException $e) {
             return response()->json([
                 'status' => 'error',
