@@ -53,10 +53,10 @@
 				{{--<li class="{{ request()->routeIs('chat') ? 'active' : '' }}">
 					<a href="{{ route('chat')}}"><i class="fa-solid fa-message"></i> <span> {{ __('chat') }} </span></a>
 				</li>--}}
+				@if(auth()->user()->user_type==1)
 				<li class="{{ request()->routeIs('ticket-chat') ? 'active' : '' }}">
 					<a href="{{ route('ticket-chat')}}"><i class="fa-brands fa-rocketchat"></i> <span> {{ __('ticket-chat') }} </span></a>
 				</li>
-				@if(auth()->user()->user_type==1)
 				<li class="{{ request()->routeIs('employee-dashboard') ? 'active' : '' }}">
 					<a href="{{ route('employee-dashboard')}}"><i class="fa-solid fa-gauge"></i> <span> Stats </span></a>
 				</li>

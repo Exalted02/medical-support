@@ -70,7 +70,7 @@
 					$issue = App\Models\Chat_reason::where('id', $chats->reason)->first();
 				@endphp
 				@if($chats->unique_chat_id != null)
-				<div class="col-xxl-3 col-xl-4 col-md-6">
+				<div class="col-xxl-4 col-xl-4 col-md-6">
 					<a href="{{ route('open-new-chat', [$chats->reason, $chats->unique_chat_id]) }}">
 					<div class="contact-grid">
 						<div class="grid-head">

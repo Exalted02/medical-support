@@ -36,7 +36,7 @@
 	<ul class="nav user-menu">
 	
 		<!-- Search -->
-		<li class="nav-item">
+		{{--<li class="nav-item">
 			<div class="top-nav-search">
 				<a href="javascript:void(0);" class="responsive-search">
 					<i class="fa-solid fa-magnifying-glass"></i>
@@ -46,12 +46,12 @@
 					<button class="btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
 				</form>
 			</div>
-		</li>
+		</li>--}}
 		<!-- /Search -->
 		<!-- /Generate Ticket -->
-		<li class="nav-item m-l-5">
+		{{--<li class="nav-item m-l-5">
 			<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#generate_ticket">Generate Ticket</button>
-		</li>
+		</li>--}}
 		<!-- /Generate Ticket -->
 		@php
 			$selectedLang = session('locale', 'en'); // Default to 'en' if session does not exist
@@ -86,9 +86,9 @@
 		<!-- /Flag -->
 	
 		<!-- Notifications -->
-		<li class="nav-item dropdown">
+		{{--<li class="nav-item dropdown">
 			<a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
-				<i class="fa-regular fa-bell"></i> <span class="badge rounded-pill">3</span>
+				<i class="fa-regular fa-bell"></i> <span class="badge rounded-pill notify-count">3</span>
 			</a>
 			<div class="dropdown-menu notifications">
 				<div class="topnav-dropdown-header">
@@ -168,11 +168,11 @@
 					<a href="activities.html">View all Notifications</a>
 				</div>
 			</div>
-		</li>
+		</li>--}}
 		<!-- /Notifications -->
 		
 		<!-- Message Notifications -->
-		<li class="nav-item dropdown">
+		{{--<li class="nav-item dropdown">
 			<a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
 				<i class="fa-regular fa-comment"></i> <span class="badge rounded-pill">8</span>
 			</a>
@@ -274,7 +274,7 @@
 					<a href="chat.html">View all Messages</a>
 				</div>
 			</div>
-		</li>
+		</li>--}}
 		<!-- /Message Notifications -->
 
 		<li class="nav-item dropdown has-arrow main-drop">

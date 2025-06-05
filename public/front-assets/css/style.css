@@ -8363,16 +8363,23 @@ input[type=file].form-control {
 .header .user-menu.nav > li > a .badge {
   color: #FFF;
   font-weight: 700;
-  background-color: #9368E9;
+  background-color: #008FFB;
   position: absolute;
-  top: -2px;
-  right: 2px;
-  width: 12px;
+  /* top: -2px; */
+  /* right: 2px; */
+  /* width: 12px; */
   height: 12px;
   font-size: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  
+	left: 20px;
+	top: 5px;
+	width: auto;
+}
+.header .user-menu.nav > li > a .badge.notify-count {
+  background-color: #FF7400;
 }
 .header .user-menu.nav > li > a i {
   font-size: 20px;

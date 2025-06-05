@@ -713,8 +713,11 @@
     background-color: #008FFB;
     padding: 8px 15px;
 }
-.chat-img-attach {
-	margin: 0 !important;
+.chat-contents .chat-content-wrap .chats .chat-left .chat-img-attach img {
+    border-radius: 5px;
+}
+.chat-contents .chat-content-wrap .chats .chat-bubble .chat-content p {
+	word-break: break-word;
 }
 
 
